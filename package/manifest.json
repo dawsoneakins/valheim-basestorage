@@ -1,0 +1,9 @@
+{
+  "name": "BaseStorage",
+  "version_number": "__VERSION__",
+  "website_url": "",
+  "description": "Craft and build from your base chests, give chests categories, and organize the base or put away your inventory from any workbench.",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.2351"
+  ]
+}

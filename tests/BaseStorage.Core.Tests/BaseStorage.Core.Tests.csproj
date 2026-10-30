@@ -1,0 +1,68 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\BaseStorage.Core\BaseStorage.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\src\BaseStorage.Plugin\Patching\PatchSafety.cs" Link="Linked\PatchSafety.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Patching\CraftFromBaseGate.cs" Link="Linked\CraftFromBaseGate.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Categories\DefaultCategoryFileWriter.cs" Link="Linked\DefaultCategoryFileWriter.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\World\LoadedRegistry.cs" Link="Linked\LoadedRegistry.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\World\SnapshotMemo.cs" Link="Linked\SnapshotMemo.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\World\RegistryKind.cs" Link="Linked\RegistryKind.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\World\RegistryMessages.cs" Link="Linked\RegistryMessages.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Favourites\FavouriteToggleOutcome.cs" Link="Linked\FavouriteToggleOutcome.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Favourites\ProfileFavourites.cs" Link="Linked\ProfileFavourites.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Reservations\IReservationGame.cs" Link="Linked\IReservationGame.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Reservations\ReservationDriver.cs" Link="Linked\ReservationDriver.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Reservations\ReservationMessages.cs" Link="Linked\ReservationMessages.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\ChestCategories\IChestCategoryStorage.cs" Link="Linked\IChestCategoryStorage.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\ChestCategories\ChestCategoryWriteDriver.cs" Link="Linked\ChestCategoryWriteDriver.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Crafting\CraftPhase.cs" Link="Linked\CraftPhase.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Crafting\CraftEnd.cs" Link="Linked\CraftEnd.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Crafting\CraftGateReason.cs" Link="Linked\CraftGateReason.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Crafting\CraftSelection.cs" Link="Linked\CraftSelection.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Crafting\RecipeLine.cs" Link="Linked\RecipeLine.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Crafting\CraftRequirementLines.cs" Link="Linked\CraftRequirementLines.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Crafting\CraftMessages.cs" Link="Linked\CraftMessages.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Crafting\ICraftGame.cs" Link="Linked\ICraftGame.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Crafting\ICraftWorld.cs" Link="Linked\ICraftWorld.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Crafting\CraftContainerLayer.cs" Link="Linked\CraftContainerLayer.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Crafting\CraftSession.cs" Link="Linked\CraftSession.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Requirements\RequirementDisplayContext.cs" Link="Linked\RequirementDisplayContext.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Requirements\IRequirementDisplayWorld.cs" Link="Linked\IRequirementDisplayWorld.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Requirements\RequirementDisplaySession.cs" Link="Linked\RequirementDisplaySession.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Building\BuildEnd.cs" Link="Linked\BuildEnd.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Building\BuildGateReason.cs" Link="Linked\BuildGateReason.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Building\BuildSelection.cs" Link="Linked\BuildSelection.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Building\BuildMessages.cs" Link="Linked\BuildMessages.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Building\IBuildGame.cs" Link="Linked\IBuildGame.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Building\BuildSession.cs" Link="Linked\BuildSession.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\StationActions\StationActionsFacts.cs" Link="Linked\StationActionsFacts.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\StationActions\StationPanelGeometry.cs" Link="Linked\StationPanelGeometry.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\StationActions\StationActionsMemo.cs" Link="Linked\StationActionsMemo.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\StationActions\StationActionsMessages.cs" Link="Linked\StationActionsMessages.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Deposit\DepositTraitRules.cs" Link="Linked\DepositTraitRules.cs" />
+    <Compile Include="..\..\src\BaseStorage.Plugin\Deposit\DepositMessages.cs" Link="Linked\DepositMessages.cs" />
+  </ItemGroup>
+
+</Project>

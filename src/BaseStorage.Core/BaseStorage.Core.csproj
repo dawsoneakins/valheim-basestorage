@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>BaseStorage.Core</AssemblyName>
+    <RootNamespace>BaseStorage.Core</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <Target Name="BaseStorageWriteCoreVersion" BeforeTargets="CoreCompile">
+    <WriteLinesToFile File="$(IntermediateOutputPath)BaseStorage.CoreVersion.g.cs"
+                      Lines="// &lt;auto-generated/&gt;;namespace BaseStorage.Core%3B;internal static class CoreBuildInfo;{;    internal const string Version = &quot;$(Version)&quot;%3B;}"
+                      Overwrite="true"
+                      WriteOnlyWhenDifferent="true" />
+    <ItemGroup>
+      <Compile Include="$(IntermediateOutputPath)BaseStorage.CoreVersion.g.cs" />
+      <FileWrites Include="$(IntermediateOutputPath)BaseStorage.CoreVersion.g.cs" />
+    </ItemGroup>
+  </Target>
+
+</Project>

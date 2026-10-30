@@ -1,0 +1,333 @@
+namespace BaseStorage.Core.Tests.Locking;
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Metadata;
+using System.Reflection.Metadata.Ecma335;
+using System.Reflection.PortableExecutable;
+using BaseStorage.Core.Locking;
+using BaseStorage.Core.Tests.PatchGuard;
+
+/// <summary>
+/// AC-8 (ADR-GWIN-027, LK1, LK2): an IL-level dependency check on BaseStorage.Core.Locking. It is a private copy of the GW-U-255 walk
+/// (ResolutionDependencyTests stays unedited, per the ADR-GWIN-015 precedent). It collects every type that a Locking type names: bases,
+/// interfaces, fields, signatures, locals and every IL operand that resolves to a type, method or field. Non-public and compiler-generated
+/// types are included. The Core dll is read through PEReader, and its tokens are resolved through the loaded module.
+/// </summary>
+public sealed class LockingDependencyTests
+{
+    private const string LockingNamespace = "BaseStorage.Core.Locking";
+    private const BindingFlags AllDeclared = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static
+        | BindingFlags.DeclaredOnly;
+
+    private const int TypeRefTable = 0x01;
+    private const int TypeDefTable = 0x02;
+    private const int FieldDefTable = 0x04;
+    private const int MethodDefTable = 0x06;
+    private const int MemberRefTable = 0x0A;
+    private const int TypeSpecTable = 0x1B;
+    private const int MethodSpecTable = 0x2B;
+
+    private static readonly string[] AllowedSystemNamespaces =
+    {
+        "System",
+        "System.Collections.Generic",
+        "System.Runtime.CompilerServices",
+    };
+
+    private static readonly string[] BannedSystemTypes = { "System.DateTime", "System.DateTimeOffset", "System.Environment", "System.Random" };
+
+    private static readonly string[] AllowedCoreTypes =
+    {
+        "BaseStorage.Core.Abstractions.IClock",
+        "BaseStorage.Core.Snapshots.StationId",
+        "BaseStorage.Core.Snapshots.StationSnapshot",
+        "BaseStorage.Core.Persistence.OrganizeLockRecord",
+        "BaseStorage.Core.Persistence.OrganizeLockCodec",
+        "BaseStorage.Core.Persistence.NameRule",
+        "BaseStorage.Core.Settings.BaseStorageSettings",
+        "BaseStorage.Core.Ui.StringTable",
+    };
+
+    private static readonly string[] RequiredForANonVacuousCheck =
+    {
+        "BaseStorage.Core.Abstractions.IClock",
+        "BaseStorage.Core.Persistence.OrganizeLockCodec",
+        "BaseStorage.Core.Settings.BaseStorageSettings",
+        "BaseStorage.Core.Locking.IOrganizeLockStore",
+    };
+
+    // GW-U-285 (AC-8, allowlist): every type that a Locking type uses is System, a Locking type, or one of the eight allowlisted Core types.
+    // This row passes on the stubs, because the stubs use only System types and the Locking types.
+    [Fact]
+    public void EveryDependencyIsASystemTypeALockingTypeOrAnAllowlistedCoreType()
+    {
+        string[] offenders = CollectUses()
+            .SelectMany(use => Leaves(use.Used).Select(leaf => (Leaf: leaf, use.Origin)))
+            .Where(item => !IsAllowed(item.Leaf))
+            .Select(item => $"{item.Leaf.FullName ?? "(unnamed)"} used by {item.Origin}")
+            .Distinct(StringComparer.Ordinal)
+            .OrderBy(text => text, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.Empty(offenders);
+    }
+
+    // GW-U-285 (AC-8, not vacuous): the collected set contains the Core dependencies of the service and the store. This row is red on the stubs,
+    // because OrganizeLockCodec is used only in method bodies that are not written yet.
+    [Fact]
+    public void TheCollectedSetContainsTheCoreDependenciesOfTheLockService()
+    {
+        HashSet<string> collected = CollectUses()
+            .SelectMany(use => Leaves(use.Used))
+            .Select(leaf => leaf.FullName ?? string.Empty)
+            .ToHashSet(StringComparer.Ordinal);
+
+        foreach (string required in RequiredForANonVacuousCheck)
+        {
+            Assert.Contains(required, collected);
+        }
+    }
+
+    // GW-U-285 (AC-8, LK1): no assembly behind any collected dependency is Unity, Valheim or BepInEx.
+    [Fact]
+    public void NoDependencyComesFromAForbiddenAssembly()
+    {
+        string[] forbidden = CollectUses()
+            .SelectMany(use => Leaves(use.Used).Select(leaf => (Leaf: leaf, use.Origin)))
+            .Where(item => ForbiddenAssemblies.IsForbidden(item.Leaf.Assembly.GetName().Name ?? string.Empty))
+            .Select(item => $"{item.Leaf.FullName ?? "(unnamed)"} from {item.Leaf.Assembly.GetName().Name} used by {item.Origin}")
+            .OrderBy(text => text, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.Empty(forbidden);
+    }
+
+    /// <summary>Every (type, origin) pair that a Locking type uses, in signatures, bases, fields, and IL operands.</summary>
+    private static List<(Type Used, string Origin)> CollectUses()
+    {
+        Assembly core = typeof(OrganizeLock).Assembly;
+        Module module = core.ManifestModule;
+        var uses = new List<(Type Used, string Origin)>();
+
+        Type[] types = core.GetTypes()
+            .Where(type => type.Namespace == LockingNamespace)
+            .OrderBy(type => type.FullName, StringComparer.Ordinal)
+            .ToArray();
+        Assert.NotEmpty(types);
+
+        using var stream = new FileStream(core.Location, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        using var pe = new PEReader(stream);
+        MetadataReader metadata = pe.GetMetadataReader();
+
+        foreach (Type type in types)
+        {
+            string owner = type.FullName ?? type.Name;
+            if (type.BaseType is not null)
+            {
+                uses.Add((type.BaseType, owner + " : base"));
+            }
+
+            foreach (Type contract in type.GetInterfaces())
+            {
+                uses.Add((contract, owner + " : interface"));
+            }
+
+            foreach (FieldInfo field in type.GetFields(AllDeclared))
+            {
+                uses.Add((field.FieldType, owner + "." + field.Name + " (field)"));
+            }
+
+            foreach (PropertyInfo property in type.GetProperties(AllDeclared))
+            {
+                uses.Add((property.PropertyType, owner + "." + property.Name + " (property)"));
+            }
+
+            foreach (MethodBase method in type.GetConstructors(AllDeclared).Cast<MethodBase>().Concat(type.GetMethods(AllDeclared)))
+            {
+                string origin = owner + "." + method.Name;
+                foreach (ParameterInfo parameter in method.GetParameters())
+                {
+                    uses.Add((parameter.ParameterType, origin + " (parameter)"));
+                }
+
+                if (method is MethodInfo info)
+                {
+                    uses.Add((info.ReturnType, origin + " (return)"));
+                }
+
+                AddBodyUses(module, metadata, pe, method, origin, uses);
+            }
+        }
+
+        return uses;
+    }
+
+    private static void AddBodyUses(
+        Module module,
+        MetadataReader metadata,
+        PEReader pe,
+        MethodBase method,
+        string origin,
+        List<(Type Used, string Origin)> uses)
+    {
+        MethodDefinition definition = metadata.GetMethodDefinition(MetadataTokens.MethodDefinitionHandle(method.MetadataToken));
+        if (definition.RelativeVirtualAddress == 0)
+        {
+            return;
+        }
+
+        MethodBody? body = method.GetMethodBody();
+        if (body is not null)
+        {
+            foreach (LocalVariableInfo local in body.LocalVariables)
+            {
+                uses.Add((local.LocalType, origin + " (local)"));
+            }
+        }
+
+        foreach (IlInstruction instruction in IlInstructionReader.Decode(pe, definition.RelativeVirtualAddress))
+        {
+            if (instruction.Token == 0)
+            {
+                continue;
+            }
+
+            string where = origin + " (IL " + instruction.OpCode.Name + ")";
+            AddToken(module, instruction.Token, where, uses);
+        }
+    }
+
+    private static void AddToken(Module module, int token, string origin, List<(Type Used, string Origin)> uses)
+    {
+        switch (token >> 24)
+        {
+            case TypeRefTable:
+            case TypeDefTable:
+            case TypeSpecTable:
+                uses.Add((module.ResolveType(token), origin));
+                break;
+            case FieldDefTable:
+                FieldInfo? definedField = module.ResolveField(token);
+                if (definedField is not null)
+                {
+                    AddField(definedField, origin, uses);
+                }
+
+                break;
+            case MethodDefTable:
+            case MethodSpecTable:
+                MethodBase? resolvedMethod = module.ResolveMethod(token);
+                if (resolvedMethod is not null)
+                {
+                    AddMethod(resolvedMethod, origin, uses);
+                }
+
+                break;
+            case MemberRefTable:
+                MemberInfo? member = module.ResolveMember(token);
+                if (member is FieldInfo field)
+                {
+                    AddField(field, origin, uses);
+                }
+                else if (member is MethodBase method)
+                {
+                    AddMethod(method, origin, uses);
+                }
+
+                break;
+            default:
+                break;
+        }
+    }
+
+    private static void AddField(FieldInfo field, string origin, List<(Type Used, string Origin)> uses)
+    {
+        if (field.DeclaringType is not null)
+        {
+            uses.Add((field.DeclaringType, origin));
+        }
+
+        uses.Add((field.FieldType, origin));
+    }
+
+    private static void AddMethod(MethodBase method, string origin, List<(Type Used, string Origin)> uses)
+    {
+        if (method.DeclaringType is not null)
+        {
+            uses.Add((method.DeclaringType, origin));
+        }
+
+        foreach (ParameterInfo parameter in method.GetParameters())
+        {
+            uses.Add((parameter.ParameterType, origin));
+        }
+
+        if (method is MethodInfo info)
+        {
+            uses.Add((info.ReturnType, origin));
+            foreach (Type argument in info.GetGenericArguments())
+            {
+                uses.Add((argument, origin));
+            }
+        }
+    }
+
+    /// <summary>The types a type is built from: its array, by-ref and pointer element, and its generic definition and arguments.</summary>
+    private static IEnumerable<Type> Leaves(Type type)
+    {
+        if (type.HasElementType)
+        {
+            foreach (Type element in Leaves(type.GetElementType()!))
+            {
+                yield return element;
+            }
+
+            yield break;
+        }
+
+        yield return type.IsGenericType ? type.GetGenericTypeDefinition() : type;
+
+        if (type.IsGenericType)
+        {
+            foreach (Type argument in type.GetGenericArguments())
+            {
+                foreach (Type leaf in Leaves(argument))
+                {
+                    yield return leaf;
+                }
+            }
+        }
+    }
+
+    private static bool IsAllowed(Type leaf)
+    {
+        string ns = leaf.Namespace ?? string.Empty;
+        string full = leaf.FullName ?? string.Empty;
+        // Edited by S-E009-001 (quality-audit QA1.2): coverlet's injected tracker is not a Core dependency.
+        if (full.StartsWith("Coverlet.Core.Instrumentation.Tracker.", StringComparison.Ordinal))
+        {
+            return true;
+        }
+
+        if (ns == LockingNamespace)
+        {
+            return true;
+        }
+
+        if (AllowedCoreTypes.Contains(full, StringComparer.Ordinal))
+        {
+            return true;
+        }
+
+        if (BannedSystemTypes.Contains(full, StringComparer.Ordinal))
+        {
+            return false;
+        }
+
+        return AllowedSystemNamespaces.Contains(ns, StringComparer.Ordinal);
+    }
+}

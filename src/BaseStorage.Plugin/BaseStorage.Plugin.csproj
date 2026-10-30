@@ -1,0 +1,123 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+    <AssemblyName>BaseStorage</AssemblyName>
+    <RootNamespace>BaseStorage.Plugin</RootNamespace>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <!-- Valheim assemblies reference netstandard 2.1 while net462 resolves 2.0; benign for Mono (MSB3277 only). Scoped to this project; see ADR-GWIN-005. -->
+    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3277</MSBuildWarningsAsMessages>
+    <DeployToGame Condition="'$(DeployToGame)' == ''">false</DeployToGame>
+    <PackageThunderstore Condition="'$(PackageThunderstore)' == ''">false</PackageThunderstore>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Core" Version="5.4.21" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="assembly_valheim" Publicize="true">
+      <HintPath>$(ValheimDir)\valheim_Data\Managed\assembly_valheim.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="assembly_utils">
+      <HintPath>$(ValheimDir)\valheim_Data\Managed\assembly_utils.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="assembly_guiutils">
+      <HintPath>$(ValheimDir)\valheim_Data\Managed\assembly_guiutils.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(ValheimDir)\valheim_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(ValheimDir)\valheim_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <EmbeddedResource Include="BaseMenu\basestorage-icon.png" LogicalName="BaseStorage.icon.png" />
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>$(ValheimDir)\valheim_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(ValheimDir)\valheim_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>$(ValheimDir)\valheim_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>$(ValheimDir)\valheim_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Shared\PatchTargetNames.cs" Link="Shared\PatchTargetNames.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BaseStorage.Core\BaseStorage.Core.csproj" />
+  </ItemGroup>
+
+  <Target Name="BaseStorageWritePluginVersion" BeforeTargets="CoreCompile">
+    <WriteLinesToFile File="$(IntermediateOutputPath)BaseStorage.PluginVersion.g.cs"
+                      Lines="// &lt;auto-generated/&gt;;namespace BaseStorage.Plugin%3B;internal static class PluginBuildInfo;{;    internal const string Version = &quot;$(Version)&quot;%3B;}"
+                      Overwrite="true"
+                      WriteOnlyWhenDifferent="true" />
+    <ItemGroup>
+      <Compile Include="$(IntermediateOutputPath)BaseStorage.PluginVersion.g.cs" />
+      <FileWrites Include="$(IntermediateOutputPath)BaseStorage.PluginVersion.g.cs" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="BaseStorageVerifyValheimDir" BeforeTargets="ResolveAssemblyReferences" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Error Code="BS1001"
+           Condition="!Exists('$(ValheimDir)\valheim_Data\Managed\assembly_valheim.dll')"
+           Text="Valheim not found: '$(ValheimDir)\valheim_Data\Managed\assembly_valheim.dll' does not exist. Set VALHEIM_DIR or create Directory.Build.user.props with &lt;ValheimDir&gt;." />
+  </Target>
+
+  <Target Name="DeployToGame" AfterTargets="Build" Condition="'$(DeployToGame)' == 'true'">
+    <PropertyGroup>
+      <BaseStorageGuardDir>$(ValheimDir)\BepInEx</BaseStorageGuardDir>
+      <BaseStorageDeployDir>$(ValheimDir)\BepInEx\plugins\BaseStorage\</BaseStorageDeployDir>
+    </PropertyGroup>
+    <ItemGroup>
+      <BaseStorageDeployFile Include="$(TargetPath);$(TargetDir)BaseStorage.Core.dll" />
+    </ItemGroup>
+    <Message Importance="high" Condition="!Exists('$(BaseStorageGuardDir)')" Text="BS1002: DeployToGame skipped: '$(BaseStorageGuardDir)' does not exist." />
+    <Copy Condition="Exists('$(BaseStorageGuardDir)')" SourceFiles="@(BaseStorageDeployFile)" DestinationFolder="$(BaseStorageDeployDir)" SkipUnchangedFiles="true" />
+    <Message Importance="high" Condition="Exists('$(BaseStorageGuardDir)')" Text="BS1003: DeployToGame copied @(BaseStorageDeployFile->Count()) file(s) to '$(BaseStorageDeployDir)'." />
+  </Target>
+
+  <!-- Opt-in Thunderstore package: dotnet build -c Release -p:PackageThunderstore=true writes dist/BaseStorage-$(Version).zip (spec AC-7.1, ADR-GWIN-065..068). Pure MSBuild; writes only under obj/ and the dist folder, never under the game folder. -->
+  <Target Name="PackageThunderstore" AfterTargets="Build" Condition="'$(PackageThunderstore)' == 'true'">
+    <PropertyGroup>
+      <BaseStorageRepoDir>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '..', '..'))</BaseStorageRepoDir>
+      <BaseStoragePackageDir>$(BaseStorageRepoDir)package\</BaseStoragePackageDir>
+      <BaseStorageDistDir Condition="'$(BaseStorageDistDir)' == ''">$(BaseStorageRepoDir)dist\</BaseStorageDistDir>
+      <BaseStorageStageDir>$(IntermediateOutputPath)thunderstore\</BaseStorageStageDir>
+      <BaseStorageZipPath>$(BaseStorageDistDir)BaseStorage-$(Version).zip</BaseStorageZipPath>
+      <!-- The manifest template's __VERSION__ placeholder becomes the Version.props version; the text is escaped so WriteLinesToFile writes it as one item. -->
+      <BaseStorageManifestText>$([MSBuild]::Escape($([System.IO.File]::ReadAllText('$(BaseStoragePackageDir)manifest.json').Replace('__VERSION__', '$(Version)').TrimEnd())))</BaseStorageManifestText>
+    </PropertyGroup>
+    <ItemGroup>
+      <BaseStoragePackageRoot Include="$(BaseStoragePackageDir)icon.png;$(BaseStoragePackageDir)README.md;$(BaseStorageRepoDir)CHANGELOG.md" />
+      <BaseStoragePackagePlugin Include="$(TargetPath);$(TargetDir)BaseStorage.Core.dll" />
+    </ItemGroup>
+    <RemoveDir Directories="$(BaseStorageStageDir)" />
+    <MakeDir Directories="$(BaseStorageStageDir);$(BaseStorageStageDir)plugins;$(BaseStorageDistDir)" />
+    <Copy SourceFiles="@(BaseStoragePackageRoot)" DestinationFolder="$(BaseStorageStageDir)" />
+    <Copy SourceFiles="@(BaseStoragePackagePlugin)" DestinationFolder="$(BaseStorageStageDir)plugins\" />
+    <WriteLinesToFile File="$(BaseStorageStageDir)manifest.json" Lines="$(BaseStorageManifestText)" Overwrite="true" />
+    <Delete Files="$(BaseStorageZipPath)" />
+    <ZipDirectory SourceDirectory="$(BaseStorageStageDir)" DestinationFile="$(BaseStorageDistDir)BaseStorage-$(Version).zip" Overwrite="true" />
+    <Message Importance="high" Text="BS1004: PackageThunderstore wrote '$(BaseStorageZipPath)'." />
+  </Target>
+
+</Project>
