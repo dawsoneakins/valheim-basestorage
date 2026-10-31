@@ -1,6 +1,6 @@
 # BaseStorage v0.3 release notes
 
-## [0.3.0] - Not released yet
+## [0.3.0] - 2026-10-31
 
 ### Changed
 

@@ -111,5 +111,16 @@ internal static class EnglishStrings
         ("menu.open", "Open"),
         ("menu.highlight", "Highlight"),
         ("menu.share", "Share"),
+        ("feed.hover", "Feed from base"),
+        ("feed.header.item", "Item"),
+        ("feed.header.fed", "Keep fed"),
+        ("feed.header.keep", "Leave in base"),
+        ("feed.status", "Queued {0}/{1}   Fuel {2}/{3}"),
+        ("feed.status.no-fuel", "Queued {0}/{1}"),
+        ("feed.in-base", "{0} in base"),
+        ("feed.on", "On"),
+        ("feed.off", "Off"),
+        ("feed.less", "-"),
+        ("feed.more", "+"),
     ];
 }

@@ -64,12 +64,12 @@ public sealed class PlaytestCraftFromBaseOffTests
 
         string[][] soloTokens =
         {
-            new[] { "`DebugLogging = true`", "`CraftFromBase = true`", "Workbench", "20 `Wood`", "`0 (+20) / <need>`" },
+            new[] { "`DebugLogging = true`", "`CraftFromBase = true`", "Workbench", "20 `Wood`", "`20/<need>`" },
             new[] { "`CraftFromBase = false`", "F1", "`<need>`" },
             new[] { "inventory", "`Reserve <id> [craft]`" },
             new[] { "Hammer", "`<need>`", "20 `Wood`" },
             new[] { "upgrade", "Left Shift", "multi-craft" },
-            new[] { "`CraftFromBase = true`", "without a restart", "`0 (+20) / <need>`" },
+            new[] { "`CraftFromBase = true`", "without a restart", "`20/<need>`" },
             new[] { "30 seconds", "failed and was skipped" },
         };
 
@@ -79,8 +79,8 @@ public sealed class PlaytestCraftFromBaseOffTests
             new[] { "Workbench", "Reserve" },
             new[] { "Hammer", "tooltip" },
             new[] { "`CraftFromBase = true`", "F1", "vanilla" },
-            new[] { "`CraftFromBase = true`", "Workbench", "`0 (+20) / <need>`", "stays vanilla" },
-            new[] { "quits to the main menu", "joins again", "Config sync: CraftFromBase = true (host)", "`0 (+20) / <need>`" },
+            new[] { "`CraftFromBase = true`", "Workbench", "`20/<need>`", "stays vanilla" },
+            new[] { "quits to the main menu", "joins again", "Config sync: CraftFromBase = true (host)", "`20/<need>`" },
             new[] { "30 seconds", "failed and was skipped" },
         };
 

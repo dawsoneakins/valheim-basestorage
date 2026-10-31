@@ -21,11 +21,11 @@ public sealed class RequirementDisplaySessionTests
 
     // GW-U-1515 (AC-4, R1-R5): the session renders through the formatter over fixture D; c7 Wood (open by another player) is never counted.
     [Theory]
-    [InlineData("Wood", 20, "20", "12 (+40) / 20", false)]
-    [InlineData("Wood", 60, "60", "12 (+40) / 60", true)]
-    [InlineData("Wood", 52, "52", "12 (+40) / 52", false)]
-    [InlineData("Resin", 5, "5", "3 (+2) / 5", false)]
-    [InlineData("Resin", 2, "2", "3 (+2) / 2", false)]
+    [InlineData("Wood", 20, "20", "52/20", false)]
+    [InlineData("Wood", 60, "60", "52/60", true)]
+    [InlineData("Wood", 52, "52", "52/52", false)]
+    [InlineData("Resin", 5, "5", "5/5", false)]
+    [InlineData("Resin", 2, "2", "5/2", false)]
     public void ThePanelRendersTheCombinedFormAndReadsOnce(string prefab, long need, string vanilla, string expectedText, bool expectedShort)
     {
         var (session, world) = Panel();
@@ -167,7 +167,7 @@ public sealed class RequirementDisplaySessionTests
 
         RequirementDisplay? display = session.Resolve("Wood", 20, "20");
         Assert.True(display.HasValue);
-        Assert.Equal("12 (+40) / 20", display!.Value.Text);
+        Assert.Equal("52/20", display!.Value.Text);
         Assert.Equal(RequirementDisplayContext.BuildTooltip, session.Context);
         Assert.Equal(new[] { "ReadCraftingPanel(1, 1)", "ReadBuildTooltip()" }, world.Calls.ToArray());
     }

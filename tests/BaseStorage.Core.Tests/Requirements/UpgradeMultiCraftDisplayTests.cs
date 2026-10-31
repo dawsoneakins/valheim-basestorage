@@ -22,19 +22,19 @@ public sealed class UpgradeMultiCraftDisplayTests
     /// <returns>The rows: chest five Bronze, chest seven Bronze, quality, prefab, need, text, short, shows chests.</returns>
     public static TheoryData<int, int, int, string, int, string, bool, bool> UpgradePanelRows() => new()
     {
-        { 7, 4, 4, "Bronze", 16, "5 (+11) / 16", false, true },
-        { 7, 3, 4, "Bronze", 16, "5 (+10) / 16", true, true },
-        { 3, 0, 3, "Bronze", 8, "5 (+3) / 8", false, true },
-        { 2, 0, 3, "Bronze", 8, "5 (+2) / 8", true, true },
+        { 7, 4, 4, "Bronze", 16, "16/16", false, true },
+        { 7, 3, 4, "Bronze", 16, "15/16", true, true },
+        { 3, 0, 3, "Bronze", 8, "8/8", false, true },
+        { 2, 0, 3, "Bronze", 8, "7/8", true, true },
     };
 
     /// <summary>The multi-craft panel rows DP5 to DP7, one per multiplier, with the Wood and Feathers texts and shorts.</summary>
     /// <returns>The rows: multiplier, Wood text, Wood short, Feathers text, Feathers short.</returns>
     public static TheoryData<int, string, bool, string, bool> MultiCraftPanelRows() => new()
     {
-        { 5, "10 (+38) / 40", false, "4 (+8) / 10", false },
-        { 6, "10 (+38) / 48", false, "4 (+8) / 12", false },
-        { 7, "10 (+38) / 56", true, "4 (+8) / 14", true },
+        { 5, "48/40", false, "12/10", false },
+        { 6, "48/48", false, "12/12", false },
+        { 7, "48/56", true, "12/14", true },
     };
 
     /// <summary>The eight display rows DP1, DP1b, DP2, DP3, DP4, DP5, DP6 and DP7 of contract 4.5.</summary>

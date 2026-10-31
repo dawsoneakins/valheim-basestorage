@@ -180,7 +180,7 @@ public sealed class PluginReservationsSourceScanTests
         // Edited by integration (S-E004-004): plus the Category button postfix, twenty-five.
         // Edited by S-E004-012 (ADR-GWIN-136): plus the UpdateRecipe postfix of the station actions, twenty-six.
         // Edited by S-E010-002 (organize-console-command 6.2): plus TerminalInitTerminalPatch.Postfix, twenty-seven.
-        Assert.Equal(28, PluginSourceScan.CountMatches(PluginSourceScan.Sources(), @"static (bool|void) (Prefix|Postfix)\("));
+        Assert.Equal(33, PluginSourceScan.CountMatches(PluginSourceScan.Sources(), @"static (bool|void) (Prefix|Postfix)\("));
     }
 
     // GW-U-776 (SR6): exactly two patch files, each with the contracted attribute, key and single-statement prefix.

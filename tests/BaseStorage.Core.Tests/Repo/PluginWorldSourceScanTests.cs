@@ -407,8 +407,8 @@ public sealed class PluginWorldSourceScanTests
         // Edited by S-E003-006 (ADR-GWIN-132): the build gate resolves the base containing the player in GameBuildGame (one call).
         // Edited by integration (S-E003-005 + S-E003-006): the union, 5 + 1 = 6 calls.
         // Edited by S-E004-012 (ADR-GWIN-136): plus the station panel's SA2 call (StationActionsPanel), 6 + 1 = 7 calls.
-        Assert.Equal(9, PluginSourceScan.CountMatches(sources, @"\.Resolve\("));
-        Assert.Equal(new[] { "src/BaseStorage.Plugin/BaseMenu/BaseMenuPanel.cs", "src/BaseStorage.Plugin/Building/GameBuildGame.cs", "src/BaseStorage.Plugin/Crafting/GameCraftGame.cs", "src/BaseStorage.Plugin/Requirements/GameRequirementDisplayWorld.cs", "src/BaseStorage.Plugin/Requirements/PluginRequirementDisplay.cs", "src/BaseStorage.Plugin/StationActions/StationActionsPanel.cs", "src/BaseStorage.Plugin/Tooltips/ItemCategoryLine.cs", PluginWorldFile }, PluginSourceScan.FilesMatching(sources, @"\.Resolve\("));
+        Assert.Equal(10, PluginSourceScan.CountMatches(sources, @"\.Resolve\("));
+        Assert.Equal(new[] { "src/BaseStorage.Plugin/BaseMenu/BaseMenuPanel.cs", "src/BaseStorage.Plugin/Building/GameBuildGame.cs", "src/BaseStorage.Plugin/Crafting/GameCraftGame.cs", "src/BaseStorage.Plugin/Feeding/StationFeeder.cs", "src/BaseStorage.Plugin/Requirements/GameRequirementDisplayWorld.cs", "src/BaseStorage.Plugin/Requirements/PluginRequirementDisplay.cs", "src/BaseStorage.Plugin/StationActions/StationActionsPanel.cs", "src/BaseStorage.Plugin/Tooltips/ItemCategoryLine.cs", PluginWorldFile }, PluginSourceScan.FilesMatching(sources, @"\.Resolve\("));
         Assert.Matches(@"LogPolicy\.IsEnabled\([^)]*LogCategory\.Detail\)[\s\S]*\.Resolve\(", Code(PluginWorldFile));
     }
 
@@ -421,7 +421,7 @@ public sealed class PluginWorldSourceScanTests
         Assert.Equal(
             // Edited by S-E003-006, ADR-GWIN-132: PluginBuilding.Tick() sits immediately after PluginCrafting.Tick().
             // Edited by integration (S-E004-004 + S-E004-011): CategoryHotkey.Tick() then OrganizeRunner.Tick() follow ChestCategoryWriter.Tick().
-            "PluginReservations.Tick();PluginCrafting.Tick();PluginBuilding.Tick();ChestCategoryWriter.Tick();CategoryHotkey.Tick();OrganizeRunner.Tick();if(firstRunCategoryFile!=null&&firstRunCategoryFile.Tick()){firstRunCategoryFile=null;}PluginVersionHandshake.Tick();",
+            "PluginReservations.Tick();PluginCrafting.Tick();PluginBuilding.Tick();ChestCategoryWriter.Tick();CategoryHotkey.Tick();OrganizeRunner.Tick();StationFeeder.Tick();if(firstRunCategoryFile!=null&&firstRunCategoryFile.Tick()){firstRunCategoryFile=null;}PluginVersionHandshake.Tick();",
             Regex.Replace(update, @"\s+", string.Empty));
     }
 

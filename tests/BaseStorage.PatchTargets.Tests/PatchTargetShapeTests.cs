@@ -124,7 +124,8 @@ public sealed class PatchTargetShapeTests
             new("Hud", "TypeName", TargetKind.TypeEntry, "Hud", null),
             new("Humanoid", "GetInventory", TargetKind.MethodNameOnly, "GetInventory", null),
             new("Humanoid", "GetRightItem", TargetKind.MethodNameOnly, "GetRightItem", null),
-            new("Humanoid", "IsItemEquiped", TargetKind.MethodNameOnly, "IsItemEquiped", null),
+            new("Humanoid", "IsItemEquiped", TargetKind.MethodOverloads, "IsItemEquiped", null),
+            new("Humanoid", "IsItemEquipedParametersItem", TargetKind.OverloadCompanion, "ItemDrop+ItemData", "IsItemEquiped"),
             new("Humanoid", "TypeName", TargetKind.TypeEntry, "Humanoid", null),
             new("Inventory", "AddItem", TargetKind.MethodOverloads, "AddItem", null),
             new("Inventory", "AddItemParametersItem", TargetKind.OverloadCompanion, "ItemDrop+ItemData", "AddItem"),
@@ -141,6 +142,8 @@ public sealed class PatchTargetShapeTests
             new("Inventory", "RemoveItem", TargetKind.MethodOverloads, "RemoveItem", null),
             new("Inventory", "RemoveItemParametersItemAmount", TargetKind.OverloadCompanion, "ItemDrop+ItemData,System.Int32", "RemoveItem"),
             new("Inventory", "Save", TargetKind.MethodNameOnly, "Save", null),
+            new("Inventory", "StackAll", TargetKind.MethodOverloads, "StackAll", null),
+            new("Inventory", "StackAllParametersFromMessage", TargetKind.OverloadCompanion, "Inventory,System.Boolean", "StackAll"),
             new("Inventory", "TypeName", TargetKind.TypeEntry, "Inventory", null),
             new("InventoryElement", "FieldIcon", TargetKind.FieldEntry, "m_icon", null),
             new("InventoryElement", "FieldIconType", TargetKind.FieldTypeCompanion, "UnityEngine.UI.Image", "FieldIcon"),
@@ -339,6 +342,14 @@ public sealed class PatchTargetShapeTests
             new("SharedData", "TypeName", TargetKind.TypeEntry, "ItemDrop+ItemData+SharedData", null),
             new("Ship", "TypeName", TargetKind.TypeEntry, "Ship", null),
             // Edited by S-E010-002 (organize-console-command 6.2): the Terminal rows.
+            new("Smelter", "Awake", TargetKind.MethodOverloads, "Awake", null),
+            new("Smelter", "AwakeParametersNone", TargetKind.OverloadCompanion, "", "Awake"),
+            new("Smelter", "TypeName", TargetKind.TypeEntry, "Smelter", null),
+            new("Switch", "GetHoverText", TargetKind.MethodOverloads, "GetHoverText", null),
+            new("Switch", "GetHoverTextParametersNone", TargetKind.OverloadCompanion, "", "GetHoverText"),
+            new("Switch", "Interact", TargetKind.MethodOverloads, "Interact", null),
+            new("Switch", "InteractParametersUserHoldAlt", TargetKind.OverloadCompanion, "Humanoid,System.Boolean,System.Boolean", "Interact"),
+            new("Switch", "TypeName", TargetKind.TypeEntry, "Switch", null),
             new("Terminal", "AddString", TargetKind.MethodOverloads, "AddString", null),
             new("Terminal", "AddStringParametersText", TargetKind.OverloadCompanion, "System.String", "AddString"),
             new("Terminal", "InitTerminal", TargetKind.MethodOverloads, "InitTerminal", null),
@@ -452,11 +463,11 @@ public sealed class PatchTargetShapeTests
         // Edited by S-E004-012 (ADR-GWIN-136): plus the 15 station-actions rows (1, 1, 1, 0, 6, 6) = 385.
         // Edited by S-E004-015 (ADR-GWIN-143): plus the seven Deposit rows (0, 0, 0, 1, 3, 3) = 392, as 48, 41, 45, 102, 78 and 78.
         // Edited by S-E010-002 (organize-console-command 6.2): 404, by kind 52, 43, 47, 102, 80 and 80.
-        Assert.Equal(406, entries.Count);
-        Assert.Equal(52, entries.Count(e => e.Kind == TargetKind.TypeEntry));
-        Assert.Equal(44, entries.Count(e => e.Kind == TargetKind.MethodOverloads));
-        Assert.Equal(48, entries.Count(e => e.Kind == TargetKind.OverloadCompanion));
-        Assert.Equal(102, entries.Count(e => e.Kind == TargetKind.MethodNameOnly));
+        Assert.Equal(417, entries.Count);
+        Assert.Equal(54, entries.Count(e => e.Kind == TargetKind.TypeEntry));
+        Assert.Equal(49, entries.Count(e => e.Kind == TargetKind.MethodOverloads));
+        Assert.Equal(53, entries.Count(e => e.Kind == TargetKind.OverloadCompanion));
+        Assert.Equal(101, entries.Count(e => e.Kind == TargetKind.MethodNameOnly));
         Assert.Equal(80, entries.Count(e => e.Kind == TargetKind.FieldEntry));
         Assert.Equal(80, entries.Count(e => e.Kind == TargetKind.FieldTypeCompanion));
         Assert.Equal(
@@ -471,6 +482,7 @@ public sealed class PatchTargetShapeTests
                 new HarmonyEntry("CraftingStationStart", "CraftingStation.Start()"),
                 new HarmonyEntry("FejdStartupShowConnectError", "FejdStartup.ShowConnectError(ZNet+ConnectionStatus)"),
                 new HarmonyEntry("HudSetupPieceInfo", "Hud.SetupPieceInfo(Piece)"),
+                new HarmonyEntry("HumanoidIsItemEquiped", "Humanoid.IsItemEquiped(ItemDrop+ItemData)"),
                 new HarmonyEntry("InventoryGridOnLeftDown", "InventoryGrid.OnLeftDown(UIInputHandler)"),
                 new HarmonyEntry("InventoryGridUpdateGui", "InventoryGrid.UpdateGui(Player,ItemDrop+ItemData)"),
                 new HarmonyEntry("InventoryGuiDoCrafting", "InventoryGui.DoCrafting(Player)"),
@@ -478,12 +490,16 @@ public sealed class PatchTargetShapeTests
                 new HarmonyEntry("InventoryGuiSetupRequirementList", "InventoryGui.SetupRequirementList(System.Int32,Player,System.Boolean,System.Int32)"),
                 new HarmonyEntry("InventoryGuiUpdateContainer", "InventoryGui.UpdateContainer(Player)"),
                 new HarmonyEntry("InventoryGuiUpdateRecipe", "InventoryGui.UpdateRecipe(Player,System.Single)"), // Edited by S-E004-012 (ADR-GWIN-136).
+                new HarmonyEntry("InventoryStackAll", "Inventory.StackAll(Inventory,System.Boolean)"),
                 new HarmonyEntry("ItemDataGetTooltip", "ItemDrop+ItemData.GetTooltip(ItemDrop+ItemData,System.Int32,System.Boolean,System.Single,System.Int32,System.Boolean)"),
                 new HarmonyEntry("PlayerConsumeResources", "Player.ConsumeResources(Piece+Requirement[],System.Int32,System.Int32,System.Int32)"),
                 new HarmonyEntry("PlayerHaveRequirementItems", "Player.HaveRequirementItems(Recipe,System.Boolean,System.Int32,System.Int32)"),
                 new HarmonyEntry("PlayerHaveRequirementsPiece", "Player.HaveRequirements(Piece,Player+RequirementMode)"),
                 new HarmonyEntry("PlayerPlacePiece", "Player.PlacePiece(Piece,UnityEngine.Vector3,UnityEngine.Quaternion,System.Boolean,System.Boolean)"),
                 new HarmonyEntry("PlayerTryPlacePiece", "Player.TryPlacePiece(Piece)"),
+                new HarmonyEntry("SmelterAwake", "Smelter.Awake()"),
+                new HarmonyEntry("SwitchGetHoverText", "Switch.GetHoverText()"),
+                new HarmonyEntry("SwitchInteract", "Switch.Interact(Humanoid,System.Boolean,System.Boolean)"),
                 // Edited by S-E010-002 (organize-console-command 6.2): the console registration id (24 in all).
                 new HarmonyEntry("TerminalInitTerminal", "Terminal.InitTerminal()"),
                 new HarmonyEntry("ZNetOnNewConnection", "ZNet.OnNewConnection(ZNetPeer)"),

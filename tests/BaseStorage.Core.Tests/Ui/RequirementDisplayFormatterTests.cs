@@ -14,15 +14,15 @@ public sealed class RequirementDisplayFormatterTests
 
     // GW-U-1500 (AC-1, 3.2 step 4): the combined form for F1-F6, F11, F12 and F13; the vanilla text is not part of the result.
     [Theory]
-    [InlineData(12, 40, 20, "12 (+40) / 20")]
-    [InlineData(5, 10, 20, "5 (+10) / 20")]
-    [InlineData(8, 12, 20, "8 (+12) / 20")]
-    [InlineData(0, 20, 20, "0 (+20) / 20")]
-    [InlineData(0, 19, 20, "0 (+19) / 20")]
-    [InlineData(25, 3, 20, "25 (+3) / 20")]
-    [InlineData(1234, 5678, 10000, "1234 (+5678) / 10000")]
-    [InlineData(int.MaxValue, int.MaxValue, int.MaxValue, "2147483647 (+2147483647) / 2147483647")]
-    [InlineData(3, 2, 0, "3 (+2) / 0")]
+    [InlineData(12, 40, 20, "52/20")]
+    [InlineData(5, 10, 20, "15/20")]
+    [InlineData(8, 12, 20, "20/20")]
+    [InlineData(0, 20, 20, "20/20")]
+    [InlineData(0, 19, 20, "19/20")]
+    [InlineData(25, 3, 20, "28/20")]
+    [InlineData(1234, 5678, 10000, "6912/10000")]
+    [InlineData(int.MaxValue, int.MaxValue, int.MaxValue, "4294967294/2147483647")]
+    [InlineData(3, 2, 0, "5/0")]
     public void TheCombinedFormShowsTheChestAmountAndIgnoresTheVanillaText(int have, int chest, int need, string expected)
     {
         RequirementDisplay result = RequirementDisplayFormatter.Format(have, chest, need, Marker);
@@ -33,12 +33,12 @@ public sealed class RequirementDisplayFormatterTests
 
     // GW-U-1501 (AC-1, 3.2 step 4 and 3.3 note): F1 and F11 are the same under de-DE, fr-FR and ar-SA; the culture is restored.
     [Theory]
-    [InlineData("de-DE", 12, 40, 20, "12 (+40) / 20")]
-    [InlineData("de-DE", 1234, 5678, 10000, "1234 (+5678) / 10000")]
-    [InlineData("fr-FR", 12, 40, 20, "12 (+40) / 20")]
-    [InlineData("fr-FR", 1234, 5678, 10000, "1234 (+5678) / 10000")]
-    [InlineData("ar-SA", 12, 40, 20, "12 (+40) / 20")]
-    [InlineData("ar-SA", 1234, 5678, 10000, "1234 (+5678) / 10000")]
+    [InlineData("de-DE", 12, 40, 20, "52/20")]
+    [InlineData("de-DE", 1234, 5678, 10000, "6912/10000")]
+    [InlineData("fr-FR", 12, 40, 20, "52/20")]
+    [InlineData("fr-FR", 1234, 5678, 10000, "6912/10000")]
+    [InlineData("ar-SA", 12, 40, 20, "52/20")]
+    [InlineData("ar-SA", 1234, 5678, 10000, "6912/10000")]
     public void TheTextIsTheSameUnderAnyCurrentCulture(string culture, int have, int chest, int need, string expected)
     {
         CultureInfo previous = CultureInfo.CurrentCulture;

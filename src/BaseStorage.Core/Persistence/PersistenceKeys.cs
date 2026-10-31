@@ -15,8 +15,11 @@ public static class PersistenceKeys
     /// <summary>Key of the favourite slots value, stored in the player profile custom data.</summary>
     public const string Favourites = "basestorage.fav";
 
+    /// <summary>The key on a station that holds what it is kept fed with.</summary>
+    public const string StationFeed = "basestorage.feed";
+
     private static readonly ReadOnlyCollection<string> AllKeys =
-        new ReadOnlyCollection<string>(new[] { ChestCategory, OrganizeLock, Favourites });
+        new ReadOnlyCollection<string>(new[] { ChestCategory, OrganizeLock, Favourites, StationFeed });
 
     /// <summary>Gets every persistent key, in the order chest category, organize lock, favourites.</summary>
     public static IReadOnlyList<string> All => AllKeys;

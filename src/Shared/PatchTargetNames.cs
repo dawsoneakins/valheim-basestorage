@@ -568,6 +568,12 @@ internal static class PatchTargetNames
         /// <summary>The reflection full name of the type.</summary>
         public const string TypeName = "Inventory";
 
+        /// <summary>The StackAll method.</summary>
+        public const string StackAll = "StackAll";
+
+        /// <summary>Parameter type full names of the StackAll(Inventory, bool) overload.</summary>
+        public const string StackAllParametersFromMessage = "Inventory,System.Boolean";
+
         /// <summary>The Save method.</summary>
         public const string Save = "Save";
 
@@ -1116,6 +1122,9 @@ internal static class PatchTargetNames
 
         /// <summary>The IsItemEquiped method.</summary>
         public const string IsItemEquiped = "IsItemEquiped";
+
+        /// <summary>Parameter type full names of the IsItemEquiped(ItemDrop.ItemData) overload.</summary>
+        public const string IsItemEquipedParametersItem = "ItemDrop+ItemData";
     }
 
     /// <summary>The Recipe type.</summary>
@@ -1434,6 +1443,38 @@ internal static class PatchTargetNames
         public const string FieldContextType = "Terminal";
     }
 
+    /// <summary>The Smelter type: every station that takes items and fuel through switches.</summary>
+    public static class Smelter
+    {
+        /// <summary>The reflection full name of the type.</summary>
+        public const string TypeName = "Smelter";
+
+        /// <summary>The Awake method.</summary>
+        public const string Awake = "Awake";
+
+        /// <summary>Parameter type full names of the Awake overload: none.</summary>
+        public const string AwakeParametersNone = "";
+    }
+
+    /// <summary>The Switch type: the ore and fuel inputs of a station.</summary>
+    public static class Switch
+    {
+        /// <summary>The reflection full name of the type.</summary>
+        public const string TypeName = "Switch";
+
+        /// <summary>The Interact method.</summary>
+        public const string Interact = "Interact";
+
+        /// <summary>Parameter type full names of the Interact overload.</summary>
+        public const string InteractParametersUserHoldAlt = "Humanoid,System.Boolean,System.Boolean";
+
+        /// <summary>The GetHoverText method.</summary>
+        public const string GetHoverText = "GetHoverText";
+
+        /// <summary>Parameter type full names of the GetHoverText overload: none.</summary>
+        public const string GetHoverTextParametersNone = "";
+    }
+
     /// <summary>
     /// The methods that the Plugin patches with Harmony. Each constant is a target id composed as
     /// TypeName + "." + Method + "(" + Parameters + ")".
@@ -1445,6 +1486,21 @@ internal static class PatchTargetNames
 
         /// <summary>The InventoryGrid.UpdateGui(Player, ItemDrop.ItemData) postfix of the favourite markers.</summary>
         public const string InventoryGridUpdateGui = "InventoryGrid.UpdateGui(Player,ItemDrop+ItemData)";
+
+        /// <summary>The Inventory.StackAll(Inventory, bool) guard of the favourites during Place stacks.</summary>
+        public const string InventoryStackAll = "Inventory.StackAll(Inventory,System.Boolean)";
+
+        /// <summary>The Humanoid.IsItemEquiped(ItemDrop.ItemData) postfix that answers for favourites during Place stacks.</summary>
+        public const string HumanoidIsItemEquiped = "Humanoid.IsItemEquiped(ItemDrop+ItemData)";
+
+        /// <summary>The Smelter.Awake postfix that records a loaded station.</summary>
+        public const string SmelterAwake = "Smelter.Awake()";
+
+        /// <summary>The Switch.Interact prefix that opens the feed panel.</summary>
+        public const string SwitchInteract = "Switch.Interact(Humanoid,System.Boolean,System.Boolean)";
+
+        /// <summary>The Switch.GetHoverText postfix that adds the feed panel hint.</summary>
+        public const string SwitchGetHoverText = "Switch.GetHoverText()";
 
         /// <summary>The Container.Awake patch target.</summary>
         public const string ContainerAwake = "Container.Awake()";

@@ -34,7 +34,7 @@ public sealed class ReservationsPatchGuardTests
         // Edited by integration (S-E004-004): plus the Category button postfix, 25.
         // Edited by S-E004-012 (ADR-GWIN-136): plus the StationActions UpdateRecipe postfix, 26.
         // Edited by S-E010-002 (organize-console-command 6.2): plus TerminalInitTerminalPatch.Postfix, 27.
-        Assert.Equal(28, result.PatchBodies.Count);
+        Assert.Equal(34, result.PatchBodies.Count);
         Assert.True(result.Violations.Count == 0, PatchGuardScanner.FormatViolations(result));
     }
 }

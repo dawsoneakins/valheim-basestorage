@@ -3,7 +3,7 @@ namespace BaseStorage.Core.Ui;
 using System;
 using System.Globalization;
 
-/// <summary>Formats a requirement line as <c>have (+chest) / need</c> when base chests contribute.</summary>
+/// <summary>Formats a requirement line as <c>total/need</c> when base chests contribute, short enough to fit the requirement slot.</summary>
 public static class RequirementDisplayFormatter
 {
     /// <summary>Decides the text and colour of one requirement line.</summary>
@@ -28,9 +28,8 @@ public static class RequirementDisplayFormatter
             return new RequirementDisplay(vanillaText, isShort, false);
         }
 
-        string text = have.ToString(CultureInfo.InvariantCulture)
-            + " (+" + chest.ToString(CultureInfo.InvariantCulture)
-            + ") / " + need.ToString(CultureInfo.InvariantCulture);
+        string text = ((long)have + chest).ToString(CultureInfo.InvariantCulture)
+            + "/" + need.ToString(CultureInfo.InvariantCulture);
         return new RequirementDisplay(text, isShort, true);
     }
 

@@ -266,4 +266,37 @@ public static class StringKeys
 
     /// <summary>The menu button that shows the open chest to the other players.</summary>
     public const string MenuShare = "menu.share";
+
+    /// <summary>The hover hint that opens a station's feed panel.</summary>
+    public const string FeedHover = "feed.hover";
+
+    /// <summary>The feed panel's item column.</summary>
+    public const string FeedHeaderItem = "feed.header.item";
+
+    /// <summary>The feed panel's on and off column.</summary>
+    public const string FeedHeaderFed = "feed.header.fed";
+
+    /// <summary>The feed panel's reserve column.</summary>
+    public const string FeedHeaderKeep = "feed.header.keep";
+
+    /// <summary>What a station holds, for a station that burns fuel.</summary>
+    public const string FeedStatus = "feed.status";
+
+    /// <summary>What a station holds, for a station that burns nothing.</summary>
+    public const string FeedStatusNoFuel = "feed.status.no-fuel";
+
+    /// <summary>How many of an item the base holds.</summary>
+    public const string FeedInBase = "feed.in-base";
+
+    /// <summary>A station is kept fed with this item.</summary>
+    public const string FeedOn = "feed.on";
+
+    /// <summary>A station is not kept fed with this item.</summary>
+    public const string FeedOff = "feed.off";
+
+    /// <summary>Lowers the amount left in the base.</summary>
+    public const string FeedLess = "feed.less";
+
+    /// <summary>Raises the amount left in the base.</summary>
+    public const string FeedMore = "feed.more";
 }

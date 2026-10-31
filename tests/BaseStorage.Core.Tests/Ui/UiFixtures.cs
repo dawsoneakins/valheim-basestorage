@@ -126,6 +126,17 @@ public static class UiFixtures
         ("menu.open", "Open"),
         ("menu.highlight", "Highlight"),
         ("menu.share", "Share"),
+        ("feed.hover", "Feed from base"),
+        ("feed.header.item", "Item"),
+        ("feed.header.fed", "Keep fed"),
+        ("feed.header.keep", "Leave in base"),
+        ("feed.status", "Queued {0}/{1}   Fuel {2}/{3}"),
+        ("feed.status.no-fuel", "Queued {0}/{1}"),
+        ("feed.in-base", "{0} in base"),
+        ("feed.on", "On"),
+        ("feed.off", "Off"),
+        ("feed.less", "-"),
+        ("feed.more", "+"),
     ];
 
     /// <summary>The number of StringKeys constants: 31 from contract 3.2, 16 from contract section 10 (S-E004-009), 1 from S-E005-002 (PlayerUnknown), 5 from S-E004-003 (category refusals), 1 from S-E006-002 (NetworkVersionMissing), 1 from S-E004-004 (ChestCategoryButton) and 10 from S-E004-011 (run summary and stop reasons).</summary>
@@ -133,7 +144,7 @@ public static class UiFixtures
     // Edited by S-E008-001 (ADR-GWIN-153): 68, with MessageCraftUsedBase (contract 4.1).
     // Edited by S-E010-002 (organize-console-command 5): 68 plus the five console keys, 73.
     // Edited by S-A-003: 73 plus the rules key and the two no-room reasons, 76.
-    public const int StringKeyCount = 88;
+    public const int StringKeyCount = 99;
 
     /// <summary>Contract 3.2 "Const" column (31 constants), contract section 10 (16 more) and S-E005-002 section 2.6 (PlayerUnknown): the StringKeys constants and the value each one holds.</summary>
     public static readonly (string Name, string Value)[] StringKeyValues =
@@ -186,6 +197,17 @@ public static class UiFixtures
         ("MenuOpen", "menu.open"),
         ("MenuHighlight", "menu.highlight"),
         ("MenuShare", "menu.share"),
+        ("FeedHover", "feed.hover"),
+        ("FeedHeaderItem", "feed.header.item"),
+        ("FeedHeaderFed", "feed.header.fed"),
+        ("FeedHeaderKeep", "feed.header.keep"),
+        ("FeedStatus", "feed.status"),
+        ("FeedStatusNoFuel", "feed.status.no-fuel"),
+        ("FeedInBase", "feed.in-base"),
+        ("FeedOn", "feed.on"),
+        ("FeedOff", "feed.off"),
+        ("FeedLess", "feed.less"),
+        ("FeedMore", "feed.more"),
         ("OrganizePreviewBodySkippedReason", "organize.preview.body.skipped-reason"),
         ("OrganizeSkipReasonInUse", "organize.skip-reason.in-use"),
         ("OrganizeSkipReasonInUseUnknown", "organize.skip-reason.in-use-unknown"),

@@ -69,7 +69,7 @@ internal static class FavouriteMarkers
                     continue;
                 }
 
-                bool want = x <= MaxCoordinate && y <= MaxCoordinate && current.Contains(new InventorySlot(x, y));
+                bool want = x <= MaxCoordinate && y <= MaxCoordinate && current.Contains(new InventorySlot(x, y)) && inventory.GetItemAt(x, y) != null;
                 int index = (y * width) + x;
                 Image? marker = markers[index];
                 if (marker == null)

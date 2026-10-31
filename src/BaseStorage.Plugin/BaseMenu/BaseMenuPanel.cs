@@ -11,6 +11,7 @@ using BaseStorage.Core.Settings;
 using BaseStorage.Core.Snapshots;
 using BaseStorage.Core.Ui;
 using BaseStorage.Plugin.ChestCategories;
+using BaseStorage.Plugin.Feeding;
 using BaseStorage.Plugin.Organize;
 using BaseStorage.Plugin.Patching;
 using BaseStorage.Plugin.Ui;
@@ -43,7 +44,7 @@ internal static class BaseMenuPanel
     private const string DepositId = "menu.deposit";
     private const string CloseId = "menu.close";
     private const float MinWidth = 380f;
-    private const float MaxWidth = 560f;
+    internal const float MaxWidth = 560f;
     private const float PanelHeight = 700f;
     private const float PanelGap = 12f;
     private const float Margin = 12f;
@@ -118,6 +119,7 @@ internal static class BaseMenuPanel
             RowViews.Clear();
         }
 
+        FeedPanel.Refresh(gui);
         if (savedCloseDistance >= 0f && gui.m_currentContainer == null)
         {
             gui.m_autoCloseDistance = savedCloseDistance;
@@ -287,8 +289,18 @@ internal static class BaseMenuPanel
 
     private static void OnOpenClick() => PatchSafety.Run(ClickKey, static () => Toggle());
 
+    /// <summary>Closes the menu, because another panel needs its place.</summary>
+    internal static void Hide()
+    {
+        if (open)
+        {
+            Toggle();
+        }
+    }
+
     private static void Toggle()
     {
+        FeedPanel.Close();
         open = !open;
         lastLoad = TimeSpan.Zero;
         CategoryDropdown.Close();
@@ -346,15 +358,19 @@ internal static class BaseMenuPanel
         }
     }
 
-    /// <summary>Sits the panel between the chest window and the crafting panel, measured from both.</summary>
-    private static void Fit(InventoryGui gui)
+    private static void Fit(InventoryGui gui) => FitBetween(gui, (RectTransform)panel!.transform, PanelHeight);
+
+    /// <summary>Sits a panel between the chest window and the crafting panel, measured from both.</summary>
+    /// <param name="gui">The inventory GUI.</param>
+    /// <param name="rect">The panel.</param>
+    /// <param name="height">The panel's height.</param>
+    internal static void FitBetween(InventoryGui gui, RectTransform rect, float height)
     {
-        var rect = (RectTransform)panel!.transform;
         var parent = (RectTransform)rect.parent;
         float left = LocalEdge(gui.m_container, parent, right: true) + PanelGap;
         float right = LocalEdge(gui.m_crafting, parent, right: false) - PanelGap;
         float width = Mathf.Clamp(right - left, MinWidth, MaxWidth);
-        rect.sizeDelta = new Vector2(width, PanelHeight);
+        rect.sizeDelta = new Vector2(width, height);
         Rect bounds = parent.rect;
         rect.anchoredPosition = new Vector2(left - bounds.xMin, -PanelGap);
     }

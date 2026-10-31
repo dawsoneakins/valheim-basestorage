@@ -42,7 +42,7 @@ public sealed class PlaytestRequirementDisplayTests
     {
         string preamble = Section().Split(new[] { "### Solo" }, StringSplitOptions.None)[0];
 
-        foreach (string literal in new[] { "12 (+40) / 20", "vanilla", "`CraftFromBase`", "[General]", "log", "Craft from base (AC-2.4, AC-3.1, AC-3.4)", "step 5", "Build from base (AC-2.4, AC-3.1, AC-3.4)" })
+        foreach (string literal in new[] { "52/20", "vanilla", "`CraftFromBase`", "[General]", "log", "Craft from base (AC-2.4, AC-3.1, AC-3.4)", "step 5", "Build from base (AC-2.4, AC-3.1, AC-3.4)" })
         {
             Assert.Contains(literal, preamble, StringComparison.Ordinal);
         }
@@ -81,7 +81,7 @@ public sealed class PlaytestRequirementDisplayTests
     {
         string section = Section();
 
-        foreach (string literal in new[] { "12 (+40) / 20", "(+<chests>)", "`CraftFromBase`", "failed and was skipped", "30 seconds" })
+        foreach (string literal in new[] { "52/20", "(+<chests>)", "`CraftFromBase`", "failed and was skipped", "30 seconds" })
         {
             Assert.Contains(literal, section, StringComparison.Ordinal);
         }

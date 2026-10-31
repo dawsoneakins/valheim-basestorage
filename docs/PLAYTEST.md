@@ -278,13 +278,13 @@ Expected: within 2 seconds the recipe is craftable for the friend again.
 
 ### 8. AC-3.2 - Display
 
-When chests contribute, a requirement reads `<inventory> (+<chests>) / <need>`, for example `12 (+40) / 20`. See the Requirement display section below for the full steps.
+When chests contribute, a requirement reads `<inventory> (+<chests>) / <need>`, for example `52/20`. See the Requirement display section below for the full steps.
 
 #### Solo
 
 1. Stand at a workbench inside a base. Choose a recipe that needs Wood, keep fewer Wood in the inventory than it needs, put more in a chest of the base, and select the recipe in the crafting panel.
 
-Expected: the Wood line reads `<inventory> (+<chests>) / <need>` with the real counts, for example `12 (+40) / 20`, in white and not blinking, and the recipe is craftable.
+Expected: the Wood line reads `<inventory> (+<chests>) / <need>` with the real counts, for example `52/20`, in white and not blinking, and the recipe is craftable.
 
 2. Take Wood out of the chest until the inventory plus the chest is less than the need.
 
@@ -1636,7 +1636,7 @@ Expected: no `BaseStorage` line contains `failed and was skipped`, and while sta
 The commit fallback (the game declining the placement after the take, `Returned`), the placement guard (`placement suppressed`), the pre-flight while waiting, abandonment, the timeout and the exceptions are covered by unit tests, not by manual steps.
 ## Requirement display (AC-3.2)
 
-The crafting panel and the build tooltip of the Hammer show, for each requirement whose material is also in base chests, `<inventory> (+<chests>) / <need>`, for example `12 (+40) / 20`. When no chest contributes, the requirement shows exactly what vanilla shows: only the needed amount, for example `20`. The amount blinks red and white as in vanilla only when the inventory plus the chests is less than the need. The display follows `CraftFromBase` (`[General]`, default `true`). The display writes no log line, so the steps check the screen.
+The crafting panel and the build tooltip of the Hammer show, for each requirement whose material is also in base chests, `<inventory> (+<chests>) / <need>`, for example `52/20`. When no chest contributes, the requirement shows exactly what vanilla shows: only the needed amount, for example `20`. The amount blinks red and white as in vanilla only when the inventory plus the chests is less than the need. The display follows `CraftFromBase` (`[General]`, default `true`). The display writes no log line, so the steps check the screen.
 
 Placing a piece is covered by `## Build from base (AC-2.4, AC-3.1, AC-3.4)`, as step 5 of `## Craft from base (AC-2.4, AC-3.1, AC-3.4)` says.
 
@@ -1644,7 +1644,7 @@ Placing a piece is covered by `## Build from base (AC-2.4, AC-3.1, AC-3.4)`, as 
 
 1. Stand at a Workbench inside a base. Choose a recipe that needs Wood, keep fewer Wood in the inventory than it needs, put more in a chest of the base, and select the recipe in the crafting panel (surplus case).
 
-Expected: the Wood line reads `<inventory> (+<chests>) / <need>` with the real counts, for example `12 (+40) / 20`, in white, not blinking and fully readable, and the recipe is craftable.
+Expected: the Wood line reads `<inventory> (+<chests>) / <need>` with the real counts, for example `52/20`, in white, not blinking and fully readable, and the recipe is craftable.
 
 2. Take Wood out of the chest until the inventory plus the chest is less than the need (short case).
 
@@ -1768,7 +1768,7 @@ Turn on `DebugLogging` first, as in `## Debug logging`.
 
 1. Setup: `DebugLogging = true`, `CraftFromBase = true`; a base with a Workbench and one chest holding 20 `Wood`; no Wood in the inventory. Open the crafting panel at the Workbench and select a recipe that needs Wood.
 
-Expected: the requirement shows `0 (+20) / <need>`.
+Expected: the requirement shows `20/<need>`.
 
 2. Without leaving the game, set `CraftFromBase = false` in F1, close F1 and select the same recipe again.
 
@@ -1788,7 +1788,7 @@ Expected: both count only the inventory, as vanilla.
 
 6. Set `CraftFromBase = true` in F1 without a restart and open the Workbench panel again.
 
-Expected: `0 (+20) / <need>` returns and crafting takes the Wood from the chest.
+Expected: `20/<need>` returns and crafting takes the Wood from the chest.
 
 7. Stand still for 30 seconds.
 
@@ -1814,11 +1814,11 @@ Expected: still vanilla, because the host's value applies for the session.
 
 5. The host sets `CraftFromBase = true` in F1 while the friend stays connected, and opens the Workbench panel.
 
-Expected: the host's panel shows `0 (+20) / <need>` at once; the friend's panel stays vanilla.
+Expected: the host's panel shows `20/<need>` at once; the friend's panel stays vanilla.
 
 6. The friend quits to the main menu and joins again.
 
-Expected: `Config sync: CraftFromBase = true (host)` in the friend log and `0 (+20) / <need>` on the friend's panel.
+Expected: `Config sync: CraftFromBase = true (host)` in the friend log and `20/<need>` on the friend's panel.
 
 7. Both stand still for 30 seconds.
 

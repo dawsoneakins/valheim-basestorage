@@ -77,6 +77,7 @@ public sealed class PatchTargetNamesFavouritesTests
                 new HarmonyEntry("CraftingStationStart", "CraftingStation.Start()"),
                 new HarmonyEntry("FejdStartupShowConnectError", "FejdStartup.ShowConnectError(ZNet+ConnectionStatus)"),
                 new HarmonyEntry("HudSetupPieceInfo", "Hud.SetupPieceInfo(Piece)"),
+                new HarmonyEntry("HumanoidIsItemEquiped", "Humanoid.IsItemEquiped(ItemDrop+ItemData)"),
                 new HarmonyEntry("InventoryGridOnLeftDown", "InventoryGrid.OnLeftDown(UIInputHandler)"),
                 new HarmonyEntry("InventoryGridUpdateGui", "InventoryGrid.UpdateGui(Player,ItemDrop+ItemData)"),
                 new HarmonyEntry("InventoryGuiDoCrafting", "InventoryGui.DoCrafting(Player)"),
@@ -85,6 +86,7 @@ public sealed class PatchTargetNamesFavouritesTests
                 new HarmonyEntry("InventoryGuiUpdateContainer", "InventoryGui.UpdateContainer(Player)"),
                 // Edited by S-E004-012 (ADR-GWIN-136, contract 6): plus the StationActions UpdateRecipe postfix id.
                 new HarmonyEntry("InventoryGuiUpdateRecipe", "InventoryGui.UpdateRecipe(Player,System.Single)"),
+                new HarmonyEntry("InventoryStackAll", "Inventory.StackAll(Inventory,System.Boolean)"),
                 new HarmonyEntry("ItemDataGetTooltip", "ItemDrop+ItemData.GetTooltip(ItemDrop+ItemData,System.Int32,System.Boolean,System.Single,System.Int32,System.Boolean)"),
                 new HarmonyEntry("PlayerConsumeResources", "Player.ConsumeResources(Piece+Requirement[],System.Int32,System.Int32,System.Int32)"),
                 new HarmonyEntry("PlayerHaveRequirementItems", "Player.HaveRequirementItems(Recipe,System.Boolean,System.Int32,System.Int32)"),
@@ -92,6 +94,9 @@ public sealed class PatchTargetNamesFavouritesTests
                 new HarmonyEntry("PlayerHaveRequirementsPiece", "Player.HaveRequirements(Piece,Player+RequirementMode)"),
                 new HarmonyEntry("PlayerPlacePiece", "Player.PlacePiece(Piece,UnityEngine.Vector3,UnityEngine.Quaternion,System.Boolean,System.Boolean)"),
                 new HarmonyEntry("PlayerTryPlacePiece", "Player.TryPlacePiece(Piece)"),
+                new HarmonyEntry("SmelterAwake", "Smelter.Awake()"),
+                new HarmonyEntry("SwitchGetHoverText", "Switch.GetHoverText()"),
+                new HarmonyEntry("SwitchInteract", "Switch.Interact(Humanoid,System.Boolean,System.Boolean)"),
                 // Edited by S-E010-002 (organize-console-command 6.2): the console registration id (24 in all).
                 new HarmonyEntry("TerminalInitTerminal", "Terminal.InitTerminal()"),
                 new HarmonyEntry("ZNetOnNewConnection", "ZNet.OnNewConnection(ZNetPeer)"),

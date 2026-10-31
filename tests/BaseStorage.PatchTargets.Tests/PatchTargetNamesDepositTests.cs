@@ -8,7 +8,7 @@ using BaseStorage.Shared;
 
 /// <summary>
 /// GW-U-1930 (AC-5, deposit-button contract 7): the seven S-E004-015 PatchTargetNames rows, read verbatim by reflection over the shared
-/// constants. Three fields carry their type companions, Humanoid.IsItemEquiped is a name-only method, and the shape rules still pass. No
+/// constants. Three fields carry their type companions, Humanoid.IsItemEquiped has its overload, and the shape rules still pass. No
 /// game install needed. Red until the rows are added to src/Shared/PatchTargetNames.cs.
 /// </summary>
 public sealed class PatchTargetNamesDepositTests
@@ -50,7 +50,7 @@ public sealed class PatchTargetNamesDepositTests
         Assert.Equal(TargetKind.FieldTypeCompanion, Only(entries, "ItemData", "FieldGridPosType").Kind);
         Assert.Equal(TargetKind.FieldEntry, Only(entries, "SharedData", "FieldItemType").Kind);
         Assert.Equal(TargetKind.FieldTypeCompanion, Only(entries, "SharedData", "FieldItemTypeType").Kind);
-        Assert.Equal(TargetKind.MethodNameOnly, Only(entries, "Humanoid", "IsItemEquiped").Kind);
+        Assert.Equal(TargetKind.MethodOverloads, Only(entries, "Humanoid", "IsItemEquiped").Kind);
     }
 
     // GW-U-1930 (7.1): the Deposit rows add no shape violation.

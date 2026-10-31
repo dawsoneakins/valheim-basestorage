@@ -9,6 +9,7 @@ using BaseStorage.Core.Logging;
 using BaseStorage.Core.Persistence;
 using BaseStorage.Core.Settings;
 using BaseStorage.Core.Snapshots;
+using BaseStorage.Plugin.Feeding;
 
 /// <summary>
 /// The Plugin's loaded-object world (contract 4.1, ADR-GWIN-030): the registries of loaded containers and crafting stations,
@@ -56,6 +57,7 @@ internal sealed class PluginWorld
                     LogPolicy.Write(BaseStoragePlugin.LogSink, LogCategory.Detail, RegistryMessages.Changed(RegistryKind.Station, false, Stations.Count));
                 }
             });
+        this.Smelters = new LoadedRegistry<ZNetView, Smelter>(static () => { }, static () => { });
         this.Snapshots = new GameSnapshotSource(Containers, Stations);
         this.Cache = new BaseCache(Snapshots, clock);
     }
@@ -68,6 +70,9 @@ internal sealed class PluginWorld
 
     /// <summary>Gets the registry of loaded crafting stations that have a build range.</summary>
     internal LoadedRegistry<CraftingStation, CraftingStation> Stations { get; private set; } = null!;
+
+    /// <summary>Gets the registry of loaded stations that can be fed, keyed by the station's network view.</summary>
+    internal LoadedRegistry<ZNetView, Smelter> Smelters { get; private set; } = null!;
 
     /// <summary>Gets the snapshot adapter that fills the Core snapshots from the registries.</summary>
     internal GameSnapshotSource Snapshots { get; }
@@ -109,6 +114,17 @@ internal sealed class PluginWorld
     internal void OnNetViewDestroy(ZNetView view)
     {
         Containers.Remove(view);
+        Smelters.Remove(view);
+    }
+
+    /// <summary>Registers a station after its Awake. A station without a valid view (a placement ghost) is ignored.</summary>
+    /// <param name="smelter">The station.</param>
+    internal void OnSmelterAwake(Smelter smelter)
+    {
+        if (smelter != null && smelter.m_nview != null && smelter.m_nview.IsValid() && Smelters.Add(smelter.m_nview, smelter))
+        {
+            StationFeeder.Register(smelter);
+        }
     }
 
     /// <summary>Registers a crafting station after its Start when it has a valid view and a build range, and writes the Debug base summary.</summary>
