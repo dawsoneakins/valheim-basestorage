@@ -21,6 +21,6 @@ public sealed class CoreAssemblyMarkerTests
     {
         Version? version = typeof(BaseStorage.Core.CoreAssemblyMarker).Assembly.GetName().Version;
 
-        Assert.Equal(new Version(0, 2, 0, 0), version);
+        Assert.Equal(new Version(0, 3, 0, 0), version);
     }
 }

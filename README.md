@@ -6,6 +6,8 @@ BaseStorage is a BepInEx 5 mod for Valheim: chests near a crafting station form 
 
 On Windows, download `BaseStorage-Setup.bat` from the latest release (https://github.com/dawsoneakins/valheim-basestorage/releases/latest) and double-click it. It finds Valheim, installs BepInEx and the mod, checks both downloads, and never touches your saves. Close Valheim first.
 
+To update, download the latest `BaseStorage-Setup.bat` and run it the same way. It replaces the plugin and keeps your settings, your favourites and your saves. Everyone playing together needs the same version, so update as a group.
+
 ## Repository layout
 
 ```

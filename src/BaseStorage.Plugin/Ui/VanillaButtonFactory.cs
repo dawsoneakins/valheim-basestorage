@@ -69,6 +69,14 @@ internal static class VanillaButtonFactory
         button.onClick = new Button.ButtonClickedEvent();
         button.onClick.AddListener(onClick);
 
+        // The clone must not keep the template's hover text, such as Craft's "Missing requirement".
+        UITooltip? tooltip = clone.GetComponent<UITooltip>();
+        if (tooltip != null)
+        {
+            tooltip.m_text = string.Empty;
+            tooltip.m_topic = string.Empty;
+        }
+
         if (!TrySetLabel(button, SingleLine.Of(StringTable.English.Format(labelKey))))
         {
             LogOnce(id, "fallback: no label component");

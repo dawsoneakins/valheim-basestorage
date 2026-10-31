@@ -79,6 +79,25 @@ public static class BaseMenuBuilder
         return slots == 0 ? 0 : (int)(used * 100 / slots);
     }
 
+    /// <summary>Gets the list's scroll position that shows a row: a row already in full view stays where it is, or else it is centred.</summary>
+    /// <param name="index">The row.</param>
+    /// <param name="rowCount">The rows in the list.</param>
+    /// <param name="rowHeight">The height of a row.</param>
+    /// <param name="viewHeight">The height of the visible part of the list.</param>
+    /// <param name="current">The current scroll position, measured down from the top of the list.</param>
+    /// <returns>The scroll position.</returns>
+    public static float ScrollOffset(int index, int rowCount, float rowHeight, float viewHeight, float current)
+    {
+        var top = index * rowHeight;
+        if (top >= current && top + rowHeight <= current + viewHeight)
+        {
+            return current;
+        }
+
+        var bottomLimit = Math.Max(0f, (rowCount * rowHeight) - viewHeight);
+        return Math.Min(bottomLimit, Math.Max(0f, top + ((rowHeight - viewHeight) / 2f)));
+    }
+
     private static int FillPercent(ContainerSnapshot chest) =>
         chest.SlotCount == 0 ? 0 : chest.Contents.Count * 100 / chest.SlotCount;
 

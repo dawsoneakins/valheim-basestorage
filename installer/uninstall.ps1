@@ -10,8 +10,13 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# Join-Path throws on a drive that is not there, and Steam keeps listing libraries on drives that are gone.
+function Get-ChildPath([string]$parent, [string]$child) {
+    return $parent.TrimEnd('\') + '\' + $child
+}
+
 function Test-GameDir([string]$dir) {
-    return $dir -and (Test-Path -LiteralPath (Join-Path $dir 'valheim.exe'))
+    return $dir -and (Test-Path -LiteralPath (Get-ChildPath $dir 'valheim.exe'))
 }
 
 function Find-GameDir {
@@ -27,11 +32,11 @@ function Find-GameDir {
     }
 
     foreach ($root in $roots) {
-        $candidates = @((Join-Path $root 'steamapps\common\Valheim'))
-        $vdf = Join-Path $root 'steamapps\libraryfolders.vdf'
+        $candidates = @((Get-ChildPath $root 'steamapps\common\Valheim'))
+        $vdf = Get-ChildPath $root 'steamapps\libraryfolders.vdf'
         if (Test-Path -LiteralPath $vdf) {
             foreach ($match in [regex]::Matches((Get-Content -LiteralPath $vdf -Raw), '"path"\s+"([^"]+)"')) {
-                $candidates += (Join-Path ($match.Groups[1].Value -replace '\\\\', '\') 'steamapps\common\Valheim')
+                $candidates += (Get-ChildPath ($match.Groups[1].Value -replace '\\\\', '\') 'steamapps\common\Valheim')
             }
         }
 

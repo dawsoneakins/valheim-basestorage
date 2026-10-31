@@ -59,6 +59,21 @@ public sealed class BaseMenuBuilderTests
     public void TheBaseFillPoolsEveryChest() =>
         Assert.Equal(50, BaseMenuBuilder.FillPercent(new[] { C(1, 0f, 0f, 2, S("Wood", 1), S("Stone", 1)), C(2, 0f, 0f, 2) }));
 
+    [Theory]
+    [InlineData(2, 0f, 0f)] // already in view, so the list stays put
+    [InlineData(2, 10f, 10f)]
+    [InlineData(3, 0f, 55f)] // the first row that does not fit whole
+    [InlineData(5, 0f, 115f)] // below the view, centred
+    [InlineData(5, 300f, 115f)] // above the view, centred
+    [InlineData(0, 300f, 0f)] // stops at the top
+    [InlineData(19, 0f, 500f)] // stops at the bottom
+    public void ScrollingToARowShowsIt(int index, float current, float expected) =>
+        Assert.Equal(expected, BaseMenuBuilder.ScrollOffset(index, 20, 30f, 100f, current));
+
+    [Fact]
+    public void AShortListDoesNotScroll() =>
+        Assert.Equal(0f, BaseMenuBuilder.ScrollOffset(2, 3, 30f, 100f, 0f));
+
     [Fact]
     public void AccessAndInUseFlagsReachTheRow()
     {

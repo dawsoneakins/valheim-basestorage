@@ -13,7 +13,7 @@ using UnityEngine.UI;
 internal static class FavouriteMarkers
 {
     private const string MarkerName = "BaseStorage.inventory.slot.favourite-marker";
-    private const float MarkerSize = 12f;
+    private const float MarkerSize = 22f;
     private const float BrandPrimaryR = 1f;
     private const float BrandPrimaryG = 0.6470588f;
     private const float BrandPrimaryB = 0f;
@@ -130,19 +130,22 @@ internal static class FavouriteMarkers
 
         Image clone = UnityEngine.Object.Instantiate(element.m_queued, parent);
         clone.name = MarkerName;
-        clone.sprite = element.m_queued.sprite;
+        clone.enabled = true; // Vanilla keeps the queued image off unless an equip is queued, and the clone copies that.
+        clone.sprite = FavouriteStar.Sprite;
+        clone.type = Image.Type.Simple;
+        clone.preserveAspect = true;
         clone.color = new Color(BrandPrimaryR, BrandPrimaryG, BrandPrimaryB, 1f);
         clone.raycastTarget = false;
 
         RectTransform rect = clone.rectTransform;
-        rect.anchorMin = new Vector2(0f, 1f);
-        rect.anchorMax = new Vector2(0f, 1f);
-        rect.pivot = new Vector2(0f, 1f);
+        rect.anchorMin = new Vector2(1f, 0f);
+        rect.anchorMax = new Vector2(1f, 0f);
+        rect.pivot = new Vector2(1f, 0f);
         rect.anchoredPosition = Vector2.zero;
         rect.sizeDelta = new Vector2(MarkerSize, MarkerSize);
         rect.localScale = Vector3.one;
 
-        clone.transform.SetSiblingIndex(element.m_icon.transform.GetSiblingIndex());
+        clone.transform.SetAsLastSibling(); // On top: item icons fill the slot and would hide a marker behind them.
         return clone;
     }
 }

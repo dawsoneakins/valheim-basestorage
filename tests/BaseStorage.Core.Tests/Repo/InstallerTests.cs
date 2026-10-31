@@ -121,6 +121,39 @@ public sealed class InstallerTests : IDisposable
     }
 
     [Fact]
+    public void ALibraryOnAMissingDriveIsSkipped()
+    {
+        string steam = SteamListing(MissingDrive() + @":\\OldLibrary", Path.Combine(root, "Steam").Replace(@"\", @"\\", StringComparison.Ordinal));
+
+        (int code, string output) = Run("install.ps1", $"-SteamRoot \"{steam}\" -PackZip \"{packZip}\" -ExpectedHash {Hash(packZip)} -NoPrompt");
+
+        Assert.True(code == 0, output);
+        Assert.Equal("new plugin", File.ReadAllText(Plugin("BaseStorage.dll")));
+    }
+
+    [Fact]
+    public void ASteamRootOnAMissingDriveEndsInTheNormalMessage()
+    {
+        (int code, string output) = Run("install.ps1", $"-SteamRoot \"{MissingDrive()}:\\Steam\" -PackZip \"{packZip}\" -ExpectedHash {Hash(packZip)} -NoPrompt");
+
+        Assert.Equal(1, code);
+        Assert.Contains("could not find Valheim", output, StringComparison.Ordinal);
+        Assert.DoesNotContain("Join-Path", output, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void UninstallSkipsALibraryOnAMissingDrive()
+    {
+        Install();
+        string steam = SteamListing(MissingDrive() + @":\\OldLibrary", Path.Combine(root, "Steam").Replace(@"\", @"\\", StringComparison.Ordinal));
+
+        (int code, string output) = Run("uninstall.ps1", $"-SteamRoot \"{steam}\" -NoPrompt");
+
+        Assert.True(code == 0, output);
+        Assert.False(File.Exists(Plugin("BaseStorage.dll")));
+    }
+
+    [Fact]
     public void UninstallRemovesThePluginAndLeavesBepInExUnlessAsked()
     {
         Install();
@@ -163,6 +196,34 @@ public sealed class InstallerTests : IDisposable
     {
         using var writer = new StreamWriter(zip.CreateEntry(name).Open());
         writer.Write(text);
+    }
+
+    private static char MissingDrive()
+    {
+        for (char letter = 'Z'; letter >= 'D'; letter--)
+        {
+            if (!Directory.Exists(letter + @":\"))
+            {
+                return letter;
+            }
+        }
+
+        throw new InvalidOperationException("every drive letter is in use");
+    }
+
+    private string SteamListing(params string[] escapedPaths)
+    {
+        string steam = Path.Combine(root, "OtherSteam");
+        string library = Path.Combine(steam, "steamapps");
+        Directory.CreateDirectory(library);
+        string body = string.Empty;
+        for (int i = 0; i < escapedPaths.Length; i++)
+        {
+            body += "\t\"" + i + "\"\n\t{\n\t\t\"path\"\t\t\"" + escapedPaths[i] + "\"\n\t}\n";
+        }
+
+        File.WriteAllText(Path.Combine(library, "libraryfolders.vdf"), "\"libraryfolders\"\n{\n" + body + "}\n");
+        return steam;
     }
 
     private string ModZip()

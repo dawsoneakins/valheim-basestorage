@@ -461,14 +461,14 @@ public sealed class PluginFavouritesSourceScanTests
 
     // GW-U-715
     [Fact]
-    public void TheMarkerIsNonInteractiveAndSitsTopLeftOnTheIconSibling()
+    public void TheMarkerIsNonInteractiveAndSitsBottomRightOnTopOfTheIcon()
     {
         string text = MarkersText();
 
         Assert.Contains("raycastTarget = false", text, StringComparison.Ordinal);
-        Assert.True(Regex.Matches(text, @"new Vector2\(0f, 1f\)").Count >= 3, "anchorMin, anchorMax and pivot must be top-left.");
-        Assert.Contains("SetSiblingIndex(", text, StringComparison.Ordinal);
-        Assert.Contains("m_icon.transform.GetSiblingIndex()", text, StringComparison.Ordinal);
+        Assert.True(Regex.Matches(text, @"new Vector2\(1f, 0f\)").Count >= 3, "anchorMin, anchorMax and pivot must be bottom-right.");
+        Assert.Contains("clone.enabled = true", text, StringComparison.Ordinal);
+        Assert.Contains("SetAsLastSibling()", text, StringComparison.Ordinal);
         Assert.Contains("m_icon.transform.parent", text, StringComparison.Ordinal);
         Assert.Contains("m_playerGrid", text, StringComparison.Ordinal);
         Assert.Contains("ReferenceEquals(", text, StringComparison.Ordinal);
@@ -481,7 +481,7 @@ public sealed class PluginFavouritesSourceScanTests
     {
         string text = MarkersText();
 
-        Assert.Matches(@"MarkerSize\s*=\s*12f\b", text);
+        Assert.Matches(@"MarkerSize\s*=\s*22f\b", text);
         Assert.Matches(@"BrandPrimaryR\s*=\s*1f\b", text);
         Assert.Matches(@"BrandPrimaryG\s*=\s*0\.6470588f\b", text);
         Assert.Matches(@"BrandPrimaryB\s*=\s*0f\b", text);

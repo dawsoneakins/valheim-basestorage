@@ -47,9 +47,9 @@ BaseStorage writes `BepInEx\config\BaseStorage.categories.txt` once per game sta
 
 ## Favourites
 
-Mod favourites are per character. They are stored under the `basestorage.fav` key of the character's custom data and are saved with the character by the game's normal save; the mod never forces a save. A favourite slot shows a small orange marker (the design-system id `inventory.slot.favourite-marker`) in the slot's top-left corner, below the item icon and the stack count.
+Mod favourites are per character. They are stored under the `basestorage.fav` key of the character's custom data and are saved with the character by the game's normal save; the mod never forces a save. A favourite slot shows a small gold star (the design-system id `inventory.slot.favourite-marker`) in the slot's bottom-right corner, on top of the item icon.
 
-1. Load a character, press Tab to open the inventory, hold **Alt** and left-click an occupied slot (for example Wood). Expected: a marker appears in the slot's top-left corner, the top-left message reads `Favourite: <item name>` (for example `Favourite: Wood`), and the item stays in the slot (it is not picked up).
+1. Load a character, press Tab to open the inventory, hold **Alt** and left-click an occupied slot (for example Wood). Expected: a star appears in the slot's bottom-right corner, the top-left message reads `Favourite: <item name>` (for example `Favourite: Wood`), and the item stays in the slot (it is not picked up).
 2. Hold Alt and left-click the same slot again. Expected: the marker disappears, the message reads `No longer favourite: <item name>`, and the item stays in the slot.
 3. Left-click a slot without Alt: vanilla pickup. Shift+click: vanilla split dialog. Ctrl+click: vanilla quick move. Expected: no marker change and no message in all three cases.
 4. Hold Alt and left-click an empty slot. Expected: nothing happens: no marker, no message, and no `BaseStorage` error in `<ValheimDir>\BepInEx\LogOutput.log`.

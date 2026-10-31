@@ -22,8 +22,8 @@ using UnityEngine.UI;
 /// <summary>
 /// The BaseStorage menu (Epic C): a sixth icon in the row under the player's name opens a list of the chests in the base the player
 /// stands in. Clicking a chest opens the game's own chest window on it, so slots, moving items, splitting and tooltips are vanilla;
-/// the window's close distance is lifted only while that chest is open. Positions are measured from the live UI (rule R2). Rows are
-/// built once and reused. Main thread only.
+/// the window's close distance is lifted only while that chest is open. The open chest's row is lit, and the list scrolls to it when a
+/// chest opens, however it was opened. Positions are measured from the live UI (rule R2). Rows are built once and reused. Main thread only.
 /// </summary>
 internal static class BaseMenuPanel
 {
@@ -60,6 +60,7 @@ internal static class BaseMenuPanel
     private const float ScrollSpeed = 120f;
     private const int MaxRows = 150;
     private static readonly TimeSpan ReloadInterval = TimeSpan.FromSeconds(1);
+    private static readonly Color RestTint = new Color(1f, 1f, 1f, 0.35f);
 
     private static readonly List<RowView> RowViews = new List<RowView>();
     private static readonly Dictionary<ContainerId, Container> Loaded = new Dictionary<ContainerId, Container>();
@@ -73,6 +74,10 @@ internal static class BaseMenuPanel
     private static GameObject? panel;
     private static TMP_Text? header;
     private static RectTransform? listContent;
+    private static ScrollRect? listScroll;
+    private static Container? seenChest;
+    private static int seenFrame;
+    private static bool scrollPending;
     private static InventoryGui? builtFor;
     private static bool open;
     private static float savedCloseDistance = -1f;
@@ -132,6 +137,17 @@ internal static class BaseMenuPanel
         if (panel == null)
         {
             BuildPanel(gui);
+        }
+
+        // A gap in the frames means the menu or the inventory was closed, so the same chest counts as newly opened.
+        bool resumed = Time.frameCount - seenFrame > 1;
+        seenFrame = Time.frameCount;
+        Container? current = gui.m_currentContainer;
+        if (resumed || !ReferenceEquals(current, seenChest))
+        {
+            seenChest = current;
+            scrollPending = current != null;
+            lastLoad = TimeSpan.Zero;
         }
 
         TimeSpan now = clock.Elapsed;
@@ -304,9 +320,10 @@ internal static class BaseMenuPanel
 
         header = Text(gui, panel.transform, HeaderId, Margin, -Margin, MaxWidth - (2 * Margin), 30f);
         Transform parent = panel.transform;
-        Place(VanillaButtonFactory.Create(gui.m_craftButton, parent, OrganizeId, StringKeys.StationActionsOrganizeButton, OnOrganizeClick), Margin, 170f);
-        Place(VanillaButtonFactory.Create(gui.m_craftButton, parent, DepositId, StringKeys.StationActionsDepositButton, OnDepositClick), Margin + 176f, 200f);
-        Place(VanillaButtonFactory.Create(gui.m_craftButton, parent, CloseId, StringKeys.MenuClose, OnOpenClick), Margin + 382f, 130f);
+        // Not cloned from Craft: a clone keeps the colours its template had at that moment as its normal look, and Craft is often greyed out.
+        Place(VanillaButtonFactory.Create(gui.m_stackAllButton, parent, OrganizeId, StringKeys.StationActionsOrganizeButton, OnOrganizeClick), Margin, 170f);
+        Place(VanillaButtonFactory.Create(gui.m_stackAllButton, parent, DepositId, StringKeys.StationActionsDepositButton, OnDepositClick), Margin + 176f, 200f);
+        Place(VanillaButtonFactory.Create(gui.m_stackAllButton, parent, CloseId, StringKeys.MenuClose, OnOpenClick), Margin + 382f, 130f);
         takeButton = VanillaButtonFactory.Create(gui.m_takeAllButton, parent, TakeId, StringKeys.MenuTakeAll, OnTakeClick);
         Place(takeButton, Margin, 130f, SecondRow);
         placeButton = VanillaButtonFactory.Create(gui.m_stackAllButton, parent, PlaceId, StringKeys.MenuPlaceStacks, OnPlaceClick);
@@ -324,7 +341,7 @@ internal static class BaseMenuPanel
         if (button != null)
         {
             VanillaButtonFactory.Pin((RectTransform)button.transform, new Vector2(width, 40f), new Vector2(x, y));
-            button.interactable = true; // Cloned from Craft, which may be greyed out at that moment.
+            button.interactable = true;
             button.gameObject.SetActive(true);
         }
     }
@@ -356,6 +373,7 @@ internal static class BaseMenuPanel
         view.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.35f);
         listContent = (RectTransform)VanillaButtonFactory.CreateNode(view.transform, RowsId, new Vector2(width, 0f), Vector2.zero, typeof(RectTransform)).transform;
         ScrollRect scroll = view.GetComponent<ScrollRect>();
+        listScroll = scroll;
         scroll.content = listContent;
         scroll.viewport = viewRect;
         scroll.horizontal = false;
@@ -449,16 +467,38 @@ internal static class BaseMenuPanel
         SetEnabled(placeButton, current != null);
         SetEnabled(highlightButton, current != null);
         SetEnabled(shareButton, current != null);
+        int openRow = -1;
         for (int i = 0; i < RowViews.Count; i++)
         {
             BaseMenuRow? row = i < rows.Count ? rows[i] : null;
             bool isOpen = row != null && current != null && Loaded.TryGetValue(row.Chest.Id, out Container? chest) && ReferenceEquals(chest, current);
             RowViews[i].Show(row, isOpen);
+            if (isOpen)
+            {
+                openRow = i;
+            }
         }
 
         if (listContent != null)
         {
             listContent.sizeDelta = new Vector2(listContent.sizeDelta.x, Math.Min(rows.Count, MaxRows) * RowHeight);
+            if (scrollPending && openRow >= 0)
+            {
+                ScrollTo(openRow);
+            }
+        }
+    }
+
+    /// <summary>Scrolls once per opened chest, so a player can still scroll away from it. Rows count down from the top of the list.</summary>
+    private static void ScrollTo(int row)
+    {
+        scrollPending = false;
+        if (listContent != null && listScroll != null)
+        {
+            Vector2 position = listContent.anchoredPosition;
+            position.y = BaseMenuBuilder.ScrollOffset(row, Math.Min(rows.Count, MaxRows), RowHeight, listScroll.viewport.rect.height, position.y);
+            listScroll.StopMovement();
+            listContent.anchoredPosition = position;
         }
     }
 
@@ -561,19 +601,21 @@ internal static class BaseMenuPanel
     {
         private readonly GameObject root;
         private readonly Image background;
+        private readonly Button click;
         private readonly TMP_Text? label;
         private readonly TMP_Text? rule;
         private readonly TMP_Text? openHint;
+        private bool lit;
 
         internal RowView(InventoryGui gui, Transform parent, int index, float width)
         {
             float labelWidth = width - RuleWidth - 2f;
             root = VanillaButtonFactory.CreateNode(parent, RowId, new Vector2(labelWidth, RowHeight - 2f), new Vector2(0f, -index * RowHeight), typeof(RectTransform), typeof(Image), typeof(Button));
             background = root.GetComponent<Image>();
-            Button click = root.GetComponent<Button>();
+            click = root.GetComponent<Button>();
             click.targetGraphic = background;
             ColorBlock colors = click.colors;
-            colors.normalColor = new Color(1f, 1f, 1f, 0.35f);
+            colors.normalColor = RestTint;
             colors.highlightedColor = new Color(1f, 0.8f, 0.3f, 1f);
             colors.pressedColor = new Color(1f, 0.7f, 0.2f, 1f);
             colors.selectedColor = colors.normalColor;
@@ -619,7 +661,17 @@ internal static class BaseMenuPanel
                 root.SetActive(true);
             }
 
-            background.color = isOpen ? new Color(1f, 0.8f, 0.3f, 0.9f) : new Color(1f, 1f, 1f, RowTint);
+            // The button multiplies its tint into the row colour, so the resting tint would fade the open row to almost nothing.
+            if (lit != isOpen)
+            {
+                lit = isOpen;
+                ColorBlock colors = click.colors;
+                colors.normalColor = isOpen ? Color.white : RestTint;
+                colors.selectedColor = colors.normalColor;
+                click.colors = colors;
+            }
+
+            background.color = isOpen ? new Color(1f, 0.8f, 0.3f, 0.6f) : new Color(1f, 1f, 1f, RowTint);
             SetText(openHint, StringTable.English.Get(isOpen ? StringKeys.MenuClose : StringKeys.MenuOpen));
 
             string state = row.AccessDenied ? StringTable.English.Get(StringKeys.MenuNoAccess) : row.InUse ? StringTable.English.Get(StringKeys.MenuInUse) : string.Empty;
