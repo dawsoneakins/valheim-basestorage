@@ -15,7 +15,7 @@ public enum InventoryItemTraits
     /// <summary>The item is worn or wielded by the player (the game's equipped flag).</summary>
     Equipped = 1,
 
-    /// <summary>A mead or potion: a consumable that is not food, the <c>@mead</c> group.</summary>
+    /// <summary>A mead or potion: a consumable that is not food, apart from bukeberries, the <c>@mead</c> group.</summary>
     Mead = 4,
 
     /// <summary>Arrows and bolts, the <c>@ammo</c> group. A kind of Ammo in the kinds table counts as well.</summary>

@@ -211,6 +211,9 @@ public sealed class PluginUiSourceScanTests
         Assert.Contains("SingleLine.Of(StringTable.English.Format(", sources[FactoryFile]);
     }
 
+    private const string PluginMainFile = "BaseStoragePlugin.cs";
+    private const string PluginDisplayName = "\"Don's QOL\"";
+
     // GW-U-065
     [Fact]
     public void NoPluginLiteralEqualsOrContainsAContractEnglishText()
@@ -222,6 +225,12 @@ public sealed class PluginUiSourceScanTests
         {
             foreach ((int line, string _, string literal) in LiteralsOf(text))
             {
+                // The BepInPlugin attribute needs a compile-time name, and it is what the menu button is called too.
+                if (file == PluginMainFile && literal == PluginDisplayName)
+                {
+                    continue;
+                }
+
                 string inner = literal.Substring(1, literal.Length - 2);
                 foreach ((string _, string english) in UiFixtures.EnglishTable)
                 {

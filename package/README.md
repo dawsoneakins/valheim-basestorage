@@ -1,4 +1,6 @@
-# BaseStorage
+# Don's QOL
+
+Formerly BaseStorage. Files, folders and the settings file keep the old name, so updating keeps your settings and chest categories.
 
 Craft and build from your base chests, give chests categories, and organize the base or put away your inventory from any workbench.
 
@@ -29,7 +31,7 @@ Every BaseStorage action ends with one short message in the top-left corner.
 2. When you join, the host's host-synced settings and category file are used for the session. Your own `.cfg` file is not overwritten.
 3. Single-player works with no host.
 
-Everyone in a multiplayer game needs the same BaseStorage version. With `RequireSameVersion` on (default `true`, host-synced), a player whose version differs from the host's is refused with `BaseStorage version mismatch: host X, you Y`.
+Everyone in a multiplayer game needs the same BaseStorage version. With `RequireSameVersion` on (default `true`, host-synced), a player whose version differs from the host's is refused with `Don's QOL version mismatch: host X, you Y`.
 
 ## Configuration
 
@@ -96,9 +98,9 @@ Start Valheim with the `-console` launch option, press F5 and type `basestorage 
 
 - Console and crossplay players are not supported.
 - Dedicated servers are not supported; it is verified only on peer-hosted games.
-- Smelters, kilns and fires are not fed from chests.
+- Fires, torches, fermenters and cooking stations are not fed from chests.
 - Carts and ships are not used as storage (excluded by default, `ExcludeVehicles`).
-- There is no item search across the base, no chest renaming and no visual chest labels.
+- There is no chest renaming and no visual chest labels.
 - There is no dedicated sorting table piece.
 - Compatibility with other storage or inventory mods is not guaranteed.
 - No gamepad bindings. The station and chest-panel buttons can be clicked with the gamepad cursor where vanilla allows it, and the hotkeys are keyboard shortcuts.

@@ -32,6 +32,7 @@ using UnityEngine.UI;
 internal static class BaseMenuPanel
 {
     private const string ClickKey = "BaseStorage.Plugin.BaseMenu.BaseMenuPanel.Click";
+    private static readonly Color IconRestColour = new Color(0.85f, 0.85f, 0.85f, 1f);
     private const string OpenId = "menu.open";
     private const string PanelId = "menu.panel";
     private const string ListId = "menu.list";
@@ -241,6 +242,7 @@ internal static class BaseMenuPanel
         {
             picture.sprite = BaseMenuIcon.Sprite;
             picture.preserveAspect = true;
+            ShowInFullColour(clone, picture);
         }
 
         foreach (UIGamePad pad in clone.GetComponentsInChildren<UIGamePad>(true))
@@ -263,6 +265,24 @@ internal static class BaseMenuPanel
 
         openButton = clone;
         clone.gameObject.SetActive(true);
+    }
+
+    /// <summary>The row's gold tint and raven shadow would muddy a coloured emblem, so hide the shadow and only brighten on hover.</summary>
+    private static void ShowInFullColour(Button clone, Image picture)
+    {
+        picture.color = Color.white;
+        Image? root = clone.GetComponent<Image>();
+        if (root != null && root != picture)
+        {
+            root.color = Color.clear;
+        }
+
+        ColorBlock colors = clone.colors;
+        colors.normalColor = IconRestColour;
+        colors.selectedColor = IconRestColour;
+        colors.highlightedColor = Color.white;
+        colors.pressedColor = IconRestColour;
+        clone.colors = colors;
     }
 
     /// <summary>Finds the clone's picture: the image the button colours, or else the first image on top of the shadow.</summary>

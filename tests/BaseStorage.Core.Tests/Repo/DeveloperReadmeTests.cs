@@ -50,7 +50,7 @@ public sealed class DeveloperReadmeTests
         string raw = File.ReadAllText(RepoRoot.Combine(ReadmeFile));
 
         Assert.DoesNotContain("\r", raw, StringComparison.Ordinal);
-        Assert.StartsWith("# BaseStorage\n", raw, StringComparison.Ordinal);
+        Assert.StartsWith("# Don's QOL\n", raw, StringComparison.Ordinal);
         Assert.EndsWith("\n", raw, StringComparison.Ordinal);
         Assert.Contains("(docs/SPEC.md)", raw, StringComparison.Ordinal);
     }

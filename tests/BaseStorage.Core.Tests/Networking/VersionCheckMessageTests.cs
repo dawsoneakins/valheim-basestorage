@@ -18,7 +18,7 @@ public sealed class VersionCheckMessageTests
         Assert.True(StringTable.English.Contains(result.MessageKey!));
     }
 
-    // GW-U-810 (AC-6.1, AC-8.1): the formatted text reads exactly "BaseStorage version mismatch: host X, you Y".
+    // GW-U-810 (AC-6.1, AC-8.1): the formatted text reads exactly "Don's QOL version mismatch: host X, you Y".
     [Theory]
     [InlineData("0.1.0", "0.2.0")]
     [InlineData("0.2.0", "0.1.0")]
@@ -29,7 +29,7 @@ public sealed class VersionCheckMessageTests
     {
         VersionCheckResult result = VersionCheck.Compare(host, client, true);
 
-        Assert.Equal("BaseStorage version mismatch: host " + host + ", you " + client, result.FormatMessage(StringTable.English));
+        Assert.Equal("Don's QOL version mismatch: host " + host + ", you " + client, result.FormatMessage(StringTable.English));
         Assert.Equal(NetworkingFixtures.MismatchText(host, client), result.FormatMessage(StringTable.English));
         Assert.Equal(StringTable.English.Format(StringKeys.NetworkVersionMismatch, host, client), result.FormatMessage(StringTable.English));
     }
@@ -42,7 +42,7 @@ public sealed class VersionCheckMessageTests
 
         string fromTable = StringTable.English.Format(StringKeys.NetworkVersionMismatch, "0.1.0", "0.2.0");
         Assert.Equal(fromTable, result.FormatMessage(StringTable.English));
-        Assert.Equal("BaseStorage version mismatch: host 0.1.0, you 0.2.0", fromTable);
+        Assert.Equal("Don's QOL version mismatch: host 0.1.0, you 0.2.0", fromTable);
     }
 
     // GW-U-810 (U2): the text is the same under any current culture.
@@ -58,7 +58,7 @@ public sealed class VersionCheckMessageTests
         {
             VersionCheckResult result = VersionCheck.CheckPayload("0.1.0", "BSV1;0.2.0", true);
 
-            Assert.Equal("BaseStorage version mismatch: host 0.1.0, you 0.2.0", result.FormatMessage(StringTable.English));
+            Assert.Equal("Don's QOL version mismatch: host 0.1.0, you 0.2.0", result.FormatMessage(StringTable.English));
             Assert.Equal("0.2.0", result.ClientVersion);
             Assert.True(VersionCheck.CheckPayload("0.1.0", "BSV1;0.1.0", true).IsAccepted);
         });

@@ -25,14 +25,14 @@ public sealed class PeerVersionOutcomeTests
         Assert.Equal("network.version.missing", StringKeys.NetworkVersionMissing);
         Assert.True(StringTable.English.Contains(StringKeys.NetworkVersionMissing));
         Assert.Equal(
-            "BaseStorage version mismatch: host {0}, joining player has no BaseStorage",
+            "Don's QOL version mismatch: host {0}, joining player has no Don's QOL",
             StringTable.English.Get(StringKeys.NetworkVersionMissing));
         Assert.Equal(
-            "BaseStorage version mismatch: host 0.1.0, joining player has no BaseStorage",
+            "Don's QOL version mismatch: host 0.1.0, joining player has no Don's QOL",
             StringTable.English.Format(StringKeys.NetworkVersionMissing, Host));
     }
 
-    // GW-U-1258 (3.3): the mismatch outcome formats the fixed AC text "BaseStorage version mismatch: host X, you Y".
+    // GW-U-1258 (3.3): the mismatch outcome formats the fixed AC text "Don's QOL version mismatch: host X, you Y".
     [Theory]
     [InlineData("0.1.0", "0.2.0")]
     [InlineData("0.2.0", "0.1.0")]
@@ -45,7 +45,7 @@ public sealed class PeerVersionOutcomeTests
 
         Assert.Equal(PeerVersionAction.RefuseMismatch, outcome.Action);
         Assert.Equal(StringKeys.NetworkVersionMismatch, outcome.MessageKey);
-        Assert.Equal("BaseStorage version mismatch: host " + host + ", you " + client, outcome.FormatMessage(StringTable.English));
+        Assert.Equal("Don's QOL version mismatch: host " + host + ", you " + client, outcome.FormatMessage(StringTable.English));
         Assert.Equal(outcome.Result!.FormatMessage(StringTable.English), outcome.FormatMessage(StringTable.English));
     }
 
@@ -61,7 +61,7 @@ public sealed class PeerVersionOutcomeTests
 
         Assert.Equal(PeerVersionAction.LeaveMismatch, left.Action);
         Assert.Equal(StringKeys.NetworkVersionMismatch, left.MessageKey);
-        Assert.Equal("BaseStorage version mismatch: host 0.1.0, you 0.2.0", left.FormatMessage(StringTable.English));
+        Assert.Equal("Don's QOL version mismatch: host 0.1.0, you 0.2.0", left.FormatMessage(StringTable.English));
         Assert.Equal(refused.FormatMessage(StringTable.English), left.FormatMessage(StringTable.English));
         Assert.Equal(refused.FormatMessage(StringTable.English), clientTable.TakeHostMismatch()!.FormatMessage(StringTable.English));
     }
@@ -86,7 +86,7 @@ public sealed class PeerVersionOutcomeTests
         {
             Assert.Equal(PeerVersionAction.RefuseMissing, outcome.Action);
             Assert.Equal(StringKeys.NetworkVersionMissing, outcome.MessageKey);
-            Assert.Equal("BaseStorage version mismatch: host 0.1.0, joining player has no BaseStorage", outcome.FormatMessage(StringTable.English));
+            Assert.Equal("Don's QOL version mismatch: host 0.1.0, joining player has no Don's QOL", outcome.FormatMessage(StringTable.English));
         }
     }
 
@@ -130,8 +130,8 @@ public sealed class PeerVersionOutcomeTests
             PeerVersionOutcome mismatch = table.Receive(table.Track(false), VersionHandshake.EncodePayloadBytes(Other), true);
             PeerVersionOutcome missing = table.Receive(table.Track(false), null, true);
 
-            Assert.Equal("BaseStorage version mismatch: host 0.1.0, you 0.2.0", mismatch.FormatMessage(StringTable.English));
-            Assert.Equal("BaseStorage version mismatch: host 0.1.0, joining player has no BaseStorage", missing.FormatMessage(StringTable.English));
+            Assert.Equal("Don's QOL version mismatch: host 0.1.0, you 0.2.0", mismatch.FormatMessage(StringTable.English));
+            Assert.Equal("Don's QOL version mismatch: host 0.1.0, joining player has no Don's QOL", missing.FormatMessage(StringTable.English));
         });
     }
 

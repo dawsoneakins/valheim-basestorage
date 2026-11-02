@@ -70,9 +70,9 @@ if (-not (Test-GameDir $dir)) {
 $plugin = Join-Path $dir 'BepInEx\plugins\BaseStorage'
 if (Test-Path -LiteralPath $plugin) {
     Remove-Item -LiteralPath $plugin -Recurse -Force
-    Write-Host 'BaseStorage removed.'
+    Write-Host "Don's QOL removed."
 } else {
-    Write-Host 'BaseStorage was not installed.'
+    Write-Host "Don's QOL was not installed."
 }
 
 $remove = $RemoveBepInEx

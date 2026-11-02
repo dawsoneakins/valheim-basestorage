@@ -33,7 +33,7 @@ public sealed class StringTableContentsTests
         Assert.Equal("Organize in progress by {0}", UiContract.Get("message.base.in-progress"));
         Assert.Equal("Organize in progress by {0}", UiContract.Get("station.actions.disabled-in-progress"));
         Assert.Equal(
-            "BaseStorage version mismatch: host {0}, you {1}",
+            "Don's QOL version mismatch: host {0}, you {1}",
             UiContract.Get("network.version.mismatch"));
     }
 

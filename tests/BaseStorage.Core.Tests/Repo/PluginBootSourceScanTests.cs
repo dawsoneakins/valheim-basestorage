@@ -22,7 +22,7 @@ public sealed class PluginBootSourceScanTests
         Assert.Matches(@"namespace\s+BaseStorage\.Plugin\s*;", main);
         Assert.Matches(@"public\s+sealed\s+class\s+BaseStoragePlugin\s*:\s*BaseUnityPlugin\b", main);
         Assert.Matches(@"public\s+const\s+string\s+PluginGuid\s*=\s*""dawso\.valheim\.basestorage""\s*;", main);
-        Assert.Matches(@"public\s+const\s+string\s+PluginName\s*=\s*""BaseStorage""\s*;", main);
+        Assert.Matches(@"public\s+const\s+string\s+PluginName\s*=\s*""Don's QOL""\s*;", main);
     }
 
     // GW-U-081

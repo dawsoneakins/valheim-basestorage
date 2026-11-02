@@ -55,7 +55,7 @@ public static class UiFixtures
         ("message.category.set", "Chest category: {0}"),
         ("message.favourite.on", "Favourite: {0}"),
         ("message.favourite.off", "No longer favourite: {0}"),
-        ("network.version.mismatch", "BaseStorage version mismatch: host {0}, you {1}"),
+        ("network.version.mismatch", "Don's QOL version mismatch: host {0}, you {1}"),
         // Contract section 10 (S-E004-009): preview composer and end-of-run summary keys, appended in table order.
         ("organize.preview.line", "{0}: {1}"),
         ("organize.preview.body.nothing", "Nothing to move."),
@@ -85,7 +85,7 @@ public static class UiFixtures
         ("category.refusal.timeout", "no answer from the chest owner"),
         ("category.refusal.unavailable", "the chest is not available"),
         // Contract version-rpc-contracts.md 2.3 (S-E006-002): the host notice for a joining player without the mod.
-        ("network.version.missing", "BaseStorage version mismatch: host {0}, joining player has no BaseStorage"),
+        ("network.version.missing", "Don's QOL version mismatch: host {0}, joining player has no Don's QOL"),
         // Contract category-button-contracts.md section 5 (S-E004-004): the Category button label, appended in table order.
         ("chest.category.button", "{0}"),
         // Contract organize-runner-contracts.md section 6 (S-E004-011): the summary passthrough and the stop-reason fragments, appended in table order.
@@ -115,7 +115,7 @@ public static class UiFixtures
         ("organize.preview.body.reason.full", "This base is full. Free up space or add a chest."),
         ("organize.preview.body.reason.category", "Some categories ran out of space. Add a chest or give one that category."),
         ("tooltip.category", "Category: {0}"),
-        ("menu.button", "Base Storage"),
+        ("menu.button", "Don's QOL"),
         ("menu.close", "Close"),
         ("menu.header", "{0} stations, {1} chests, {2}% full"),
         ("menu.row", "{0}%  {1}m {2}"),
@@ -393,10 +393,10 @@ public static class UiFixtures
     public const string InProgressTemplate = "Organize in progress by {0}";
 
     /// <summary>Contract 2.3: network.version.mismatch template.</summary>
-    public const string VersionMismatchTemplate = "BaseStorage version mismatch: host {0}, you {1}";
+    public const string VersionMismatchTemplate = "Don's QOL version mismatch: host {0}, you {1}";
 
     /// <summary>Contract 2.3: network.version.mismatch with "0.1.0" and "0.2.0".</summary>
-    public const string VersionMismatchText = "BaseStorage version mismatch: host 0.1.0, you 0.2.0";
+    public const string VersionMismatchText = "Don's QOL version mismatch: host 0.1.0, you 0.2.0";
 
     /// <summary>Contract 2.3: message.organize.summary with 37, 2, "in use", 4.</summary>
     public const string OrganizeSummaryText = "Organized: 37 stacks moved, 2 skipped (in use), 4 no room";

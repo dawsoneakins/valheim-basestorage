@@ -16,7 +16,7 @@ internal static class NetworkingFixtures
     public const string Tag = "BSV1;";
 
     /// <summary>The fixed AC text (contract 4.2, ui-strings-contract.md 3.2 row 43) without placeholders, for building expectations.</summary>
-    public const string MismatchPrefix = "BaseStorage version mismatch: host ";
+    public const string MismatchPrefix = "Don's QOL version mismatch: host ";
 
     /// <summary>The joiner between the two versions in the fixed AC text.</summary>
     public const string MismatchJoiner = ", you ";

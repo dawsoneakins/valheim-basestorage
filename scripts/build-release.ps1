@@ -31,7 +31,7 @@ $modZip = Join-Path $dist "BaseStorage-$version-mod.zip"
 if (Test-Path -LiteralPath $modZip) { Remove-Item -LiteralPath $modZip -Force }
 Compress-Archive -LiteralPath (Join-Path $built 'BaseStorage.dll'), (Join-Path $built 'BaseStorage.Core.dll') -DestinationPath $modZip
 $hash = (Get-FileHash -LiteralPath $modZip -Algorithm SHA256).Hash
-$url = "https://github.com/dawsoneakins/valheim-basestorage/releases/download/v$version/BaseStorage-$version-mod.zip"
+$url = "https://github.com/dawsoneakins/valheim-dons-qol/releases/download/v$version/BaseStorage-$version-mod.zip"
 $script = (Get-Content -LiteralPath (Join-Path $repo 'installer\install.ps1') -Raw).Replace('__MOD_URL__', $url).Replace('__MOD_HASH__', $hash)
 $head = @(
     '@echo off',

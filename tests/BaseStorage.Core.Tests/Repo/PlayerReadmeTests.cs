@@ -164,8 +164,8 @@ public sealed class PlayerReadmeTests
         string section = Section(ReadReadme(), "Known limits");
         string[] terms =
         [
-            "console", "crossplay", "dedicated server", "peer-hosted", "smelter", "kiln", "fire", "cart", "ship",
-            "item search", "renam", "label", "sorting table", "inventory mods",
+            "console", "crossplay", "dedicated server", "peer-hosted", "fire", "fermenter", "cart", "ship",
+            "renam", "label", "sorting table", "inventory mods",
         ];
         string[] missing = terms.Where(term => !section.Contains(term, StringComparison.OrdinalIgnoreCase)).ToArray();
 

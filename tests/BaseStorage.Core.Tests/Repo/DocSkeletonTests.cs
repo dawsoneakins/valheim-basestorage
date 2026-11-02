@@ -19,7 +19,7 @@ public sealed class DocSkeletonTests
     {
         AssertSkeleton(
             "package/README.md",
-            "# BaseStorage",
+            "# Don's QOL",
             "## What it does",
             "## Installation",
             "## Configuration",

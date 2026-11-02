@@ -1,10 +1,12 @@
-# BaseStorage
+# Don's QOL
 
-BaseStorage is a BepInEx 5 mod for Valheim: chests near a crafting station form a base, crafting and building draw from every chest in that base, and one button organizes items into chests by category. The full specification, acceptance criteria and settings table live in [docs/SPEC.md](docs/SPEC.md); this file is for people building the mod.
+![Don's QOL](package/icon.png)
+
+Don's QOL, formerly BaseStorage, is a BepInEx 5 mod for Valheim: chests near a crafting station form a base, crafting and building draw from every chest in that base, and one button organizes items into chests by category. The full specification, acceptance criteria and settings table live in [docs/SPEC.md](docs/SPEC.md); this file is for people building the mod. Code, DLLs, the install folder and the settings file keep the BaseStorage name, so updating keeps your settings and chest categories.
 
 ## Install
 
-On Windows, download `BaseStorage-Setup.bat` from the latest release (https://github.com/dawsoneakins/valheim-basestorage/releases/latest) and double-click it. It finds Valheim, installs BepInEx and the mod, checks both downloads, and never touches your saves. Close Valheim first.
+On Windows, download `BaseStorage-Setup.bat` from the latest release (https://github.com/dawsoneakins/valheim-dons-qol/releases/latest) and double-click it. It finds Valheim, installs BepInEx and the mod, checks both downloads, and never touches your saves. Close Valheim first.
 
 To update, download the latest `BaseStorage-Setup.bat` and run it the same way. It replaces the plugin and keeps your settings, your favourites and your saves. Everyone playing together needs the same version, so update as a group.
 

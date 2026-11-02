@@ -12,6 +12,9 @@ internal static class DepositTraitRules
     /// <summary>The prefab name prefix of the fishing bait items.</summary>
     internal const string BaitPrefabPrefix = "FishingBait";
 
+    /// <summary>Bukeberries: a consumable with no food value that is no mead either, since eating one only empties the stomach.</summary>
+    internal const string BukeberriesPrefab = "Pukeberries";
+
     /// <summary>Builds the traits of one item.</summary>
     /// <param name="equipped">True when the item is equipped.</param>
     /// <param name="consumable">True when the item type is a consumable.</param>
@@ -33,7 +36,7 @@ internal static class DepositTraitRules
             traits |= InventoryItemTraits.Equipped;
         }
 
-        if (consumable && !food)
+        if (consumable && !food && !string.Equals(prefabName, BukeberriesPrefab, StringComparison.Ordinal))
         {
             traits |= InventoryItemTraits.Mead;
         }

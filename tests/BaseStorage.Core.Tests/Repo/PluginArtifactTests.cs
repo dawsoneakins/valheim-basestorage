@@ -20,7 +20,8 @@ public sealed class PluginArtifactTests
 {
     private const string PluginTypeName = "BaseStorage.Plugin.BaseStoragePlugin";
     private const string PluginGuid = "dawso.valheim.basestorage";
-    private const string PluginName = "BaseStorage";
+    private const string AssemblyName = "BaseStorage";
+    private const string PluginName = "Don's QOL";
     private const string BindingTypeName = "BaseStorage.Plugin.Settings.BepInExSettingsSource";
 
     // GW-I-010
@@ -37,7 +38,7 @@ public sealed class PluginArtifactTests
         using var pe = new PEReader(stream);
         MetadataReader metadata = pe.GetMetadataReader();
 
-        Assert.Equal(PluginName, metadata.GetString(metadata.GetAssemblyDefinition().Name));
+        Assert.Equal(AssemblyName, metadata.GetString(metadata.GetAssemblyDefinition().Name));
 
         string expectedVersion = RepoRoot.ValuesOf(ContractPaths.VersionProps, "Version").Single();
         List<(TypeDefinitionHandle Handle, string FullName, string Guid, string Name, string Version)> plugins = BepInPluginAttributes(metadata);

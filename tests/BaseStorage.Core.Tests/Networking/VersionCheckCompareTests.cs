@@ -45,7 +45,7 @@ public sealed class VersionCheckCompareTests
         Assert.Equal("0.1.0", result.HostVersion);
         Assert.Equal("0.2.0", result.ClientVersion);
         Assert.Equal("network.version.mismatch", result.MessageKey);
-        Assert.Equal("BaseStorage version mismatch: host 0.1.0, you 0.2.0", result.FormatMessage(StringTable.English));
+        Assert.Equal("Don's QOL version mismatch: host 0.1.0, you 0.2.0", result.FormatMessage(StringTable.English));
     }
 
     // GW-U-806 (V3): equality is ordinal on the whole string, so a one-character difference is a mismatch.

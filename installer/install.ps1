@@ -112,13 +112,13 @@ function Get-Mod {
     $temp = $null
     if (-not $zipPath) {
         if ($ModUrl -like '__*') { Stop-Install 'the plugin folder is missing. Extract the whole zip first, then run this again.' }
-        $temp = Get-File $ModUrl 'BaseStorage'
+        $temp = Get-File $ModUrl "Don's QOL"
         $zipPath = $temp
     }
 
     try {
         $hash = Get-Sha256 $zipPath
-        if ($hash -ne $ModHash) { Stop-Install "the BaseStorage download does not match the expected file ($hash)." }
+        if ($hash -ne $ModHash) { Stop-Install "the Don's QOL download does not match the expected file ($hash)." }
         $folder = Join-Path ([IO.Path]::GetTempPath()) ('basestorage-mod-' + [Guid]::NewGuid().ToString('N'))
         Add-Type -AssemblyName System.IO.Compression.FileSystem
         [IO.Compression.ZipFile]::ExtractToDirectory($zipPath, $folder)
@@ -198,5 +198,5 @@ try {
 if ($modTemp -and (Test-Path -LiteralPath $modTemp)) { Remove-Item -LiteralPath $modTemp -Recurse -Force }
 
 Write-Host ''
-Write-Host 'BaseStorage is installed. Start Valheim as usual.' -ForegroundColor Green
+Write-Host "Don's QOL is installed. Start Valheim as usual." -ForegroundColor Green
 if ($backup) { Write-Host "Your previous plugin files are in $backup" }

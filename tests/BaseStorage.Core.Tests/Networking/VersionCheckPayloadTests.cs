@@ -30,7 +30,7 @@ public sealed class VersionCheckPayloadTests
 
         Assert.Equal(VersionCheckStatus.RejectedMismatch, rejected.Status);
         Assert.Equal("0.2.0", rejected.ClientVersion);
-        Assert.Equal("BaseStorage version mismatch: host 0.1.0, you 0.2.0", rejected.FormatMessage(StringTable.English));
+        Assert.Equal("Don's QOL version mismatch: host 0.1.0, you 0.2.0", rejected.FormatMessage(StringTable.English));
         Assert.Equal(VersionCheckStatus.Accepted, accepted.Status);
         Assert.Equal("0.2.0", accepted.ClientVersion);
         Assert.Equal(rejected, VersionCheck.CheckPayload("0.1.0", Encoding.ASCII.GetBytes("BSV1;0.2.0"), true));

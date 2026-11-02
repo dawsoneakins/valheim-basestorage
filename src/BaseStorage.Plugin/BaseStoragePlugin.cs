@@ -37,7 +37,7 @@ public sealed class BaseStoragePlugin : BaseUnityPlugin
     public const string PluginGuid = "dawso.valheim.basestorage";
 
     /// <summary>The BepInEx plugin name; also the log source name.</summary>
-    public const string PluginName = "BaseStorage";
+    public const string PluginName = "Don's QOL";
 
     /// <summary>The plugin version, generated at build time from the Version property of Version.props.</summary>
     public const string PluginVersion = PluginBuildInfo.Version;

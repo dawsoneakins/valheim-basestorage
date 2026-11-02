@@ -74,7 +74,7 @@ public static class ReleaseFeatures
             ["## Organize (AC-2.4, AC-4.7, AC-4.8, AC-5.4)"]),
         new("QF13", "Version handshake",
             ["- Version handshake:"],
-            ["BaseStorage version mismatch: host X, you Y"],
+            ["Don's QOL version mismatch: host X, you Y"],
             ["## Version handshake (AC-6.1, AC-6.3)"]),
         new("QF14", "Host-synced settings",
             ["- Host-synced settings:"],

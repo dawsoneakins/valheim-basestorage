@@ -5,7 +5,7 @@ using System.IO;
 using System.Reflection;
 using UnityEngine;
 
-/// <summary>The Base Storage icon, a gold chest embedded in the plugin, loaded once.</summary>
+/// <summary>The Don's QOL emblem embedded in the plugin, loaded once.</summary>
 internal static class BaseMenuIcon
 {
     private const string ResourceName = "BaseStorage.icon.png";
@@ -26,7 +26,7 @@ internal static class BaseMenuIcon
 
         var bytes = new byte[stream.Length];
         int read = stream.Read(bytes, 0, bytes.Length);
-        var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+        var texture = new Texture2D(2, 2, TextureFormat.RGBA32, true);
         if (read != bytes.Length || !Decode(texture, bytes))
         {
             return null;
