@@ -4,12 +4,15 @@ using System;
 using System.Collections.Generic;
 using BaseStorage.Core.Abstractions;
 using BaseStorage.Core.Bases.Resolution;
+using BaseStorage.Core.Categories;
 using BaseStorage.Core.Menu;
 using BaseStorage.Core.Organize.Run;
 using BaseStorage.Core.Persistence;
 using BaseStorage.Core.Settings;
 using BaseStorage.Core.Snapshots;
 using BaseStorage.Core.Ui;
+using BaseStorage.Plugin.Categories;
+using BaseStorage.Plugin.CategoryButton;
 using BaseStorage.Plugin.ChestCategories;
 using BaseStorage.Plugin.Feeding;
 using BaseStorage.Plugin.Organize;
@@ -58,9 +61,22 @@ internal static class BaseMenuPanel
     private const string SearchId = "menu.search";
     private const string SearchTextId = "menu.search.text";
     private const string SearchHintId = "menu.search.hint";
+    private const string SearchClearId = "menu.search.clear";
+    private const string SearchClearLabelId = "menu.search.clear.label";
+    private const string SearchEmptyId = "menu.search.empty";
+    private const string RowIconId = "menu.row.icon";
+    private const string MatchOpen = "<color=#FFCC4D>";
+    private const string MatchClose = "</color>";
+    private const string SearchIconId = "menu.search.icon";
+    private const string SearchAreaId = "menu.search.area";
+    private const float SearchClearWidth = 64f;
+    private const float SearchIconSize = 20f;
+    private const float SearchPadding = 10f;
+    private const float RowIconSize = 26f;
+    private const float RowIconSpace = 34f;
     private const float SecondRow = -92f;
-    private const float SearchTop = -140f;
-    private const float SearchHeight = 36f;
+    private const float SearchTop = -138f;
+    private const float SearchHeight = 40f;
     private const float ListTop = -184f;
     private const float RowTint = 0.18f;
     private const float FarEnough = 200f;
@@ -69,12 +85,16 @@ internal static class BaseMenuPanel
     private static readonly TimeSpan ReloadInterval = TimeSpan.FromSeconds(1);
     private static readonly Color RestTint = new Color(1f, 1f, 1f, 0.35f);
     private static readonly Color MarkTint = new Color(1f, 0.8f, 0.3f, 1f);
+    private static readonly Color SearchIdle = new Color(0.62f, 0.5f, 0.28f, 0.75f);
+    private static readonly Color SearchIconTint = new Color(1f, 0.85f, 0.45f, 0.85f);
+    private static readonly Color SearchFocused = new Color(1f, 0.8f, 0.3f, 0.9f);
 
     private static readonly List<RowView> RowViews = new List<RowView>();
     private static readonly Dictionary<ContainerId, Container> Loaded = new Dictionary<ContainerId, Container>();
     private static readonly List<Container> Scratch = new List<Container>();
     private static readonly Vector3[] Corners = new Vector3[4];
     private static readonly Dictionary<string, string> ItemNames = new Dictionary<string, string>(StringComparer.Ordinal);
+    private static readonly Dictionary<string, Sprite?> ItemIcons = new Dictionary<string, Sprite?>(StringComparer.Ordinal);
     private static readonly List<ContainerSnapshot> Fresh = new List<ContainerSnapshot>();
 
     private static PluginWorld? world;
@@ -97,6 +117,9 @@ internal static class BaseMenuPanel
     private static Button? shareButton;
     private static Button? markButton;
     private static TMP_InputField? searchInput;
+    private static Outline? searchOutline;
+    private static GameObject? searchClear;
+    private static TMP_Text? searchEmpty;
     private static string query = string.Empty;
     private static bool marking;
     private static TimeSpan lastLoad = TimeSpan.Zero;
@@ -419,42 +442,115 @@ internal static class BaseMenuPanel
         return parent.InverseTransformPoint(Corners[right ? 2 : 0]).x;
     }
 
-    /// <summary>Builds the search box by hand: the game has no input field to clone here, and text from the panel keeps its look.</summary>
+    /// <summary>
+    /// Builds the search box by hand, as a standard input field: the text sits in its own padded area, because the field scrolls its first
+    /// letter flush to that area's edge. The text is new rather than cloned, because a clone brings its template's margins with it.
+    /// </summary>
     private static void CreateSearch(InventoryGui gui)
     {
         float width = MaxWidth - (2 * Margin);
-        GameObject box = VanillaButtonFactory.CreateNode(panel!.transform, SearchId, new Vector2(width, SearchHeight), new Vector2(Margin, SearchTop), typeof(RectTransform), typeof(Image), typeof(RectMask2D));
+        GameObject box = VanillaButtonFactory.CreateNode(panel!.transform, SearchId, new Vector2(width, SearchHeight), new Vector2(Margin, SearchTop), typeof(RectTransform), typeof(Image));
         box.SetActive(false);
-        box.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.55f);
-        TMP_Text? text = SearchText(gui, box.transform, SearchTextId, width);
-        TMP_Text? hint = SearchText(gui, box.transform, SearchHintId, width);
+        box.GetComponent<Image>().color = new Color(0.07f, 0.05f, 0.05f, 0.9f);
+        searchOutline = box.AddComponent<Outline>();
+        searchOutline.effectColor = SearchIdle;
+        searchOutline.effectDistance = new Vector2(2f, -2f);
+        Image glass = VanillaButtonFactory.CreateNode(box.transform, SearchIconId, new Vector2(SearchIconSize, SearchIconSize), new Vector2(SearchPadding, -(SearchHeight - SearchIconSize) / 2f), typeof(RectTransform), typeof(Image)).GetComponent<Image>();
+        glass.sprite = SearchIcon.Sprite;
+        glass.color = SearchIconTint;
+        glass.raycastTarget = false;
+        float areaLeft = SearchPadding + SearchIconSize + SearchPadding;
+        var area = (RectTransform)VanillaButtonFactory.CreateNode(box.transform, SearchAreaId, new Vector2(width - areaLeft - SearchClearWidth - SearchPadding, SearchHeight), new Vector2(areaLeft, 0f), typeof(RectTransform), typeof(RectMask2D)).transform;
+        TMP_Text? text = SearchText(gui, area, SearchTextId);
+        TMP_Text? hint = SearchText(gui, area, SearchHintId);
         if (text == null || hint == null)
         {
             return;
         }
 
-        text.raycastTarget = true;
         hint.text = StringTable.English.Get(StringKeys.MenuSearch);
-        hint.alpha = 0.55f;
+        hint.fontStyle = FontStyles.Italic;
+        hint.alpha = 0.6f;
         TMP_InputField input = box.AddComponent<TMP_InputField>();
-        input.textViewport = (RectTransform)box.transform;
+        input.transition = Selectable.Transition.None;
+        input.textViewport = area;
         input.textComponent = text;
         input.placeholder = hint;
         input.lineType = TMP_InputField.LineType.SingleLine;
+        input.customCaretColor = true;
+        input.caretColor = SearchFocused;
+        input.caretWidth = 2;
+        input.selectionColor = new Color(1f, 0.8f, 0.3f, 0.35f);
         input.onValueChanged.AddListener(OnSearchChanged);
+        input.onSelect.AddListener(static _ => SetSearchFocus(true));
+        input.onDeselect.AddListener(static _ => SetSearchFocus(false));
         searchInput = input;
+        CreateSearchClear(gui, box.transform, width);
         box.SetActive(true);
     }
 
-    private static TMP_Text? SearchText(InventoryGui gui, Transform parent, string id, float width)
+    private static void SetSearchFocus(bool focused)
     {
-        TMP_Text? text = Text(gui, parent, id, 8f, 0f, width - 16f, SearchHeight, gui.m_recipeDecription);
-        ContentSizeFitter? fitter = text == null ? null : text.GetComponent<ContentSizeFitter>();
-        if (fitter != null)
+        if (searchOutline != null)
         {
-            fitter.enabled = false;
+            searchOutline.effectColor = focused ? SearchFocused : SearchIdle;
+        }
+    }
+
+    private static void CreateSearchClear(InventoryGui gui, Transform box, float width)
+    {
+        GameObject clear = VanillaButtonFactory.CreateNode(box, SearchClearId, new Vector2(SearchClearWidth - 6f, SearchHeight - 8f), new Vector2(width - SearchClearWidth + 2f, -4f), typeof(RectTransform), typeof(Image), typeof(Button));
+        clear.GetComponent<Image>().color = new Color(1f, 0.85f, 0.45f, 0.18f);
+        clear.GetComponent<Button>().onClick.AddListener(static () => PatchSafety.Run(ClickKey, static () =>
+        {
+            if (searchInput != null)
+            {
+                searchInput.text = string.Empty;
+                searchInput.ActivateInputField();
+            }
+        }));
+        TMP_Text? label = Text(gui, clear.transform, SearchClearLabelId, 0f, 0f, SearchClearWidth - 6f, SearchHeight - 8f, gui.m_recipeDecription);
+        if (label != null)
+        {
+            ContentSizeFitter? fitter = label.GetComponent<ContentSizeFitter>();
+            if (fitter != null)
+            {
+                fitter.enabled = false;
+            }
+
+            label.alignment = TextAlignmentOptions.Center;
+            label.fontSize = 15f;
+            label.text = StringTable.English.Get(StringKeys.MenuSearchClear);
         }
 
+        clear.SetActive(false);
+        searchClear = clear;
+    }
+
+    private static TMP_Text? SearchText(InventoryGui gui, Transform area, string id)
+    {
+        TMP_Text? template = gui.m_recipeDecription;
+        if (template == null)
+        {
+            return null;
+        }
+
+        GameObject node = VanillaButtonFactory.CreateNode(area, id, Vector2.zero, Vector2.zero, typeof(RectTransform), typeof(TextMeshProUGUI));
+        var rect = (RectTransform)node.transform;
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+        TMP_Text text = node.GetComponent<TMP_Text>();
+        text.font = template.font;
+        text.fontSize = 20f;
+        text.color = Color.white;
+        text.alignment = TextAlignmentOptions.MidlineLeft;
+        text.textWrappingMode = TextWrappingModes.NoWrap;
+        text.overflowMode = TextOverflowModes.Overflow;
+        text.richText = false;
+        text.raycastTarget = false;
         return text;
     }
 
@@ -462,6 +558,11 @@ internal static class BaseMenuPanel
     {
         query = text.Trim();
         lastLoad = TimeSpan.Zero;
+        if (searchClear != null)
+        {
+            searchClear.SetActive(text.Length > 0);
+        }
+
         if (listContent != null)
         {
             listContent.anchoredPosition = new Vector2(listContent.anchoredPosition.x, 0f);
@@ -486,6 +587,14 @@ internal static class BaseMenuPanel
         {
             RowViews.Add(new RowView(gui, listContent, i, width));
         }
+
+        searchEmpty = Text(gui, view.transform, SearchEmptyId, Margin, -Margin, width - (2 * Margin), RowHeight);
+        if (searchEmpty != null)
+        {
+            searchEmpty.alignment = TextAlignmentOptions.Center;
+            searchEmpty.alpha = 0.7f;
+            searchEmpty.gameObject.SetActive(false);
+        }
     }
 
     private static TMP_Text? Text(InventoryGui gui, Transform parent, string id, float x, float y, float width, float height, TMP_Text? template = null)
@@ -500,6 +609,7 @@ internal static class BaseMenuPanel
             text.textWrappingMode = TextWrappingModes.NoWrap;
             text.overflowMode = TextOverflowModes.Ellipsis;
             text.raycastTarget = false;
+            text.richText = true;
             text.gameObject.SetActive(true);
         }
 
@@ -549,11 +659,31 @@ internal static class BaseMenuPanel
         }
         else
         {
-            rows = BaseSearch.Apply(rows, query, NameOf);
-            SetText(header, StringTable.English.Format(StringKeys.MenuSearchHeader, BaseSearch.Total(rows), rows.Count));
+            rows = BaseSearch.Apply(rows, query, NameOf, CategoryOf);
+            SetText(header, SearchHeader());
         }
 
         Show();
+    }
+
+    private static string SearchHeader()
+    {
+        StringTable strings = StringTable.English;
+        if (rows.Count == 0)
+        {
+            return strings.Get(StringKeys.MenuSearchNoneHeader);
+        }
+
+        IReadOnlyList<string> items = BaseSearch.Items(rows);
+        string chests = strings.FormatPlural(StringKeys.MenuSearchChests, rows.Count, rows.Count);
+        if (items.Count == 0)
+        {
+            return chests;
+        }
+
+        return items.Count == 1
+            ? strings.Format(StringKeys.MenuSearchHeaderOne, items[0], BaseSearch.Total(rows), chests)
+            : strings.Format(StringKeys.MenuSearchHeader, items.Count, BaseSearch.Total(rows), chests);
     }
 
     /// <summary>Reads each chest as it is now, because a search must not show the base cache's older contents.</summary>
@@ -573,13 +703,37 @@ internal static class BaseMenuPanel
     {
         if (!ItemNames.TryGetValue(prefab, out string? name))
         {
-            GameObject? item = ObjectDB.instance == null ? null : ObjectDB.instance.GetItemPrefab(prefab);
-            ItemDrop? drop = item == null ? null : item.GetComponent<ItemDrop>();
+            ItemDrop? drop = DropOf(prefab);
             name = drop == null || Localization.instance == null ? prefab : Localization.instance.Localize(drop.m_itemData.m_shared.m_name);
             ItemNames[prefab] = name;
         }
 
         return name;
+    }
+
+    private static string CategoryOf(string prefab)
+    {
+        ItemDrop? drop = DropOf(prefab);
+        ItemKind kind = drop == null ? ItemKind.Other : ItemKindAdapter.From(drop.m_itemData.m_shared);
+        return PluginCategoryCatalog.Current.Resolve(prefab, kind);
+    }
+
+    private static Sprite? IconOf(string prefab)
+    {
+        if (!ItemIcons.TryGetValue(prefab, out Sprite? icon))
+        {
+            ItemDrop? drop = DropOf(prefab);
+            icon = drop == null ? null : drop.m_itemData.GetIcon();
+            ItemIcons[prefab] = icon;
+        }
+
+        return icon;
+    }
+
+    private static ItemDrop? DropOf(string prefab)
+    {
+        GameObject? item = ObjectDB.instance == null ? null : ObjectDB.instance.GetItemPrefab(prefab);
+        return item == null ? null : item.GetComponent<ItemDrop>();
     }
 
     private static void LoadContainers(PluginWorld current)
@@ -617,6 +771,7 @@ internal static class BaseMenuPanel
             }
         }
 
+        ShowSearchEmpty();
         if (listContent != null)
         {
             listContent.sizeDelta = new Vector2(listContent.sizeDelta.x, Math.Min(rows.Count, MaxRows) * RowHeight);
@@ -624,6 +779,25 @@ internal static class BaseMenuPanel
             {
                 ScrollTo(openRow);
             }
+        }
+    }
+
+    private static void ShowSearchEmpty()
+    {
+        if (searchEmpty == null)
+        {
+            return;
+        }
+
+        bool none = query.Length > 0 && rows.Count == 0;
+        if (searchEmpty.gameObject.activeSelf != none)
+        {
+            searchEmpty.gameObject.SetActive(none);
+        }
+
+        if (none)
+        {
+            SetText(searchEmpty, StringTable.English.Format(StringKeys.MenuSearchNone, query));
         }
     }
 
@@ -772,11 +946,14 @@ internal static class BaseMenuPanel
         private readonly TMP_Text? label;
         private readonly TMP_Text? rule;
         private readonly TMP_Text? openHint;
+        private readonly Image icon;
+        private readonly float labelWidth;
         private bool lit;
+        private bool iconShown;
 
         internal RowView(InventoryGui gui, Transform parent, int index, float width)
         {
-            float labelWidth = width - RuleWidth - 2f;
+            labelWidth = width - RuleWidth - 2f;
             root = VanillaButtonFactory.CreateNode(parent, RowId, new Vector2(labelWidth, RowHeight - 2f), new Vector2(0f, -index * RowHeight), typeof(RectTransform), typeof(Image), typeof(Button));
             background = root.GetComponent<Image>();
             click = root.GetComponent<Button>();
@@ -789,6 +966,10 @@ internal static class BaseMenuPanel
             click.colors = colors;
             click.onClick.AddListener(() => PatchSafety.Run(ClickKey, () => OpenChest(index)));
             label = Text(gui, root.transform, RowLabelId, 6f, 0f, labelWidth - OpenHintWidth - 10f, RowHeight - 2f);
+            icon = VanillaButtonFactory.CreateNode(root.transform, RowIconId, new Vector2(RowIconSize, RowIconSize), new Vector2(4f, -3f), typeof(RectTransform), typeof(Image)).GetComponent<Image>();
+            icon.raycastTarget = false;
+            icon.preserveAspect = true;
+            icon.gameObject.SetActive(false);
             openHint = Text(gui, root.transform, OpenHintId, labelWidth - OpenHintWidth, 0f, OpenHintWidth - 4f, RowHeight - 2f);
             if (openHint != null)
             {
@@ -810,7 +991,7 @@ internal static class BaseMenuPanel
                 return string.Empty;
             }
 
-            string hit = StringTable.English.Format(StringKeys.MenuHit, row.Hits[0].Name, row.Hits[0].Count);
+            string hit = StringTable.English.Format(StringKeys.MenuHit, BaseSearch.Mark(row.Hits[0].Name, query, MatchOpen, MatchClose), row.Hits[0].Count);
             return row.Hits.Count == 1 ? hit : StringTable.English.Format(StringKeys.MenuHitMore, hit, row.Hits.Count - 1);
         }
 
@@ -850,11 +1031,39 @@ internal static class BaseMenuPanel
             }
 
             background.color = isOpen ? new Color(1f, 0.8f, 0.3f, 0.6f) : new Color(1f, 1f, 1f, RowTint);
-            SetText(openHint, StringTable.English.Get(isOpen ? StringKeys.MenuClose : StringKeys.MenuOpen));
+            int distance = (int)Mathf.Sqrt(row.DistanceSquared);
+            bool found = row.Hits.Count > 0;
+            ShowIcon(found ? IconOf(row.Hits[0].Prefab) : null);
+            SetText(openHint, isOpen
+                ? StringTable.English.Get(StringKeys.MenuClose)
+                : found ? StringTable.English.Format(StringKeys.MenuDistance, distance) : StringTable.English.Get(StringKeys.MenuOpen));
 
-            string state = row.AccessDenied ? StringTable.English.Get(StringKeys.MenuNoAccess) : row.InUse ? StringTable.English.Get(StringKeys.MenuInUse) : HitText(row);
-            SetText(label, StringTable.English.Format(StringKeys.MenuRow, row.FillPercent, (int)Mathf.Sqrt(row.DistanceSquared), state));
-            SetText(rule, row.RuleLabel);
+            string state = row.AccessDenied ? StringTable.English.Get(StringKeys.MenuNoAccess) : row.InUse ? StringTable.English.Get(StringKeys.MenuInUse) : string.Empty;
+            SetText(label, found
+                ? (state.Length == 0 ? HitText(row) : HitText(row) + "  (" + state + ")")
+                : StringTable.English.Format(StringKeys.MenuRow, row.FillPercent, distance, state));
+            SetText(rule, BaseSearch.Mark(row.RuleLabel, query, MatchOpen, MatchClose));
+        }
+
+        /// <summary>Shows a found item's icon and moves the text clear of it. A result with no icon keeps the text in line with the others.</summary>
+        private void ShowIcon(Sprite? sprite)
+        {
+            bool show = sprite != null;
+            icon.sprite = sprite;
+            if (icon.gameObject.activeSelf != show)
+            {
+                icon.gameObject.SetActive(show);
+            }
+
+            bool searching = query.Length > 0;
+            if (iconShown == searching || label == null)
+            {
+                return;
+            }
+
+            iconShown = searching;
+            float x = searching ? RowIconSpace : 6f;
+            VanillaButtonFactory.Pin(label.rectTransform, new Vector2(labelWidth - OpenHintWidth - 4f - x, RowHeight - 2f), new Vector2(x, 0f));
         }
     }
 }

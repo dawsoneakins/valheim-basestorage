@@ -53,7 +53,9 @@ public sealed class OrganizeSurfaceTests
                 "Layouts:IReadOnlyList<ChestLayout>",
                 "Moves:IReadOnlyList<PlannedMove>",
                 "NoRoom:IReadOnlyList<NoRoomEntry>",
+                "RulesToSave:IReadOnlyList<ChestAutoAssignment>",
                 "Skipped:IReadOnlyList<SkippedChest>",
+                "Spilled:Int32",
             },
             [typeof(PlannedMove)] = new[]
             {

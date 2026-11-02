@@ -41,6 +41,9 @@ public sealed class BaseMenuRow
     /// <summary>Gets the items in this chest that match the current search, most first.</summary>
     public IReadOnlyList<BaseSearchHit> Hits { get; private set; } = Array.Empty<BaseSearchHit>();
 
+    /// <summary>Gets how well the chest matched the current search; lower is better.</summary>
+    internal int SearchRank { get; private set; }
+
     /// <summary>Gets a value indicating whether the local player may not open this chest.</summary>
     public bool AccessDenied => (Chest.Flags & ContainerFlags.AccessDenied) != 0;
 
@@ -48,8 +51,9 @@ public sealed class BaseMenuRow
     public bool InUse => (Chest.Flags & ContainerFlags.InUseByOther) != 0;
 
     /// <summary>Copies the row with search hits.</summary>
-    /// <param name="hits">The hits.</param>
+    /// <param name="hits">The hits; empty when only the chest's label matched.</param>
+    /// <param name="rank">How well the chest matched.</param>
     /// <returns>The copy.</returns>
-    internal BaseMenuRow WithHits(IReadOnlyList<BaseSearchHit> hits) =>
-        new BaseMenuRow(Chest, Assignment, RuleLabel, FillPercent, DistanceSquared) { Hits = hits };
+    internal BaseMenuRow WithHits(IReadOnlyList<BaseSearchHit> hits, int rank) =>
+        new BaseMenuRow(Chest, Assignment, RuleLabel, FillPercent, DistanceSquared) { Hits = hits, SearchRank = rank };
 }

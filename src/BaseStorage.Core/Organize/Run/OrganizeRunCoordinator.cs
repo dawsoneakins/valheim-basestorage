@@ -144,7 +144,8 @@ public sealed class OrganizeRunCoordinator
                 port.Catalog,
                 port.ItemKinds,
                 EligibilityOptions.FromSettings(settings),
-                settings.AutoAssignThresholdPct);
+                settings.AutoAssignThresholdPct,
+                settings.AutoAssignMixedChests);
             made = madeDeposit.Plan;
             minLayouts = 2;
         }
@@ -390,7 +391,7 @@ public sealed class OrganizeRunCoordinator
     {
         try
         {
-            port.SaveCategoryRules(plan!.AutoAssign.MixedAssigned);
+            port.SaveCategoryRules(plan!.RulesToSave);
         }
         catch (Exception ex)
         {
@@ -430,7 +431,7 @@ public sealed class OrganizeRunCoordinator
         }
 
         port.ShowNotice(OrganizeNoticePlacement.TopLeft, key, args);
-        if (deposit is null && !stopped && plan!.AutoAssign.MixedAssigned.Count > 0)
+        if (!stopped && plan!.RulesToSave.Count > 0)
         {
             SaveRules();
         }

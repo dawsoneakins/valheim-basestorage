@@ -44,7 +44,7 @@ public sealed class BaseStorageSettingsTests
             Assert.Equal(string.Empty, settings.OrganizeKey);
             Assert.Equal(string.Empty, settings.DepositKey);
 
-            string[] expectedItems = { "@food", "@mead", "@ammo", "Hammer", "Hoe", "Cultivator", "FishingRod", "@bait" };
+            string[] expectedItems = { "@mead", "@ammo", "Hammer", "Hoe", "Cultivator", "FishingRod", "@bait" };
             Assert.Equal(expectedItems, settings.DepositNeverItems);
         }
         finally

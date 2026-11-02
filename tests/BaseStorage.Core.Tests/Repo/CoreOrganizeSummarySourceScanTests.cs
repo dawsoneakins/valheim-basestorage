@@ -32,7 +32,7 @@ public sealed class CoreOrganizeSummarySourceScanTests
     private static readonly string[] ExpectedStringKeys =
     {
         "OrganizePreviewLine", "OrganizePreviewHeader", "OrganizePreviewBodyNothing", "OrganizePreviewBodyRules", "OrganizePreviewBodyReasonFull", "OrganizePreviewBodyReasonCategory", "OrganizePreviewBodyMove", "OrganizePreviewBodyClaim",
-        "OrganizePreviewBodyNoRoom", "OrganizePreviewBodySkipped", "OrganizePreviewBodySkippedReason", "OrganizeSkipReasonInUse",
+        "OrganizePreviewBodyNoRoom", "OrganizePreviewBodySpill", "OrganizePreviewBodySkipped", "OrganizePreviewBodySkippedReason", "OrganizeSkipReasonInUse",
         "OrganizeSkipReasonInUseUnknown", "OrganizeSkipReasonKeep", "OrganizeSkipReasonIneligible", "OrganizeSkipReasonInvalidContents",
         "OrganizeNamesJoin", "MessageOrganizeSummaryMoved", "MessageOrganizeSummaryMovedNone", "MessageOrganizeSummarySkipped",
         "MessageOrganizeSummaryNoRoom", "MessageOrganizeSummaryStopped", "MessageOrganizeSummaryStoppedNoReason", "MessageOrganizeSummaryJoin",

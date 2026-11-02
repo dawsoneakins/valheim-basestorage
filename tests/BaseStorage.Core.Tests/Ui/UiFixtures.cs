@@ -139,7 +139,7 @@ public static class UiFixtures
         ("feed.more", "+"),
         ("menu.mark", "Mark"),
         ("menu.search", "Search the base"),
-        ("menu.search.header", "{0} found in {1} chests"),
+        ("menu.search.header", "{0} items, {1} in all, in {2}"),
         ("menu.hit", "{0} x{1}"),
         ("menu.hit.more", "{0} +{1} more"),
         ("tooltip.favourite", "Favourite: Put away and Place stacks leave this"),
@@ -150,7 +150,7 @@ public static class UiFixtures
     // Edited by S-E008-001 (ADR-GWIN-153): 68, with MessageCraftUsedBase (contract 4.1).
     // Edited by S-E010-002 (organize-console-command 5): 68 plus the five console keys, 73.
     // Edited by S-A-003: 73 plus the rules key and the two no-room reasons, 76.
-    public const int StringKeyCount = 105;
+    public const int StringKeyCount = 112;
 
     /// <summary>Contract 3.2 "Const" column (31 constants), contract section 10 (16 more) and S-E005-002 section 2.6 (PlayerUnknown): the StringKeys constants and the value each one holds.</summary>
     public static readonly (string Name, string Value)[] StringKeyValues =
@@ -220,6 +220,13 @@ public static class UiFixtures
         ("MenuHit", "menu.hit"),
         ("MenuHitMore", "menu.hit.more"),
         ("TooltipFavourite", "tooltip.favourite"),
+        ("MenuSearchHeaderOne", "menu.search.header.single"),
+        ("MenuSearchChests", "menu.search.chests"),
+        ("MenuSearchNone", "menu.search.none"),
+        ("MenuSearchNoneHeader", "menu.search.none.header"),
+        ("MenuSearchClear", "menu.search.clear"),
+        ("MenuDistance", "menu.distance"),
+        ("OrganizePreviewBodySpill", "organize.preview.body.spill"),
         ("OrganizePreviewBodySkippedReason", "organize.preview.body.skipped-reason"),
         ("OrganizeSkipReasonInUse", "organize.skip-reason.in-use"),
         ("OrganizeSkipReasonInUseUnknown", "organize.skip-reason.in-use-unknown"),

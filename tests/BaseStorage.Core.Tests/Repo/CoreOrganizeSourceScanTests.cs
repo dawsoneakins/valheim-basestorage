@@ -18,6 +18,7 @@ public sealed class CoreOrganizeSourceScanTests
 
     private static readonly string[] ExpectedFiles =
     {
+        "CategoryNearness.cs",
         "ChestLayout.cs",
         "ChestRole.cs",
         "ItemKey.cs",
@@ -28,6 +29,7 @@ public sealed class CoreOrganizeSourceScanTests
         "PlannedMove.cs",
         "SkipReason.cs",
         "SkippedChest.cs",
+        "SpareChestShares.cs",
         "WorkingChest.cs",
         "WorkingStack.cs",
     };

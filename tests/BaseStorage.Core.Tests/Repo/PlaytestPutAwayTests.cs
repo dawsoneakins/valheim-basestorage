@@ -53,7 +53,7 @@ public sealed class PlaytestPutAwayTests
                      "`DepositPreview`",
                      "`[Organize]`",
                      "`DepositNeverItems`",
-                     "`@food, @mead, @ammo, Hammer, Hoe, Cultivator, FishingRod, @bait`",
+                     "`@mead, @ammo, Hammer, Hoe, Cultivator, FishingRod, @bait`",
                      "(top row)",
                      "Alt+click",
                      "Put away: 4 stacks moved, 2 no room",

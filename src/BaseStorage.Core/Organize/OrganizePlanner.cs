@@ -27,7 +27,8 @@ public static class OrganizePlanner
 
     /// <summary>
     /// Plans an Organize of one base snapshot; when <paramref name="autoAssignMixedChests"/> is true, the mixed-chest step runs
-    /// after the threshold step (S-A-001). Pure (P1).
+    /// after the threshold step (S-A-001), spare chests go to the categories short of the most room, and a stack with no room in its own
+    /// category moves to the nearest related chest. Pure (P1).
     /// </summary>
     /// <param name="containers">The base's member chests, in snapshot order, passed unfiltered. Not null, no null elements, no duplicate ids.</param>
     /// <param name="assignments">The persisted assignment per chest id. A missing id means unassigned. Not null, no null values.</param>
@@ -70,8 +71,16 @@ public static class OrganizePlanner
         var moves = new List<PlannedMove>();
         var noRoom = new List<NoRoomEntry>();
         var claimed = new List<WorkingChest>();
-        var placement = new Placement(byId, auto, pool, catalog, itemKinds, moves, noRoom, claimed);
-        PlaceUntilNothingMoves(placement, chests, moves, noRoom);
+        var shares = autoAssignMixedChests ? SpareChestShares.Of(auto, catalog, itemKinds) : null;
+        var placement = new Placement(byId, auto, pool, catalog, itemKinds, moves, noRoom, claimed, shares);
+        if (autoAssignMixedChests)
+        {
+            PlaceEverythingPossible(placement, chests, moves, noRoom);
+        }
+        else
+        {
+            PlaceUntilNothingMoves(placement, chests, moves, noRoom);
+        }
 
         var layouts = new ChestLayout[chests.Length];
         for (var i = 0; i < chests.Length; i++)
@@ -85,7 +94,42 @@ public static class OrganizePlanner
             claimedLayouts[i] = layouts[claimed[i].Index];
         }
 
-        return new OrganizePlan(auto, moves.ToArray(), noRoom.ToArray(), skipped.ToArray(), layouts, claimedLayouts);
+        return new OrganizePlan(auto, moves.ToArray(), noRoom.ToArray(), skipped.ToArray(), layouts, claimedLayouts, placement.Spilled, placement.SpillRules());
+    }
+
+    /// <summary>
+    /// Places every stack that can reach a better chest: first into its own category, then, once nothing else moves, into the nearest
+    /// related chest. A stack that spills frees a slot, which may let another stack get home, so the two repeat until nothing moves.
+    /// </summary>
+    private static void PlaceEverythingPossible(Placement placement, WorkingChest[] chests, List<PlannedMove> moves, List<NoRoomEntry> noRoom)
+    {
+        int before;
+        do
+        {
+            before = moves.Count;
+            PlaceUntilNothingMoves(placement, chests, moves, noRoom);
+            if (noRoom.Count == 0)
+            {
+                return;
+            }
+
+            placement.AllowAnyClaim();
+            PlaceUntilNothingMoves(placement, chests, moves, noRoom);
+            if (noRoom.Count == 0)
+            {
+                return;
+            }
+
+            noRoom.Clear();
+            placement.Spilling = true;
+            for (var c = 0; c < chests.Length; c++)
+            {
+                placement.PlaceAll(chests[c]);
+            }
+
+            placement.Spilling = false;
+        }
+        while (moves.Count > before && noRoom.Count > 0);
     }
 
     /// <summary>
@@ -472,10 +516,12 @@ public static class OrganizePlanner
         private readonly List<PlannedMove> moves;
         private readonly List<NoRoomEntry> noRoom;
         private readonly List<WorkingChest> claimed;
+        private Dictionary<string, int>? claimsLeft;
         private readonly Dictionary<string, string> categoryByPrefab = new Dictionary<string, string>(StringComparer.Ordinal);
         private readonly Dictionary<string, List<WorkingChest>> destinationsByCategory = new Dictionary<string, List<WorkingChest>>(StringComparer.Ordinal);
         private readonly List<WorkingChest> moveTargets = new List<WorkingChest>();
         private readonly List<int> moveCounts = new List<int>();
+        private readonly HashSet<WorkingChest> spillHosts = new HashSet<WorkingChest>();
 
         /// <summary>Creates the fill state over the usable chests of one call.</summary>
         /// <param name="byId">The working chest per usable chest id; the destinations are looked up here.</param>
@@ -486,6 +532,7 @@ public static class OrganizePlanner
         /// <param name="moves">The list that receives the planned moves.</param>
         /// <param name="noRoom">The list that receives the no-room entries.</param>
         /// <param name="claimed">The list that receives the claimed overflow chests, in claim order.</param>
+        /// <param name="claimsLeft">The empty chests each category may claim, or null when any category may claim any chest.</param>
         internal Placement(
             Dictionary<ContainerId, WorkingChest> byId,
             AutoAssignResult auto,
@@ -494,8 +541,10 @@ public static class OrganizePlanner
             IReadOnlyDictionary<string, ItemKind> itemKinds,
             List<PlannedMove> moves,
             List<NoRoomEntry> noRoom,
-            List<WorkingChest> claimed)
+            List<WorkingChest> claimed,
+            Dictionary<string, int>? claimsLeft = null)
         {
+            this.claimsLeft = claimsLeft;
             this.byId = byId;
             this.auto = auto;
             this.pool = pool;
@@ -505,6 +554,44 @@ public static class OrganizePlanner
             this.noRoom = noRoom;
             this.claimed = claimed;
         }
+
+        /// <summary>Gets or sets a value indicating whether a stack with no room in its own category may move to the nearest related chest.</summary>
+        internal bool Spilling { get; set; }
+
+        /// <summary>Gets the number of stacks that moved to a chest of another category.</summary>
+        internal int Spilled { get; private set; }
+
+        /// <summary>Lists the chests that took a stack of another category and have no saved category, so a guest cannot flip them later.</summary>
+        /// <returns>The rules, in snapshot order.</returns>
+        internal ChestAutoAssignment[] SpillRules()
+        {
+            var mixed = new HashSet<ContainerId>();
+            for (var i = 0; i < auto.MixedAssigned.Count; i++)
+            {
+                mixed.Add(auto.MixedAssigned[i].Id);
+            }
+
+            var hosts = new List<WorkingChest>();
+            foreach (var host in spillHosts)
+            {
+                if (host.Outcome != AutoAssignOutcome.AlreadyAssigned && !mixed.Contains(host.Container.Id))
+                {
+                    hosts.Add(host);
+                }
+            }
+
+            hosts.Sort(static (a, b) => a.Index.CompareTo(b.Index));
+            var rules = new ChestAutoAssignment[hosts.Count];
+            for (var i = 0; i < rules.Length; i++)
+            {
+                rules[i] = new ChestAutoAssignment(hosts[i].Container, AutoAssignOutcome.Assigned, CategoryAssignment.ForCategory(hosts[i].CategoryName!));
+            }
+
+            return rules;
+        }
+
+        /// <summary>Drops the share-out, once every category has had its share, so a leftover empty chest helps whoever still needs room.</summary>
+        internal void AllowAnyClaim() => claimsLeft = null;
 
         /// <summary>Places every input stack of one source chest, in Contents order (5.1).</summary>
         /// <param name="chest">The source chest.</param>
@@ -558,7 +645,7 @@ public static class OrganizePlanner
                 remaining = FillEmptySlots(destinations[d], key, remaining, moveTargets, moveCounts);
             }
 
-            while (remaining > 0)
+            while (remaining > 0 && MayClaim(category))
             {
                 var overflow = pool.Claim(category);
                 if (overflow is null)
@@ -571,6 +658,17 @@ public static class OrganizePlanner
                 destinations.Add(destination);
                 claimed.Add(destination);
                 remaining = FillEmptySlots(destination, key, remaining, moveTargets, moveCounts);
+            }
+
+            if (remaining > 0 && Spilling)
+            {
+                var left = Spill(chest, key, category, remaining);
+                if (left < remaining)
+                {
+                    Spilled++;
+                }
+
+                remaining = left;
             }
 
             if (remaining > 0)
@@ -586,8 +684,86 @@ public static class OrganizePlanner
 
             for (var m = 0; m < moveTargets.Count; m++)
             {
-                moves.Add(new PlannedMove(chest.Container.Id, i, moveTargets[m].Container.Id, key, moveCounts[m], category));
+                moves.Add(new PlannedMove(chest.Container.Id, i, moveTargets[m].Container.Id, key, moveCounts[m], moveTargets[m].CategoryName!));
             }
+        }
+
+        /// <summary>
+        /// Tells whether a chest still holds one of its own stacks of an item. The game merges a new stack into it, and that stack may be
+        /// due to leave with the amount the plan counted, so a stack of the same item must not land there.
+        /// </summary>
+        private static bool HoldsOwnStackOf(WorkingChest chest, ItemKey key)
+        {
+            var own = chest.Container.Contents.Count;
+            for (var i = 0; i < own; i++)
+            {
+                if (chest.Stacks[i].Count > 0 && chest.Stacks[i].Key.Equals(key))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>Uses up one of the category's share of the empty chests.</summary>
+        private bool MayClaim(string category)
+        {
+            if (claimsLeft is null)
+            {
+                return true;
+            }
+
+            if (!claimsLeft.TryGetValue(category, out var left) || left == 0)
+            {
+                return false;
+            }
+
+            claimsLeft[category] = left - 1;
+            return true;
+        }
+
+        /// <summary>Moves what it can of a stack to chests nearer its category than the one it is in: same-item stacks first, then free slots.</summary>
+        private int Spill(WorkingChest chest, ItemKey key, string category, int remaining)
+        {
+            var here = CategoryNearness.Of(category, chest.CategoryName, catalog);
+            var nearer = new List<WorkingChest>();
+            foreach (var candidate in byId.Values)
+            {
+                if (!ReferenceEquals(candidate, chest)
+                    && candidate.CategoryName is not null
+                    && CategoryNearness.Of(category, candidate.CategoryName, catalog) < here
+                    && !HoldsOwnStackOf(candidate, key))
+                {
+                    nearer.Add(candidate);
+                }
+            }
+
+            nearer.Sort((a, b) =>
+            {
+                var byNearness = CategoryNearness.Of(category, a.CategoryName, catalog).CompareTo(CategoryNearness.Of(category, b.CategoryName, catalog));
+                return byNearness != 0 ? byNearness : a.Index.CompareTo(b.Index);
+            });
+
+            for (var d = 0; d < nearer.Count && remaining > 0; d++)
+            {
+                remaining = MergeInto(nearer[d], key, remaining, moveTargets, moveCounts);
+            }
+
+            for (var d = 0; d < nearer.Count && remaining > 0; d++)
+            {
+                remaining = FillEmptySlots(nearer[d], key, remaining, moveTargets, moveCounts);
+            }
+
+            for (var m = 0; m < moveTargets.Count; m++)
+            {
+                if (!string.Equals(moveTargets[m].CategoryName, category, StringComparison.Ordinal))
+                {
+                    spillHosts.Add(moveTargets[m]);
+                }
+            }
+
+            return remaining;
         }
 
         /// <summary>Returns the mutable destination list of a category, created on first use from the usable category chests (P12).</summary>

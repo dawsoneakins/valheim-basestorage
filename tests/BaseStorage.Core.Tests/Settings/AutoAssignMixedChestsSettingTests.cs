@@ -9,9 +9,9 @@ using BaseStorage.Core.Settings;
 public sealed class AutoAssignMixedChestsSettingTests
 {
     private const string Description =
-        "Let Organize give mixed chests below the threshold a category that is short of space. Set to false to keep them as unassigned sources, as in 0.1.0. Host-synced: in multiplayer the host's value is used.";
+        "Let Organize give mixed chests a category that is short of space, and move stacks with no room of their own to the nearest related chest. Set to false for the 0.1.0 behaviour. Host-synced: in multiplayer the host's value is used.";
 
-    // GW-U-2430 (AC-7, 5.1): the catalog row is the last row, host-synced, default true, with the exact 201-character description.
+    // GW-U-2430 (AC-7, 5.1): the catalog row is the last row, host-synced, default true, with the exact 229-character description.
     [Fact]
     public void TheCatalogRowIsTheLastRowHostSyncedWithTheExactDescription()
     {
@@ -24,7 +24,7 @@ public sealed class AutoAssignMixedChestsSettingTests
         Assert.Equal("true", row.DefaultText);
         Assert.True(row.HostSynced);
         Assert.Equal(Description, row.Description);
-        Assert.Equal(201, row.Description.Length);
+        Assert.Equal(229, row.Description.Length);
         Assert.Same(row, SettingsCatalog.Get("AutoAssignMixedChests"));
     }
 

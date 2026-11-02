@@ -172,7 +172,9 @@ internal sealed class GameCraftGame : ICraftGame
             return false;
         }
 
-        if (!InventoryGui.IsVisible() || !gui.InCraftTab() || ZDOMan.GetSessionID() == 0L)
+        // An upgrade runs from the Upgrade tab, where the game's InCraftTab answers false.
+        bool rightTab = selection.UpgradeItem != null ? gui.InUpradeTab() : gui.InCraftTab();
+        if (!InventoryGui.IsVisible() || !rightTab || ZDOMan.GetSessionID() == 0L)
         {
             return false;
         }

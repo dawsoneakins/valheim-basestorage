@@ -24,6 +24,15 @@ public sealed class PluginUpgradeMultiCraftSourceScanTests
         Assert.Matches(@"m_multiCrafting\s*\?\s*\w+\.m_multiCraftAmount\s*:\s*1", text);
     }
 
+    // An upgrade runs from the Upgrade tab, where the game's InCraftTab is false; asking only that cancelled every chest-funded upgrade.
+    [Fact]
+    public void APendingUpgradeChecksTheUpgradeTab()
+    {
+        string text = PluginSourceScan.Sources()[GameCraftFile];
+
+        Assert.Matches(@"UpgradeItem\s*!=\s*null\s*\?\s*gui\.InUpradeTab\(\)\s*:\s*gui\.InCraftTab\(\)", text);
+    }
+
     // GW-U-1723 (UMS2, AC-1, AC-3): the check forwards vanilla's quality and amount, and the craft forwards the selection's quality and multiplier.
     [Fact]
     public void TheCheckAndTheCraftForwardTheQualityAndTheMultiplier()

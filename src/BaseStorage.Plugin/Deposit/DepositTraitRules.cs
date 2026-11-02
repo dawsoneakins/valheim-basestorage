@@ -16,7 +16,7 @@ internal static class DepositTraitRules
     /// <param name="equipped">True when the item is equipped.</param>
     /// <param name="consumable">True when the item type is a consumable.</param>
     /// <param name="ammo">True when the item type is ammo.</param>
-    /// <param name="food">True when the item is food.</param>
+    /// <param name="food">True when the item is food, which keeps it out of the mead group.</param>
     /// <param name="prefabName">The prefab name of the item.</param>
     /// <returns>The OR of every trait that applies.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="prefabName"/> is null.</exception>
@@ -31,11 +31,6 @@ internal static class DepositTraitRules
         if (equipped)
         {
             traits |= InventoryItemTraits.Equipped;
-        }
-
-        if (food)
-        {
-            traits |= InventoryItemTraits.Food;
         }
 
         if (consumable && !food)

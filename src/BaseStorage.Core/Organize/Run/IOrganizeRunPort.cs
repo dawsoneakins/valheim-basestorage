@@ -45,7 +45,7 @@ public interface IOrganizeRunPort
     /// <param name="body">The preview body, already resolved from the strings table.</param>
     void ShowPreview(string header, string body);
 
-    /// <summary>Saves the categories the mixed-chest step gave, after a run that finished (S-A-003). A chest that cannot be written is skipped and logged.</summary>
+    /// <summary>Saves the categories a finished run settled on (S-A-003). A chest that cannot be written is skipped and logged.</summary>
     /// <param name="rules">The chests and their categories.</param>
     void SaveCategoryRules(IReadOnlyList<ChestAutoAssignment> rules);
 

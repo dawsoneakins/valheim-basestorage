@@ -99,7 +99,7 @@ internal static class DepositFixtures
     /// <summary>Inventory I of contract 6.3: 12 stacks, indices 0 to 11 in this order.</summary>
     internal static PlayerInventorySnapshot I() => Inventory(
         At(0, 0, S("SwordIron", 1, 1, 2), InventoryItemTraits.Equipped),
-        At(1, 0, S("CookedMeat", 5), InventoryItemTraits.Food),
+        At(1, 0, S("CookedMeat", 5)),
         At(0, 1, S("Wood", 50)),
         At(1, 1, S("Wood", 40)),
         At(2, 1, S("Stone", 30)),

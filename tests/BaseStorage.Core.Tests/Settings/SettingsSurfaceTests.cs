@@ -71,9 +71,8 @@ public sealed class SettingsSurfaceTests
 
     // GW-U-100 (AC-3)
     [Fact]
-    public void ItemListTokensHoldsTheFourClassTokens()
+    public void ItemListTokensHoldsTheThreeClassTokens()
     {
-        Assert.Equal("@food", ItemListTokens.Food);
         Assert.Equal("@mead", ItemListTokens.Mead);
         Assert.Equal("@ammo", ItemListTokens.Ammo);
         Assert.Equal("@bait", ItemListTokens.Bait);

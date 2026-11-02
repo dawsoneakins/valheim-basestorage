@@ -51,7 +51,7 @@ Host-synced settings take the host's value in multiplayer; the others are local 
 | `AutoAssignMixedChests` | `[Organize]` | `true` | yes | Let Organize give mixed chests below the threshold a category that is short of space. Set to false to keep them as unassigned sources, as in 0.1.0. |
 | `OrganizeSkipPreview` | `[Organize]` | `false` | no | Start Organize without showing the preview first. |
 | `DepositPreview` | `[Organize]` | `false` | no | Show a preview before Put away inventory moves anything. |
-| `DepositNeverItems` | `[Organize]` | `@food,@mead,@ammo,Hammer,Hoe,Cultivator,FishingRod,@bait` | no | Items Put away inventory never moves. Comma-separated prefab names or tokens: @food, @mead, @ammo (arrows and bolts), @bait. |
+| `DepositNeverItems` | `[Organize]` | `@mead,@ammo,Hammer,Hoe,Cultivator,FishingRod,@bait` | no | Items Put away inventory never moves. Comma-separated prefab names or tokens: @mead, @ammo (arrows and bolts), @bait. Star an item as a favourite to keep it on you. |
 | `MovesPerFrame` | `[Organize]` | `20` | no | Maximum item moves per frame while Organize or Put away inventory runs. |
 | `OrganizeLockSeconds` | `[Organize]` | `30` | yes | Seconds before an abandoned Organize lock on a base expires. |
 | `ReserveTimeoutMs` | `[Network]` | `1500` | yes | Milliseconds to wait for a chest reservation before giving up. |
@@ -86,7 +86,7 @@ Use any crafting station in a base and an **Organize base** button appears next 
 
 The button is disabled, with a tooltip saying why, while an Organize runs in the base (`Organize in progress by <name>`) or when the base has no usable chest (`No chests in this base`). Set the `StationButtons` setting (`StationButtons = false`) under `[General]` (local to each player, default `true`) to hide the button and the line. With a gamepad, the button is reached with the cursor and has no button binding of its own.
 
-**Put away inventory**, next to Organize base, moves your inventory into the station's base chests by their categories. It never moves the hotbar (top row), equipped items, favourites (Alt+click a slot) or anything in `DepositNeverItems` (default: food, meads, arrows and bolts, the hammer, hoe, cultivator, fishing rod and bait). Set `DepositPreview = true` under `[Organize]` to show a preview first (default off). The optional `DepositKey` under `[Keys]` (unbound by default) puts away into the base you stand in. It ends with one line such as `Put away: 4 stacks moved, 2 no room`, and it shares the disabled state and the one-per-base lock with Organize base.
+**Put away inventory**, next to Organize base, moves your inventory into the station's base chests by their categories. It never moves the hotbar (top row), equipped items, favourites (Alt+click a slot) or anything in `DepositNeverItems` (default: meads, arrows and bolts, the hammer, hoe, cultivator, fishing rod and bait). Set `DepositPreview = true` under `[Organize]` to show a preview first (default off). The optional `DepositKey` under `[Keys]` (unbound by default) puts away into the base you stand in. It ends with one line such as `Put away: 4 stacks moved, 2 no room`, and it shares the disabled state and the one-per-base lock with Organize base.
 
 ## Console command
 

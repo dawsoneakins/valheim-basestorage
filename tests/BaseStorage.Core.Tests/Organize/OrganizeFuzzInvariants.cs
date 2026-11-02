@@ -69,7 +69,7 @@ internal static class OrganizeFuzzInvariants
         }
 
         AssertConservation(input, plan, replay);
-        AssertMisplacedOracle(input, plan);
+        AssertMisplacedOracle(input, plan, autoAssignMixedChests);
         AssertSamePlan(plan, Run(input, autoAssignMixedChests));
 
         int keepSkipped = plan.Skipped.Count(s => input.Assignments.TryGetValue(s.Id, out var a) && a.IsKeep);
@@ -226,14 +226,17 @@ internal static class OrganizeFuzzInvariants
     /// (as <c>AutoAssign</c> reports it). For every misplaced stack, moved plus no-room equals its count; a stack in place is in no move
     /// and no entry. Every move and entry carries the item's resolved category.
     /// </summary>
-    private static void AssertMisplacedOracle(PlanInput input, OrganizePlan plan)
+    private static void AssertMisplacedOracle(PlanInput input, OrganizePlan plan, bool mayGoToARelatedChest)
     {
         var transferred = new Dictionary<(ContainerId Source, int Index), long>();
         foreach (PlannedMove move in plan.Moves)
         {
             (ContainerId, int) key = (move.Source, move.SourceStackIndex);
             transferred[key] = transferred.GetValueOrDefault(key) + move.Count;
-            Assert.Equal(ResolveCategory(input, move.PrefabName), move.CategoryName);
+            if (!mayGoToARelatedChest)
+            {
+                Assert.Equal(ResolveCategory(input, move.PrefabName), move.CategoryName);
+            }
         }
 
         foreach (NoRoomEntry entry in plan.NoRoom)

@@ -1,5 +1,6 @@
 namespace BaseStorage.Core.Organize;
 
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using BaseStorage.Core.Categories.AutoAssign;
@@ -21,14 +22,22 @@ public sealed class OrganizePlan
     /// <param name="skipped">The skipped chests in snapshot order.</param>
     /// <param name="layouts">One layout per usable chest in snapshot order.</param>
     /// <param name="claimedOverflow">The claimed overflow layouts in claim order; the same instances as in <paramref name="layouts"/>.</param>
+    /// <param name="spilled">The stacks that move to a chest of another category because their own has no room.</param>
+    /// <param name="spillRules">The chests that take those stacks and have no saved category yet.</param>
     internal OrganizePlan(
         AutoAssignResult autoAssign,
         PlannedMove[] moves,
         NoRoomEntry[] noRoom,
         SkippedChest[] skipped,
         ChestLayout[] layouts,
-        ChestLayout[] claimedOverflow)
+        ChestLayout[] claimedOverflow,
+        int spilled = 0,
+        ChestAutoAssignment[]? spillRules = null)
     {
+        Spilled = spilled;
+        var rules = new List<ChestAutoAssignment>(autoAssign.MixedAssigned);
+        rules.AddRange(spillRules ?? Array.Empty<ChestAutoAssignment>());
+        RulesToSave = new ReadOnlyCollection<ChestAutoAssignment>(rules);
         AutoAssign = autoAssign;
         Moves = new ReadOnlyCollection<PlannedMove>(moves);
         NoRoom = new ReadOnlyCollection<NoRoomEntry>(noRoom);
@@ -51,6 +60,15 @@ public sealed class OrganizePlan
 
     /// <summary>Gets the auto-assign result over the usable chests.</summary>
     public AutoAssignResult AutoAssign { get; }
+
+    /// <summary>Gets the number of stacks that move to a chest of another category because their own has no room.</summary>
+    public int Spilled { get; }
+
+    /// <summary>
+    /// Gets the categories to save after a run: the mixed-chest step's, and those of chests that took a stack of another category and had
+    /// none saved, because the guest could otherwise tip the chest's majority and flip its category on the next Organize.
+    /// </summary>
+    public IReadOnlyList<ChestAutoAssignment> RulesToSave { get; }
 
     /// <summary>Gets the planned moves in execution order, read-only.</summary>
     public IReadOnlyList<PlannedMove> Moves { get; }

@@ -168,8 +168,6 @@ internal static class DepositFuzzInvariants
         InventoryItemTraits traits = stack.Traits;
         switch (entry.ToUpperInvariant())
         {
-            case "@FOOD":
-                return kind == ItemKind.Food || (traits & InventoryItemTraits.Food) != 0;
             case "@MEAD":
                 return (traits & InventoryItemTraits.Mead) != 0;
             case "@AMMO":

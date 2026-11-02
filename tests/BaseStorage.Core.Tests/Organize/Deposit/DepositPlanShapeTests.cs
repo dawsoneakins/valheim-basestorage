@@ -61,7 +61,7 @@ public sealed class DepositPlanShapeTests
             new[]
             {
                 (0, DepositExclusion.Hotbar | DepositExclusion.Equipped),
-                (1, DepositExclusion.Hotbar | DepositExclusion.NeverList),
+                (1, DepositExclusion.Hotbar),
                 (6, DepositExclusion.Equipped),
                 (7, DepositExclusion.Favourite),
                 (8, DepositExclusion.NeverList),

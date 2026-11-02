@@ -315,6 +315,27 @@ public static class StringKeys
     /// <summary>One matching item, and how many other items match.</summary>
     public const string MenuHitMore = "menu.hit.more";
 
+    /// <summary>The search header when one item was found, before the chest count.</summary>
+    public const string MenuSearchHeaderOne = "menu.search.header.single";
+
+    /// <summary>Key base (plural form appended) of the chest count in the search header.</summary>
+    public const string MenuSearchChests = "menu.search.chests";
+
+    /// <summary>The list's message when a search finds nothing.</summary>
+    public const string MenuSearchNone = "menu.search.none";
+
+    /// <summary>The search header when a search finds nothing.</summary>
+    public const string MenuSearchNoneHeader = "menu.search.none.header";
+
+    /// <summary>The label of the button that empties the search box.</summary>
+    public const string MenuSearchClear = "menu.search.clear";
+
+    /// <summary>A chest's distance on a search result.</summary>
+    public const string MenuDistance = "menu.distance";
+
+    /// <summary>Key base (plural form appended) of the preview clause for stacks going to a related chest.</summary>
+    public const string OrganizePreviewBodySpill = "organize.preview.body.spill";
+
     /// <summary>The tooltip line of a favourite item.</summary>
     public const string TooltipFavourite = "tooltip.favourite";
 }

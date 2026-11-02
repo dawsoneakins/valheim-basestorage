@@ -66,10 +66,15 @@ public static class OrganizeSummaryFormatter
             sentences.Add(table.FormatPlural(StringKeys.OrganizePreviewBodyClaim, claim.Value, ClauseArgs(moves, destinations, claim.Value, name, 0, 0, null)));
         }
 
-        int rules = plan.AutoAssign.MixedAssigned.Count;
+        int rules = plan.RulesToSave.Count;
         if (rules > 0)
         {
             sentences.Add(table.FormatPlural(StringKeys.OrganizePreviewBodyRules, rules, rules));
+        }
+
+        if (plan.Spilled > 0)
+        {
+            sentences.Add(table.FormatPlural(StringKeys.OrganizePreviewBodySpill, plan.Spilled, plan.Spilled));
         }
 
         int noRoom = plan.NoRoom.Count;

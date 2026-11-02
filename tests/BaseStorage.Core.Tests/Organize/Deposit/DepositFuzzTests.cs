@@ -73,7 +73,7 @@ public sealed class DepositFuzzTests
 
         Assert.Equal(new[] { 2, 3, 4, 5 }, heights.OrderBy(h => h));
         Assert.Equal(RandomInventoryGenerator.NeverListVariants, variants.Count);
-        Assert.Equal(InventoryItemTraits.Equipped | InventoryItemTraits.Food | InventoryItemTraits.Mead | InventoryItemTraits.Ammo | InventoryItemTraits.Bait, traits);
+        Assert.Equal(InventoryItemTraits.Equipped | InventoryItemTraits.Mead | InventoryItemTraits.Ammo | InventoryItemTraits.Bait, traits);
         Assert.True(empty > 0 && full > 0, "the corpus must have empty and full inventories");
         Assert.True(favourites > 0 && emptyFavourites > 0, "the corpus must have favourites, including favourites of empty slots");
         Assert.True(overMax > 0 && reversed > 0 && neverPrefabs > 0, "the corpus must have over-max stacks, reversed stack order and never-list items");

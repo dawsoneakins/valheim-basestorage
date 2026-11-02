@@ -707,6 +707,9 @@ internal static class PatchTargetNames
         /// <summary>The InCraftTab method.</summary>
         public const string InCraftTab = "InCraftTab";
 
+        /// <summary>The InUpradeTab method; the misspelling is the game's.</summary>
+        public const string InUpradeTab = "InUpradeTab";
+
         /// <summary>The SetupRequirement method (one declared overload).</summary>
         public const string SetupRequirement = "SetupRequirement";
 

@@ -27,8 +27,8 @@ public static class SettingsCatalog
             "Start Organize without showing the preview first."),
         new SettingDefinition(SettingSections.Organize, SettingKeys.DepositPreview, SettingKind.Bool, "false", false,
             "Show a preview before Put away inventory moves anything."),
-        new SettingDefinition(SettingSections.Organize, SettingKeys.DepositNeverItems, SettingKind.ItemList, "@food,@mead,@ammo,Hammer,Hoe,Cultivator,FishingRod,@bait", false,
-            "Items Put away inventory never moves. Comma-separated prefab names or tokens: @food, @mead, @ammo (arrows and bolts), @bait."),
+        new SettingDefinition(SettingSections.Organize, SettingKeys.DepositNeverItems, SettingKind.ItemList, "@mead,@ammo,Hammer,Hoe,Cultivator,FishingRod,@bait", false,
+            "Items Put away inventory never moves. Comma-separated prefab names or tokens: @mead, @ammo (arrows and bolts), @bait. Star an item as a favourite to keep it on you."),
         new SettingDefinition(SettingSections.Organize, SettingKeys.MovesPerFrame, SettingKind.Int, "20", false,
             "Maximum item moves per frame while Organize or Put away inventory runs."),
         new SettingDefinition(SettingSections.Organize, SettingKeys.OrganizeLockSeconds, SettingKind.Int, "30", true,
@@ -46,7 +46,7 @@ public static class SettingsCatalog
         new SettingDefinition(SettingSections.Debug, SettingKeys.DebugLogging, SettingKind.Bool, "false", false,
             "Write per-move detail to the log at Debug level."),
         new SettingDefinition(SettingSections.Organize, SettingKeys.AutoAssignMixedChests, SettingKind.Bool, "true", true,
-            "Let Organize give mixed chests below the threshold a category that is short of space. Set to false to keep them as unassigned sources, as in 0.1.0. Host-synced: in multiplayer the host's value is used."),
+            "Let Organize give mixed chests a category that is short of space, and move stacks with no room of their own to the nearest related chest. Set to false for the 0.1.0 behaviour. Host-synced: in multiplayer the host's value is used."),
         new SettingDefinition(SettingSections.General, SettingKeys.ShowCategoryTooltip, SettingKind.Bool, "true", false,
             "Show each item's BaseStorage category on its tooltip."),
     };
@@ -57,7 +57,7 @@ public static class SettingsCatalog
     /// <summary>The 9 entries whose host-synced flag is true, in table order.</summary>
     public static IReadOnlyList<SettingDefinition> HostSynced { get; } = new ReadOnlyCollection<SettingDefinition>(Array.FindAll(Rows, r => r.HostSynced));
 
-    /// <summary>The parsed default of DepositNeverItems, with 8 entries.</summary>
+    /// <summary>The parsed default of DepositNeverItems, with 7 entries.</summary>
     public static IReadOnlyList<string> DepositNeverItemsDefault { get; } = ItemListText.Parse(Array.Find(Rows, r => r.Key == SettingKeys.DepositNeverItems)!.DefaultText);
 
     /// <summary>Finds the entry for a key. The key comparison is ordinal and case-sensitive.</summary>

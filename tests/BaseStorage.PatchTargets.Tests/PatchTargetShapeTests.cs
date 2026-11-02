@@ -201,6 +201,7 @@ public sealed class PatchTargetShapeTests
             new("InventoryGui", "Hide", TargetKind.MethodOverloads, "Hide", null),
             new("InventoryGui", "HideParametersNone", TargetKind.OverloadCompanion, "", "Hide"),
             new("InventoryGui", "InCraftTab", TargetKind.MethodNameOnly, "InCraftTab", null),
+            new("InventoryGui", "InUpradeTab", TargetKind.MethodNameOnly, "InUpradeTab", null),
             new("InventoryGui", "IsContainerOpen", TargetKind.MethodNameOnly, "IsContainerOpen", null),
             new("InventoryGui", "IsVisible", TargetKind.MethodNameOnly, "IsVisible", null),
             new("InventoryGui", "SetupRequirement", TargetKind.MethodOverloads, "SetupRequirement", null),
@@ -464,11 +465,11 @@ public sealed class PatchTargetShapeTests
         // Edited by S-E004-012 (ADR-GWIN-136): plus the 15 station-actions rows (1, 1, 1, 0, 6, 6) = 385.
         // Edited by S-E004-015 (ADR-GWIN-143): plus the seven Deposit rows (0, 0, 0, 1, 3, 3) = 392, as 48, 41, 45, 102, 78 and 78.
         // Edited by S-E010-002 (organize-console-command 6.2): 404, by kind 52, 43, 47, 102, 80 and 80.
-        Assert.Equal(418, entries.Count);
+        Assert.Equal(419, entries.Count);
         Assert.Equal(54, entries.Count(e => e.Kind == TargetKind.TypeEntry));
         Assert.Equal(50, entries.Count(e => e.Kind == TargetKind.MethodOverloads));
         Assert.Equal(54, entries.Count(e => e.Kind == TargetKind.OverloadCompanion));
-        Assert.Equal(100, entries.Count(e => e.Kind == TargetKind.MethodNameOnly));
+        Assert.Equal(101, entries.Count(e => e.Kind == TargetKind.MethodNameOnly));
         Assert.Equal(80, entries.Count(e => e.Kind == TargetKind.FieldEntry));
         Assert.Equal(80, entries.Count(e => e.Kind == TargetKind.FieldTypeCompanion));
         Assert.Equal(

@@ -22,7 +22,7 @@ internal static class Section7Table
         ("Organize", "AutoAssignThresholdPct", SettingKind.Int, "50", true),
         ("Organize", "OrganizeSkipPreview", SettingKind.Bool, "false", false),
         ("Organize", "DepositPreview", SettingKind.Bool, "false", false),
-        ("Organize", "DepositNeverItems", SettingKind.ItemList, "@food,@mead,@ammo,Hammer,Hoe,Cultivator,FishingRod,@bait", false),
+        ("Organize", "DepositNeverItems", SettingKind.ItemList, "@mead,@ammo,Hammer,Hoe,Cultivator,FishingRod,@bait", false),
         ("Organize", "MovesPerFrame", SettingKind.Int, "20", false),
         ("Organize", "OrganizeLockSeconds", SettingKind.Int, "30", true),
         ("Network", "ReserveTimeoutMs", SettingKind.Int, "1500", true),

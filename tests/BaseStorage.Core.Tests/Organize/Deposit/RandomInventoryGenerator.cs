@@ -43,7 +43,6 @@ internal static class RandomInventoryGenerator
         new NeverItemSpec("MeadHealthMinor", ItemKind.Other, InventoryItemTraits.Mead, 10),
         new NeverItemSpec("FishingBait", ItemKind.Other, InventoryItemTraits.Bait, 20),
         new NeverItemSpec("BoltIron", ItemKind.Ammo, InventoryItemTraits.Ammo, 20),
-        new NeverItemSpec("Honey", null, InventoryItemTraits.Food, 50),
     };
 
     /// <summary>One never-list item of the table.</summary>
@@ -238,11 +237,6 @@ internal static class RandomInventoryGenerator
                 }
             }
 
-            if ((item.Prefab == "CookedMeat" || item.Prefab == "QueensJam" || item.Prefab == "SerpentStew") && random.Chance(60))
-            {
-                traits |= InventoryItemTraits.Food;
-            }
-
             if (item.Prefab == "ArrowWood" && random.Chance(60))
             {
                 traits |= InventoryItemTraits.Ammo;
@@ -251,7 +245,7 @@ internal static class RandomInventoryGenerator
 
         if (random.Chance(3))
         {
-            traits |= random.Pick(new[] { InventoryItemTraits.Food, InventoryItemTraits.Mead, InventoryItemTraits.Ammo, InventoryItemTraits.Bait });
+            traits |= random.Pick(new[] { InventoryItemTraits.Mead, InventoryItemTraits.Ammo, InventoryItemTraits.Bait });
         }
 
         int count;

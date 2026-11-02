@@ -14,7 +14,7 @@ public sealed class PlannedMove
     /// <param name="destination">The destination chest id.</param>
     /// <param name="item">The moved item's identity.</param>
     /// <param name="count">The number of items moved, at least 1.</param>
-    /// <param name="categoryName">The stack's category, which is the destination's chest category.</param>
+    /// <param name="categoryName">The destination's chest category: the stack's own, or a related one when its own has no room.</param>
     internal PlannedMove(ContainerId source, int sourceStackIndex, ContainerId destination, ItemKey item, int count, string categoryName)
     {
         Source = source;
@@ -48,6 +48,6 @@ public sealed class PlannedMove
     /// <summary>Gets the number of items moved, at least 1.</summary>
     public int Count { get; }
 
-    /// <summary>Gets the category of the stack, which is the destination's chest category.</summary>
+    /// <summary>Gets the destination's chest category: the stack's own, or a related one when its own has no room.</summary>
     public string CategoryName { get; }
 }

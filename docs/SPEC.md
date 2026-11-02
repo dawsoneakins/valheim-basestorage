@@ -144,7 +144,7 @@ IDs are stable. Reference them from ROADMAP stories as "AC-x.y".
   - the hotbar (row 1);
   - equipped items;
   - items flagged favourite by the mod;
-  - anything listed in the `DepositNeverItems` setting (default: food you are carrying, meads, arrows and bolts, the hammer, hoe, cultivator, and the active fishing rod and bait).
+  - anything listed in the `DepositNeverItems` setting (default: meads, arrows and bolts, the hammer, hoe, cultivator, and the active fishing rod and bait).
   A preview is optional (`DepositPreview`, default false). Mod favourites toggle with Alt+click on an inventory slot and are stored in the player profile's custom data.
 - **AC-4.10 Station is the entry point.**
   - **Buttons.** When the player uses any crafting station that belongs to a base, the crafting panel shows two buttons in vanilla style: **Organize base** and **Put away inventory**. They sit next to the existing craft controls and do not cover recipe list, requirements or craft button at any supported resolution (1280x720 to 3840x2160, UI scale 0.8 to 1.2).

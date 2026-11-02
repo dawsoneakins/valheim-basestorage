@@ -49,14 +49,14 @@ public sealed class SettingDescriptionTests
         }
     }
 
-    // GW-U-099 (D4): the DepositNeverItems description names the separator and the four class tokens.
+    // GW-U-099 (D4): the DepositNeverItems description names the separator and the three class tokens.
     [Fact]
     public void DepositNeverItemsDescriptionNamesTheSeparatorAndTheClassTokens()
     {
         string description = SettingsCatalog.Get(SettingKeys.DepositNeverItems).Description;
 
         Assert.Contains(",", description);
-        Assert.Contains("@food", description);
+        Assert.DoesNotContain("@food", description);
         Assert.Contains("@mead", description);
         Assert.Contains("@ammo", description);
         Assert.Contains("@bait", description);

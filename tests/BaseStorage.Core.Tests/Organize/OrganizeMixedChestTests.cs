@@ -50,9 +50,10 @@ public sealed class OrganizeMixedChestTests
                 Move(203, 0, 201, "Wood", 1, 50, 20, "Wood"),
                 Move(209, 2, 204, "Resin", 1, 50, 12, "Misc"),
                 Move(209, 3, 208, "CookedMeat", 1, 50, 5, "Cooked Food"),
+                Move(209, 4, 204, "TrophyDeer", 1, 20, 1, "Misc"),
             },
             MovesOf(plan));
-        Assert.Equal(new[] { NoRoom(209, 4, "TrophyDeer", 1, 20, 1, "Trophies") }, NoRoomOf(plan));
+        Assert.Empty(NoRoomOf(plan));
         Assert.Equal(new uint[] { 204, 208 }, plan.ClaimedOverflow.Select(layout => layout.Id.Id));
         Assert.Equal(SkippedRowsOfE(), SkipsOf(plan));
         Assert.Equal(
@@ -61,15 +62,15 @@ public sealed class OrganizeMixedChestTests
                 Layout(201, ChestRole.Category, "Wood", S("Wood", 50)),
                 Layout(202, ChestRole.Category, "Stone", S("Flint", 5), S("Stone", 50), S("Stone", 5)),
                 Layout(203, ChestRole.Category, "Stone", S("Flint", 7), S("Stone", 40)),
-                Layout(204, ChestRole.ClaimedOverflow, "Misc", S("Resin", 12)),
+                Layout(204, ChestRole.ClaimedOverflow, "Misc", S("Resin", 12), S("TrophyDeer", 1, 20)),
                 Layout(208, ChestRole.ClaimedOverflow, "Cooked Food", S("CookedMeat", 5)),
-                Layout(209, ChestRole.Category, "Wood", S("TrophyDeer", 1, 20), S("Wood", 50), S("Wood", 35)),
+                Layout(209, ChestRole.Category, "Wood", S("Wood", 50), S("Wood", 35)),
             },
             LayoutsOf(plan));
 
         Assert.DoesNotContain(plan.Moves, move => move.Source == Id(209) && (move.SourceStackIndex == 0 || move.SourceStackIndex == 1));
-        Assert.Equal(47, plan.Moves.Sum(move => move.Count));
-        Assert.Equal(1, plan.NoRoom.Sum(entry => entry.Count));
+        Assert.Equal(48, plan.Moves.Sum(move => move.Count));
+        Assert.Empty(plan.NoRoom);
     }
 
     // GW-U-2407 (AC-2, MC3, 6.8): skipped chests add neither demand nor capacity, so 209 is the single Wood pick.

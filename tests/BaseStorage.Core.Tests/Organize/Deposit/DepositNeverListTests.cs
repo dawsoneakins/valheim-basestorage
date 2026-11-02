@@ -10,17 +10,17 @@ using static BaseStorage.Core.Tests.Organize.Deposit.DepositFixtures;
 using static BaseStorage.Core.Tests.Organize.OrganizeFixtures;
 
 /// <summary>
-/// AC-4.9: the DepositNeverItems default covers carried food, meads, arrows and bolts, hammer, hoe, cultivator, fishing rod and bait
+/// AC-4.9: the DepositNeverItems default covers meads, arrows and bolts, hammer, hoe, cultivator, fishing rod and bait
 /// (deposit contract 6.5), and the exclusions read the list from the settings once.
 /// </summary>
 public sealed class DepositNeverListTests
 {
     /// <summary>The default list, copied from spec section 7 as a literal.</summary>
-    private static readonly string[] DefaultEntries = { "@food", "@mead", "@ammo", "Hammer", "Hoe", "Cultivator", "FishingRod", "@bait" };
+    private static readonly string[] DefaultEntries = { "@mead", "@ammo", "Hammer", "Hoe", "Cultivator", "FishingRod", "@bait" };
 
-    // GW-U-1057 (AC-4.9): the parsed default has exactly the 8 entries, in order.
+    // GW-U-1057 (AC-4.9): the parsed default has exactly the 7 entries, in order.
     [Fact]
-    public void TheDefaultListHasTheEightSpecEntries()
+    public void TheDefaultListHasTheSevenEntries()
     {
         Assert.Equal(DefaultEntries, SettingsCatalog.DepositNeverItemsDefault);
         Assert.Equal(DefaultEntries, DefaultExclusions().NeverItems);
@@ -28,8 +28,6 @@ public sealed class DepositNeverListTests
 
     // GW-U-1058 (AC-4.9): every default entry keeps its representative stack back, and an empty list lets the same stack go.
     [Theory]
-    [InlineData("@food", "CookedMeat", ItemKind.Other, InventoryItemTraits.Food)]
-    [InlineData("@food", "SerpentStew", ItemKind.Food, InventoryItemTraits.None)]
     [InlineData("@mead", "MeadHealthMinor", ItemKind.Other, InventoryItemTraits.Mead)]
     [InlineData("@ammo", "ArrowWood", ItemKind.Ammo, InventoryItemTraits.None)]
     [InlineData("@ammo", "BoltIron", ItemKind.Other, InventoryItemTraits.Ammo)]

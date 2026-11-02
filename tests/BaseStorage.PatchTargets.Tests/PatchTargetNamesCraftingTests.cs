@@ -42,6 +42,7 @@ public sealed class PatchTargetNamesCraftingTests
     [InlineData("InventoryGui", "FieldCraftBonusAmountType", "System.Int32")]
     [InlineData("InventoryGui", "IsVisible", "IsVisible")]
     [InlineData("InventoryGui", "InCraftTab", "InCraftTab")]
+    [InlineData("InventoryGui", "InUpradeTab", "InUpradeTab")]
     [InlineData("Recipe", "TypeName", "Recipe")]
     [InlineData("Recipe", "FieldItem", "m_item")]
     [InlineData("Recipe", "FieldItemType", "ItemDrop")]

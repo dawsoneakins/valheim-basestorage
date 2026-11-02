@@ -10,15 +10,15 @@ using BaseStorage.Core.Settings;
 /// </summary>
 public sealed class ItemListTextTests
 {
-    private const string DefaultText = "@food,@mead,@ammo,Hammer,Hoe,Cultivator,FishingRod,@bait";
+    private const string DefaultText = "@mead,@ammo,Hammer,Hoe,Cultivator,FishingRod,@bait";
 
     // GW-U-102 (AC-1)
     [Fact]
-    public void DepositNeverItemsDefaultIsTheEightEntryListFromSection43()
+    public void DepositNeverItemsDefaultIsTheSevenEntryList()
     {
-        string[] expected = { "@food", "@mead", "@ammo", "Hammer", "Hoe", "Cultivator", "FishingRod", "@bait" };
+        string[] expected = { "@mead", "@ammo", "Hammer", "Hoe", "Cultivator", "FishingRod", "@bait" };
 
-        Assert.Equal(8, SettingsCatalog.DepositNeverItemsDefault.Count);
+        Assert.Equal(7, SettingsCatalog.DepositNeverItemsDefault.Count);
         Assert.Equal(expected, SettingsCatalog.DepositNeverItemsDefault);
     }
 

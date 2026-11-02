@@ -33,7 +33,7 @@ public sealed class DepositExclusionTests
     {
         Assert.Equal(DepositExclusion.Equipped, DepositPlanner.ExclusionOf(At(2, 1, S("HelmetBronze", 1, 1), InventoryItemTraits.Equipped), NoExclusions(), ItemKind.Armour));
         Assert.True(At(2, 1, S("HelmetBronze", 1, 1), InventoryItemTraits.Equipped).IsEquipped);
-        Assert.Equal(DepositExclusion.None, DepositPlanner.ExclusionOf(At(2, 1, S("CookedMeat", 5), InventoryItemTraits.Food), NoExclusions(), ItemKind.Other));
+        Assert.Equal(DepositExclusion.None, DepositPlanner.ExclusionOf(At(2, 1, S("CookedMeat", 5)), NoExclusions(), ItemKind.Food));
         Assert.Equal(DepositExclusion.None, DepositPlanner.ExclusionOf(At(2, 1, S("ArrowWood", 20), InventoryItemTraits.Ammo | InventoryItemTraits.Bait | InventoryItemTraits.Mead), NoExclusions(), ItemKind.Ammo));
     }
 
@@ -52,10 +52,8 @@ public sealed class DepositExclusionTests
     [InlineData("Hammer", "Hammer", ItemKind.Tool, InventoryItemTraits.None, true)]
     [InlineData("hammer", "Hammer", ItemKind.Tool, InventoryItemTraits.None, false)]
     [InlineData("Hammer", "Hoe", ItemKind.Tool, InventoryItemTraits.None, false)]
-    [InlineData("@food", "CookedMeat", ItemKind.Other, InventoryItemTraits.Food, true)]
-    [InlineData("@food", "SerpentStew", ItemKind.Food, InventoryItemTraits.None, true)]
-    [InlineData("@Food", "SerpentStew", ItemKind.Food, InventoryItemTraits.None, true)]
-    [InlineData("@food", "Wood", ItemKind.Other, InventoryItemTraits.None, false)]
+    [InlineData("@food", "SerpentStew", ItemKind.Food, InventoryItemTraits.None, false)]
+    [InlineData("@Food", "CookedMeat", ItemKind.Food, InventoryItemTraits.None, false)]
     [InlineData("@mead", "MeadHealthMinor", ItemKind.Other, InventoryItemTraits.Mead, true)]
     [InlineData("@mead", "MeadHealthMinor", ItemKind.Other, InventoryItemTraits.None, false)]
     [InlineData("@ammo", "ArrowWood", ItemKind.Ammo, InventoryItemTraits.None, true)]
@@ -63,9 +61,9 @@ public sealed class DepositExclusionTests
     [InlineData("@AMMO", "ArrowWood", ItemKind.Ammo, InventoryItemTraits.None, true)]
     [InlineData("@bait", "FishingBait", ItemKind.Other, InventoryItemTraits.Bait, true)]
     [InlineData("@bait", "FishingBait", ItemKind.Other, InventoryItemTraits.None, false)]
-    [InlineData("@fish", "FishingBait", ItemKind.Other, InventoryItemTraits.Bait | InventoryItemTraits.Food | InventoryItemTraits.Mead | InventoryItemTraits.Ammo, false)]
+    [InlineData("@fish", "FishingBait", ItemKind.Other, InventoryItemTraits.Bait | InventoryItemTraits.Mead | InventoryItemTraits.Ammo, false)]
     [InlineData("@", "Wood", ItemKind.Other, InventoryItemTraits.None, false)]
-    [InlineData("@food", "Wood", ItemKind.Other, InventoryItemTraits.Equipped, false)]
+    [InlineData("@mead", "Wood", ItemKind.Other, InventoryItemTraits.Equipped, false)]
     public void NeverListEntriesMatchByPrefabOrGroup(string entry, string prefab, ItemKind kind, InventoryItemTraits traits, bool expected)
     {
         DepositExclusions exclusions = NeverList(entry);

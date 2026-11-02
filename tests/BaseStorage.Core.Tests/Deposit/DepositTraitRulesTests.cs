@@ -25,7 +25,7 @@ public sealed class DepositTraitRulesTests
         {
             Assert.Equal(InventoryItemTraits.None, DepositTraitRules.Of(false, false, false, false, "Wood"));
             Assert.Equal(InventoryItemTraits.Equipped, DepositTraitRules.Of(true, false, false, false, "SwordIron"));
-            Assert.Equal(InventoryItemTraits.Food, DepositTraitRules.Of(false, true, false, true, "CookedMeat"));
+            Assert.Equal(InventoryItemTraits.None, DepositTraitRules.Of(false, true, false, true, "CookedMeat"));
             Assert.Equal(InventoryItemTraits.Mead, DepositTraitRules.Of(false, true, false, false, "MeadHealthMinor"));
         });
     }

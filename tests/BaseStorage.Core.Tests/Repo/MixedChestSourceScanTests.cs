@@ -26,13 +26,14 @@ public sealed class MixedChestSourceScanTests
         Assert.False(planner.Contains(StepName, StringComparison.Ordinal), "DepositPlanner.cs names AssignMixedChests.");
         Assert.False(planner.Contains(SettingName, StringComparison.Ordinal), "DepositPlanner.cs names AutoAssignMixedChests.");
 
+        // The setting also lets Put away use the nearest related chest, so the Deposit branch may read it; it never runs the mixed-chest step.
         string coordinator = RepoRoot.ReadText(CoordinatorFile);
         int start = coordinator.IndexOf(DepositBranchStart, StringComparison.Ordinal);
         Assert.True(start >= 0, "OrganizeRunCoordinator.cs has no 'if (asDeposit)' branch.");
         int end = coordinator.IndexOf(DepositBranchEnd, start, StringComparison.Ordinal);
         Assert.True(end > start, "The 'if (asDeposit)' branch of OrganizeRunCoordinator.cs has no 'else'.");
         string branch = PluginSourceScan.StripComments(coordinator.Substring(start, end - start));
-        Assert.False(branch.Contains(SettingName, StringComparison.Ordinal), "The Deposit branch of OrganizeRunCoordinator.cs names AutoAssignMixedChests.");
+        Assert.False(branch.Contains("AutoAssigner." + StepName, StringComparison.Ordinal), "The Deposit branch of OrganizeRunCoordinator.cs names AssignMixedChests.");
     }
 
     // GW-U-2452 (AC-10, R4, 5.3): no Plugin source names the setting or the step; the setting reaches the Plugin only through the catalog loop.

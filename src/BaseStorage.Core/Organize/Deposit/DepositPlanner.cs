@@ -29,6 +29,7 @@ public static class DepositPlanner
     /// <param name="itemKinds">The item kind per prefab name; a missing prefab is Other. Not null.</param>
     /// <param name="options">The eligibility options; only ExcludeVehicles matters.</param>
     /// <param name="autoAssignThresholdPct">The threshold in percent, passed verbatim to the auto-assign resolver.</param>
+    /// <param name="spill">True lets a stack with no room in its own category go to the nearest related chest.</param>
     /// <returns>The plan: the inventory's moves and no-room entries, the skipped chests, the inventory layout first and one layout per usable chest, and the excluded stacks.</returns>
     /// <exception cref="ArgumentNullException">Thrown for a null <paramref name="player"/>, <paramref name="exclusions"/>, <paramref name="containers"/>, <paramref name="assignments"/>, <paramref name="inUseBy"/>, <paramref name="catalog"/> or <paramref name="itemKinds"/>.</exception>
     /// <exception cref="ArgumentException">Thrown for a null element, a duplicate id or the inventory id in <paramref name="containers"/>, or a null value in <paramref name="assignments"/> or <paramref name="inUseBy"/>.</exception>
@@ -41,7 +42,8 @@ public static class DepositPlanner
         CategoryCatalog catalog,
         IReadOnlyDictionary<string, ItemKind> itemKinds,
         EligibilityOptions options,
-        int autoAssignThresholdPct)
+        int autoAssignThresholdPct,
+        bool spill = false)
     {
         if (player is null)
         {
@@ -86,6 +88,19 @@ public static class DepositPlanner
             }
         }
 
+        if (spill && noRoom.Count > 0)
+        {
+            noRoom.Clear();
+            placement.Spilling = true;
+            for (var i = 0; i < reasons.Length; i++)
+            {
+                if (reasons[i] == DepositExclusion.None && source.Stacks[i].Count > 0)
+                {
+                    placement.Place(source, i);
+                }
+            }
+        }
+
         var layouts = new ChestLayout[chests.Length + 1];
         layouts[0] = OrganizePlanner.BuildLayout(source);
         for (var i = 0; i < chests.Length; i++)
@@ -108,7 +123,7 @@ public static class DepositPlanner
             }
         }
 
-        var plan = new OrganizePlan(auto, moves.ToArray(), noRoom.ToArray(), skipped.ToArray(), layouts, claimedLayouts);
+        var plan = new OrganizePlan(auto, moves.ToArray(), noRoom.ToArray(), skipped.ToArray(), layouts, claimedLayouts, placement.Spilled, placement.SpillRules());
         return new DepositPlan(plan, player, excluded.ToArray());
     }
 

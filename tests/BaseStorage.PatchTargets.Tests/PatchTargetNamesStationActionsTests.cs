@@ -95,11 +95,11 @@ public sealed class PatchTargetNamesStationActionsTests
         TargetEntry[] entries = TargetList.Classify(typeof(PatchTargetNames)).ToArray();
 
         // Edited by S-E010-002 (organize-console-command 6.2): 404, by kind 52, 43, 47, 102, 80 and 80.
-        Assert.Equal(418, entries.Length);
+        Assert.Equal(419, entries.Length);
         Assert.Equal(54, entries.Count(e => e.Kind == TargetKind.TypeEntry));
         Assert.Equal(50, entries.Count(e => e.Kind == TargetKind.MethodOverloads));
         Assert.Equal(54, entries.Count(e => e.Kind == TargetKind.OverloadCompanion));
-        Assert.Equal(100, entries.Count(e => e.Kind == TargetKind.MethodNameOnly));
+        Assert.Equal(101, entries.Count(e => e.Kind == TargetKind.MethodNameOnly));
         Assert.Equal(80, entries.Count(e => e.Kind == TargetKind.FieldEntry));
         Assert.Equal(80, entries.Count(e => e.Kind == TargetKind.FieldTypeCompanion));
     }

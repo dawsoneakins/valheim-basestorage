@@ -76,7 +76,7 @@ public sealed class DepositExclusions
 
     /// <summary>
     /// Determines whether a stack is on the never list: its prefab name is an entry, or it belongs to a listed group. The
-    /// <c>@food</c> and <c>@ammo</c> groups match the Food and Ammo traits or kinds; <c>@mead</c> and <c>@bait</c> match their traits only.
+    /// <c>@ammo</c> group matches the Ammo trait or kind; <c>@mead</c> and <c>@bait</c> match their traits only.
     /// </summary>
     /// <param name="stack">The stack; not null.</param>
     /// <param name="kind">The item kind of the stack's prefab, as the kinds table gives it (Other when absent).</param>
@@ -95,11 +95,6 @@ public sealed class DepositExclusions
         }
 
         var traits = stack.Traits & ~InventoryItemTraits.Equipped;
-        if (kind == ItemKind.Food)
-        {
-            traits |= InventoryItemTraits.Food;
-        }
-
         if (kind == ItemKind.Ammo)
         {
             traits |= InventoryItemTraits.Ammo;
@@ -110,11 +105,6 @@ public sealed class DepositExclusions
 
     private static InventoryItemTraits GroupOf(string token)
     {
-        if (string.Equals(token, ItemListTokens.Food, StringComparison.OrdinalIgnoreCase))
-        {
-            return InventoryItemTraits.Food;
-        }
-
         if (string.Equals(token, ItemListTokens.Mead, StringComparison.OrdinalIgnoreCase))
         {
             return InventoryItemTraits.Mead;

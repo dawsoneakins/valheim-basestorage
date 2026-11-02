@@ -22,7 +22,7 @@ public sealed class AutoAssignResult
     /// <param name="threshold">The threshold the result was computed with.</param>
     /// <param name="chests">One entry per input container, in snapshot order.</param>
     /// <param name="overflow">The containers whose outcome is Overflow, in snapshot order.</param>
-    /// <param name="mixedAssigned">The entries the mixed-chest step gave a category (S-A-001); these are the only ones Organize saves.</param>
+    /// <param name="mixedAssigned">The entries the mixed-chest step gave a category (S-A-001); Organize saves these.</param>
     internal AutoAssignResult(int threshold, ChestAutoAssignment[] chests, ContainerSnapshot[] overflow, ChestAutoAssignment[]? mixedAssigned = null)
     {
         MixedAssigned = new ReadOnlyCollection<ChestAutoAssignment>(mixedAssigned ?? Array.Empty<ChestAutoAssignment>());

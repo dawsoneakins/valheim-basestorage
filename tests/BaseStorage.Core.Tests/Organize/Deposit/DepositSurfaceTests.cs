@@ -47,7 +47,7 @@ public sealed class DepositSurfaceTests
         Assert.Equal(new[] { "ExclusionOf", "HotbarRow", "Plan" }, Members(planner));
         Assert.Equal(0, (int)planner.GetField("HotbarRow")!.GetRawConstantValue()!);
         Assert.Equal(
-            new[] { "PlayerInventorySnapshot", "DepositExclusions", "IReadOnlyList`1", "IReadOnlyDictionary`2", "IReadOnlyDictionary`2", "CategoryCatalog", "IReadOnlyDictionary`2", "EligibilityOptions", "Int32" },
+            new[] { "PlayerInventorySnapshot", "DepositExclusions", "IReadOnlyList`1", "IReadOnlyDictionary`2", "IReadOnlyDictionary`2", "CategoryCatalog", "IReadOnlyDictionary`2", "EligibilityOptions", "Int32", "Boolean" },
             planner.GetMethod("Plan")!.GetParameters().Select(p => p.ParameterType.Name));
         Assert.Equal(typeof(DepositPlan), planner.GetMethod("Plan")!.ReturnType);
         Assert.Equal(typeof(DepositExclusion), planner.GetMethod("ExclusionOf")!.ReturnType);
@@ -91,7 +91,7 @@ public sealed class DepositSurfaceTests
             new[] { ("None", 0), ("Hotbar", 1), ("Equipped", 2), ("Favourite", 4), ("NeverList", 8), ("SameItemAsExcluded", 16), ("InvalidStack", 32) },
             Enum.GetValues(typeof(DepositExclusion)).Cast<DepositExclusion>().Select(v => (v.ToString(), (int)v)));
         Assert.Equal(
-            new[] { ("None", 0), ("Equipped", 1), ("Food", 2), ("Mead", 4), ("Ammo", 8), ("Bait", 16) },
+            new[] { ("None", 0), ("Equipped", 1), ("Mead", 4), ("Ammo", 8), ("Bait", 16) },
             Enum.GetValues(typeof(InventoryItemTraits)).Cast<InventoryItemTraits>().Select(v => (v.ToString(), (int)v)));
     }
 
