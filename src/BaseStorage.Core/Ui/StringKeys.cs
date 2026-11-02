@@ -299,4 +299,22 @@ public static class StringKeys
 
     /// <summary>Raises the amount left in the base.</summary>
     public const string FeedMore = "feed.more";
+
+    /// <summary>The menu button that makes a left click mark favourites.</summary>
+    public const string MenuMark = "menu.mark";
+
+    /// <summary>The placeholder of the menu's search box.</summary>
+    public const string MenuSearch = "menu.search";
+
+    /// <summary>The menu header during a search.</summary>
+    public const string MenuSearchHeader = "menu.search.header";
+
+    /// <summary>One matching item in a chest.</summary>
+    public const string MenuHit = "menu.hit";
+
+    /// <summary>One matching item, and how many other items match.</summary>
+    public const string MenuHitMore = "menu.hit.more";
+
+    /// <summary>The tooltip line of a favourite item.</summary>
+    public const string TooltipFavourite = "tooltip.favourite";
 }

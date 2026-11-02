@@ -198,7 +198,8 @@ public sealed class PatchTargetShapeTests
             new("InventoryGui", "FieldTakeAllButton", TargetKind.FieldEntry, "m_takeAllButton", null),
             new("InventoryGui", "FieldTakeAllButtonType", TargetKind.FieldTypeCompanion, "UnityEngine.UI.Button", "FieldTakeAllButton"),
             new("InventoryGui", "GetInstance", TargetKind.MethodNameOnly, "get_instance", null),
-            new("InventoryGui", "Hide", TargetKind.MethodNameOnly, "Hide", null),
+            new("InventoryGui", "Hide", TargetKind.MethodOverloads, "Hide", null),
+            new("InventoryGui", "HideParametersNone", TargetKind.OverloadCompanion, "", "Hide"),
             new("InventoryGui", "InCraftTab", TargetKind.MethodNameOnly, "InCraftTab", null),
             new("InventoryGui", "IsContainerOpen", TargetKind.MethodNameOnly, "IsContainerOpen", null),
             new("InventoryGui", "IsVisible", TargetKind.MethodNameOnly, "IsVisible", null),
@@ -463,11 +464,11 @@ public sealed class PatchTargetShapeTests
         // Edited by S-E004-012 (ADR-GWIN-136): plus the 15 station-actions rows (1, 1, 1, 0, 6, 6) = 385.
         // Edited by S-E004-015 (ADR-GWIN-143): plus the seven Deposit rows (0, 0, 0, 1, 3, 3) = 392, as 48, 41, 45, 102, 78 and 78.
         // Edited by S-E010-002 (organize-console-command 6.2): 404, by kind 52, 43, 47, 102, 80 and 80.
-        Assert.Equal(417, entries.Count);
+        Assert.Equal(418, entries.Count);
         Assert.Equal(54, entries.Count(e => e.Kind == TargetKind.TypeEntry));
-        Assert.Equal(49, entries.Count(e => e.Kind == TargetKind.MethodOverloads));
-        Assert.Equal(53, entries.Count(e => e.Kind == TargetKind.OverloadCompanion));
-        Assert.Equal(101, entries.Count(e => e.Kind == TargetKind.MethodNameOnly));
+        Assert.Equal(50, entries.Count(e => e.Kind == TargetKind.MethodOverloads));
+        Assert.Equal(54, entries.Count(e => e.Kind == TargetKind.OverloadCompanion));
+        Assert.Equal(100, entries.Count(e => e.Kind == TargetKind.MethodNameOnly));
         Assert.Equal(80, entries.Count(e => e.Kind == TargetKind.FieldEntry));
         Assert.Equal(80, entries.Count(e => e.Kind == TargetKind.FieldTypeCompanion));
         Assert.Equal(
@@ -486,6 +487,7 @@ public sealed class PatchTargetShapeTests
                 new HarmonyEntry("InventoryGridOnLeftDown", "InventoryGrid.OnLeftDown(UIInputHandler)"),
                 new HarmonyEntry("InventoryGridUpdateGui", "InventoryGrid.UpdateGui(Player,ItemDrop+ItemData)"),
                 new HarmonyEntry("InventoryGuiDoCrafting", "InventoryGui.DoCrafting(Player)"),
+                new HarmonyEntry("InventoryGuiHide", "InventoryGui.Hide()"),
                 new HarmonyEntry("InventoryGuiSetupRequirement", "InventoryGui.SetupRequirement(UnityEngine.Transform,Piece+Requirement,Player,System.Boolean,System.Int32,System.Int32)"),
                 new HarmonyEntry("InventoryGuiSetupRequirementList", "InventoryGui.SetupRequirementList(System.Int32,Player,System.Boolean,System.Int32)"),
                 new HarmonyEntry("InventoryGuiUpdateContainer", "InventoryGui.UpdateContainer(Player)"),

@@ -166,7 +166,7 @@ internal sealed class GameOrganizeRunPort : IOrganizeRunPort
         PlayerInventoryCapture.Capture(Player.m_localPlayer, PlayerInventoryCapture.InventoryId());
 
     /// <summary>Gets the local player's favourite slots; empty when there are none or no player.</summary>
-    public FavouriteSlots Favourites => FavouriteSession.ForLocalPlayer()?.Current ?? FavouriteSlots.Empty;
+    public FavouriteSlots Favourites => FavouriteSession.OccupiedSlots();
 
     /// <summary>Creates the game layer of one Deposit over the containers mapped by the last <see cref="GatherFacts"/>.</summary>
     /// <param name="plan">The Deposit plan about to run.</param>

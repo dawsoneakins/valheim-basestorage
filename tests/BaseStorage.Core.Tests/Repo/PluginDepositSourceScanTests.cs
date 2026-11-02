@@ -206,7 +206,7 @@ public sealed class PluginDepositSourceScanTests
     {
         string port = Text(PluginSourceScan.Sources(), Port);
 
-        Assert.Contains("FavouriteSession.ForLocalPlayer()", port, StringComparison.Ordinal);
+        Assert.Contains("FavouriteSession.OccupiedSlots()", port, StringComparison.Ordinal);
         Assert.Contains("PlayerInventoryCapture.Capture(", port, StringComparison.Ordinal);
         Assert.Contains("new GameDepositContainerLayer(", port, StringComparison.Ordinal);
         Assert.DoesNotContain("m_customData", port, StringComparison.Ordinal);

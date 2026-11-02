@@ -7,6 +7,7 @@ using BaseStorage.Core.Settings;
 using BaseStorage.Core.Ui;
 using BaseStorage.Plugin.Categories;
 using BaseStorage.Plugin.CategoryButton;
+using BaseStorage.Plugin.Favourites;
 
 /// <summary>
 /// The tooltip's category line, from the same catalog Organize uses. A tooltip can be asked for every frame, so each prefab's line
@@ -28,6 +29,11 @@ internal static class ItemCategoryLine
     /// <returns>The tooltip text.</returns>
     internal static string Append(ItemDrop.ItemData item, string text)
     {
+        if (item != null && FavouriteSession.IsFavourite(item))
+        {
+            text += "\n" + StringTable.English.Get(StringKeys.TooltipFavourite);
+        }
+
         BaseStorageSettings? current = settings;
         if (current == null || !current.ShowCategoryTooltip || item == null)
         {

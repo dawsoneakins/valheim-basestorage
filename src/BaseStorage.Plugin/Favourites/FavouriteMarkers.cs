@@ -17,12 +17,11 @@ internal static class FavouriteMarkers
     private const float BrandPrimaryR = 1f;
     private const float BrandPrimaryG = 0.6470588f;
     private const float BrandPrimaryB = 0f;
-    private const int MaxCoordinate = 255;
 
     private static InventoryGrid? cachedGrid;
     private static Image?[] markers = Array.Empty<Image?>();
 
-    /// <summary>Shows the marker on every favourite slot of the player grid and hides it everywhere else.</summary>
+    /// <summary>Shows the marker on every favourite item of the player grid and hides it everywhere else.</summary>
     /// <param name="grid">The grid that vanilla just updated.</param>
     internal static void Refresh(InventoryGrid grid)
     {
@@ -32,7 +31,7 @@ internal static class FavouriteMarkers
             return;
         }
 
-        ProfileFavourites? favourites = FavouriteSession.ForLocalPlayer();
+        FavouriteItemStore? favourites = FavouriteSession.ItemsForLocalPlayer();
         if (favourites == null)
         {
             HideAll();
@@ -58,7 +57,7 @@ internal static class FavouriteMarkers
             markers = new Image?[width * height];
         }
 
-        FavouriteSlots current = favourites.Current;
+        FavouriteItems current = favourites.Current;
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
@@ -69,7 +68,8 @@ internal static class FavouriteMarkers
                     continue;
                 }
 
-                bool want = x <= MaxCoordinate && y <= MaxCoordinate && current.Contains(new InventorySlot(x, y)) && inventory.GetItemAt(x, y) != null;
+                ItemDrop.ItemData? item = inventory.GetItemAt(x, y);
+                bool want = item != null && current.Contains(item.m_shared.m_name);
                 int index = (y * width) + x;
                 Image? marker = markers[index];
                 if (marker == null)

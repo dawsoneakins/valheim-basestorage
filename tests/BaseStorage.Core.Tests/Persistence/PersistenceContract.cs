@@ -17,7 +17,7 @@ public static class PersistenceContract
     /// <summary>Namespace of the eight contracted public types (contract section 1).</summary>
     public const string Namespace = "BaseStorage.Core.Persistence";
 
-    /// <summary>The eight exported type names of the namespace, in contract order.</summary>
+    /// <summary>The nine exported type names of the namespace, in contract order.</summary>
     public static readonly string[] SurfaceTypeNames =
     [
         "PersistenceKeys",
@@ -28,6 +28,7 @@ public static class PersistenceContract
         "InventorySlot",
         "FavouriteSlots",
         "FavouritesCodec",
+        "FavouriteItems",
     ];
 
     private const BindingFlags StaticPublic = BindingFlags.Public | BindingFlags.Static;

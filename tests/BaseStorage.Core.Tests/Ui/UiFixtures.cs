@@ -137,6 +137,12 @@ public static class UiFixtures
         ("feed.off", "Off"),
         ("feed.less", "-"),
         ("feed.more", "+"),
+        ("menu.mark", "Mark"),
+        ("menu.search", "Search the base"),
+        ("menu.search.header", "{0} found in {1} chests"),
+        ("menu.hit", "{0} x{1}"),
+        ("menu.hit.more", "{0} +{1} more"),
+        ("tooltip.favourite", "Favourite: Put away and Place stacks leave this"),
     ];
 
     /// <summary>The number of StringKeys constants: 31 from contract 3.2, 16 from contract section 10 (S-E004-009), 1 from S-E005-002 (PlayerUnknown), 5 from S-E004-003 (category refusals), 1 from S-E006-002 (NetworkVersionMissing), 1 from S-E004-004 (ChestCategoryButton) and 10 from S-E004-011 (run summary and stop reasons).</summary>
@@ -144,7 +150,7 @@ public static class UiFixtures
     // Edited by S-E008-001 (ADR-GWIN-153): 68, with MessageCraftUsedBase (contract 4.1).
     // Edited by S-E010-002 (organize-console-command 5): 68 plus the five console keys, 73.
     // Edited by S-A-003: 73 plus the rules key and the two no-room reasons, 76.
-    public const int StringKeyCount = 99;
+    public const int StringKeyCount = 105;
 
     /// <summary>Contract 3.2 "Const" column (31 constants), contract section 10 (16 more) and S-E005-002 section 2.6 (PlayerUnknown): the StringKeys constants and the value each one holds.</summary>
     public static readonly (string Name, string Value)[] StringKeyValues =
@@ -208,6 +214,12 @@ public static class UiFixtures
         ("FeedOff", "feed.off"),
         ("FeedLess", "feed.less"),
         ("FeedMore", "feed.more"),
+        ("MenuMark", "menu.mark"),
+        ("MenuSearch", "menu.search"),
+        ("MenuSearchHeader", "menu.search.header"),
+        ("MenuHit", "menu.hit"),
+        ("MenuHitMore", "menu.hit.more"),
+        ("TooltipFavourite", "tooltip.favourite"),
         ("OrganizePreviewBodySkippedReason", "organize.preview.body.skipped-reason"),
         ("OrganizeSkipReasonInUse", "organize.skip-reason.in-use"),
         ("OrganizeSkipReasonInUseUnknown", "organize.skip-reason.in-use-unknown"),

@@ -125,27 +125,27 @@ public sealed class ChestInUseTests
         // Edited by S-E008-001 (ADR-GWIN-152, feedback-audit 4.1): message.craft.used-base is appended last, so 84 keys.
         // Edited by S-E010-002 (organize-console-command 5): 84 plus the five console keys, 89.
         // Edited by S-A-003: 89 plus the rules and no-room reason sentences, 93.
-        Assert.Equal(116, English.Keys.Count);
+        Assert.Equal(122, English.Keys.Count);
 
         FieldInfo[] constants = typeof(StringKeys).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly);
         Assert.Equal("PlayerUnknown", constants[47].Name);
         // Edited by integration (S-E006-002 + S-E004-004 + S-E004-011): the keys are appended in story order.
         // Edited by S-E004-015 (ADR-GWIN-143): the offsets grow by 2, and the two Deposit constants follow the organize run keys.
         // Edited by S-E010-002 (organize-console-command 5): the five console constants follow MessageCraftUsedBase, so the offsets grow by 5.
-        Assert.Equal("CategoryRefusalUnavailable", constants[constants.Length - 47].Name);
-        Assert.Equal("NetworkVersionMissing", constants[constants.Length - 46].Name);
-        Assert.Equal("ChestCategoryButton", constants[constants.Length - 45].Name);
-        Assert.Equal("MessageOrganizeRunSummary", constants[constants.Length - 44].Name);
-        Assert.Equal("OrganizeStopReasonLockLost", constants[constants.Length - 35].Name);
-        Assert.Equal("MessageDepositCancelled", constants[constants.Length - 34].Name);
-        Assert.Equal("MessageDepositSummaryStopped", constants[constants.Length - 33].Name);
+        Assert.Equal("CategoryRefusalUnavailable", constants[constants.Length - 53].Name);
+        Assert.Equal("NetworkVersionMissing", constants[constants.Length - 52].Name);
+        Assert.Equal("ChestCategoryButton", constants[constants.Length - 51].Name);
+        Assert.Equal("MessageOrganizeRunSummary", constants[constants.Length - 50].Name);
+        Assert.Equal("OrganizeStopReasonLockLost", constants[constants.Length - 41].Name);
+        Assert.Equal("MessageDepositCancelled", constants[constants.Length - 40].Name);
+        Assert.Equal("MessageDepositSummaryStopped", constants[constants.Length - 39].Name);
         // Edited by S-E008-001 (ADR-GWIN-152): offsets from the end grow by 1; MessageCraftUsedBase is the new last constant.
-        Assert.Equal("MessageCraftUsedBase", constants[constants.Length - 32].Name);
-        Assert.Equal("ConsoleOrganizeStarted", constants[constants.Length - 31].Name);
-        Assert.Equal("ConsoleOrganizePreview", constants[constants.Length - 30].Name);
-        Assert.Equal("ConsoleOrganizeNoPlayer", constants[constants.Length - 29].Name);
-        Assert.Equal("ConsoleBasestorageUsage", constants[constants.Length - 28].Name);
-        Assert.Equal("ConsoleBasestorageDescription", constants[constants.Length - 27].Name);
+        Assert.Equal("MessageCraftUsedBase", constants[constants.Length - 38].Name);
+        Assert.Equal("ConsoleOrganizeStarted", constants[constants.Length - 37].Name);
+        Assert.Equal("ConsoleOrganizePreview", constants[constants.Length - 36].Name);
+        Assert.Equal("ConsoleOrganizeNoPlayer", constants[constants.Length - 35].Name);
+        Assert.Equal("ConsoleBasestorageUsage", constants[constants.Length - 34].Name);
+        Assert.Equal("ConsoleBasestorageDescription", constants[constants.Length - 33].Name);
     }
 
     // GW-U-782: the existing skip clause reads naturally with the fallback label.

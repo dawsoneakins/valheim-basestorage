@@ -48,7 +48,7 @@ public sealed partial class GameTargetContractTests
         // Edited by S-E003-005, ADR-GWIN-127: renamed from 272 (the 11 requirement-display rows of contract 8.2 join).
         // Edited by S-E004-015 (ADR-GWIN-143): renamed from 385, plus the seven Deposit rows of deposit-button contract 7 = 392.
         // Edited by S-E010-002 (organize-console-command 6.2): plus the twelve console rows (Terminal, ConsoleCommand, ConsoleEvent, ConsoleEventArgs), 404.
-        Assert.Equal(417, ClassifiedEntries().Count());
+        Assert.Equal(418, ClassifiedEntries().Count());
     }
 
     // GW-I-1900 (AC-5, deposit-button contract 7): the seven Deposit rows resolve in the installed assembly_valheim.dll, with no BST2010-BST2014 line.

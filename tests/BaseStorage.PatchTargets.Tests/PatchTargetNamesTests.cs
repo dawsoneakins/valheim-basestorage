@@ -203,6 +203,7 @@ public sealed class PatchTargetNamesTests
                 ("InventoryGridOnLeftDown", "InventoryGrid.OnLeftDown(UIInputHandler)"),
                 ("InventoryGridUpdateGui", "InventoryGrid.UpdateGui(Player,ItemDrop+ItemData)"),
                 ("InventoryGuiDoCrafting", "InventoryGui.DoCrafting(Player)"),
+                ("InventoryGuiHide", "InventoryGui.Hide()"),
                 ("InventoryGuiSetupRequirement", "InventoryGui.SetupRequirement(UnityEngine.Transform,Piece+Requirement,Player,System.Boolean,System.Int32,System.Int32)"),
                 ("InventoryGuiSetupRequirementList", "InventoryGui.SetupRequirementList(System.Int32,Player,System.Boolean,System.Int32)"),
                 ("InventoryGuiUpdateContainer", "InventoryGui.UpdateContainer(Player)"),

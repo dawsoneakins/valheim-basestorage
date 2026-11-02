@@ -1,5 +1,7 @@
 namespace BaseStorage.Core.Menu;
 
+using System;
+using System.Collections.Generic;
 using BaseStorage.Core.Persistence;
 using BaseStorage.Core.Snapshots;
 
@@ -36,9 +38,18 @@ public sealed class BaseMenuRow
     /// <summary>Gets the squared distance from the player, in metres.</summary>
     public float DistanceSquared { get; }
 
+    /// <summary>Gets the items in this chest that match the current search, most first.</summary>
+    public IReadOnlyList<BaseSearchHit> Hits { get; private set; } = Array.Empty<BaseSearchHit>();
+
     /// <summary>Gets a value indicating whether the local player may not open this chest.</summary>
     public bool AccessDenied => (Chest.Flags & ContainerFlags.AccessDenied) != 0;
 
     /// <summary>Gets a value indicating whether another player has this chest open.</summary>
     public bool InUse => (Chest.Flags & ContainerFlags.InUseByOther) != 0;
+
+    /// <summary>Copies the row with search hits.</summary>
+    /// <param name="hits">The hits.</param>
+    /// <returns>The copy.</returns>
+    internal BaseMenuRow WithHits(IReadOnlyList<BaseSearchHit> hits) =>
+        new BaseMenuRow(Chest, Assignment, RuleLabel, FillPercent, DistanceSquared) { Hits = hits };
 }

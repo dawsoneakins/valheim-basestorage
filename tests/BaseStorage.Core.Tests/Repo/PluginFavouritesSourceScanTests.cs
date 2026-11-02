@@ -157,7 +157,7 @@ public sealed class PluginFavouritesSourceScanTests
     [Fact]
     public void ThePersistenceKeyIsUsedOnlyByTheAdapter()
     {
-        Assert.Equal(new[] { AdapterFile }, PluginSourceScan.FilesMatching(ScanWithFavourites(), @"PersistenceKeys\.Favourites\b"));
+        Assert.Equal(new[] { "src/BaseStorage.Plugin/Favourites/FavouriteItemStore.cs", AdapterFile }, PluginSourceScan.FilesMatching(ScanWithFavourites(), @"PersistenceKeys\.Favourites\b"));
     }
 
     // GW-U-710
@@ -249,6 +249,7 @@ public sealed class PluginFavouritesSourceScanTests
         Assert.Equal(
             new[]
             {
+                "src/BaseStorage.Plugin/BaseMenu/InventoryGuiHidePatch.cs",
                 "src/BaseStorage.Plugin/Building/PlayerHaveRequirementsPiecePatch.cs",
                 "src/BaseStorage.Plugin/Building/PlayerPlacePiecePatch.cs",
                 "src/BaseStorage.Plugin/Building/PlayerTryPlacePiecePatch.cs",
@@ -295,9 +296,8 @@ public sealed class PluginFavouritesSourceScanTests
             "InventoryGui.instance",
             "m_playerGrid",
             "m_dragItem",
-            "FavouriteSession.ForLocalPlayer()",
+            "FavouriteSession.ItemsForLocalPlayer()",
             "GetButtonPos(",
-            "ProfileFavourites.TryGetSlot(",
             "GetItemAt(",
             ".Toggle(",
         ];

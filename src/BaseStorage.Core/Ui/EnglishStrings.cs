@@ -122,5 +122,11 @@ internal static class EnglishStrings
         ("feed.off", "Off"),
         ("feed.less", "-"),
         ("feed.more", "+"),
+        ("menu.mark", "Mark"),
+        ("menu.search", "Search the base"),
+        ("menu.search.header", "{0} found in {1} chests"),
+        ("menu.hit", "{0} x{1}"),
+        ("menu.hit.more", "{0} +{1} more"),
+        ("tooltip.favourite", "Favourite: Put away and Place stacks leave this"),
     ];
 }

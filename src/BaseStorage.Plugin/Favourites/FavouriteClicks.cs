@@ -1,6 +1,6 @@
 namespace BaseStorage.Plugin.Favourites;
 
-using BaseStorage.Core.Persistence;
+using BaseStorage.Plugin.BaseMenu;
 using BaseStorage.Plugin.Ui;
 using UnityEngine;
 
@@ -19,7 +19,7 @@ internal static class FavouriteClicks
     /// <returns>True to run the vanilla handler, false to skip it.</returns>
     internal static bool RunVanilla(InventoryGrid grid, UIInputHandler clickHandler)
     {
-        if (!ZInput.GetKey(KeyCode.LeftAlt, true) && !ZInput.GetKey(KeyCode.RightAlt, true))
+        if (!BaseMenuPanel.MarkMode && !ZInput.GetKey(KeyCode.LeftAlt, true) && !ZInput.GetKey(KeyCode.RightAlt, true))
         {
             return true;
         }
@@ -35,18 +35,13 @@ internal static class FavouriteClicks
             return true;
         }
 
-        ProfileFavourites? favourites = FavouriteSession.ForLocalPlayer();
+        FavouriteItemStore? favourites = FavouriteSession.ItemsForLocalPlayer();
         if (favourites == null || clickHandler == null)
         {
             return true;
         }
 
         Vector2i pos = grid.GetButtonPos(clickHandler.gameObject);
-        if (!ProfileFavourites.TryGetSlot(pos.x, pos.y, out InventorySlot slot))
-        {
-            return true;
-        }
-
         Inventory? inventory = grid.GetInventory();
         ItemDrop.ItemData? item = inventory == null ? null : inventory.GetItemAt(pos.x, pos.y);
         if (item == null)
@@ -54,7 +49,7 @@ internal static class FavouriteClicks
             return true;
         }
 
-        FavouriteToggleOutcome outcome = favourites.Toggle(slot);
+        FavouriteToggleOutcome outcome = favourites.Toggle(item.m_shared.m_name);
         string name = Localization.instance != null
             ? Localization.instance.Localize(item.m_shared.m_name)
             : item.m_shared.m_name;

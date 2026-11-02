@@ -1,7 +1,5 @@
 namespace BaseStorage.Plugin.Favourites;
 
-using BaseStorage.Core.Persistence;
-
 /// <summary>
 /// Keeps favourites out of vanilla Place stacks. Vanilla skips equipped items there, so while it runs from the local player's inventory a
 /// favourite counts as equipped, and at no other time. Main thread only.
@@ -22,15 +20,8 @@ internal static class FavouritePlaceGuard
     /// <summary>Stops guarding.</summary>
     internal static void End() => Active = false;
 
-    /// <summary>Tells whether an item sits in a favourite slot.</summary>
+    /// <summary>Tells whether an item is a favourite.</summary>
     /// <param name="item">The item.</param>
     /// <returns>True when Place stacks must leave it.</returns>
-    internal static bool Protects(ItemDrop.ItemData item)
-    {
-        ProfileFavourites? favourites = FavouriteSession.ForLocalPlayer();
-        return favourites != null
-            && item != null
-            && ProfileFavourites.TryGetSlot(item.m_gridPos.x, item.m_gridPos.y, out InventorySlot slot)
-            && favourites.IsFavourite(slot);
-    }
+    internal static bool Protects(ItemDrop.ItemData item) => FavouriteSession.IsFavourite(item);
 }

@@ -23,7 +23,7 @@ using UnityEngine.UI;
 /// <summary>
 /// The BaseStorage menu (Epic C): a sixth icon in the row under the player's name opens a list of the chests in the base the player
 /// stands in. Clicking a chest opens the game's own chest window on it, so slots, moving items, splitting and tooltips are vanilla;
-/// the window's close distance is lifted only while that chest is open. The open chest's row is lit, and the list scrolls to it when a
+/// the window's close distance is lifted only while that chest is open. A search narrows the list to the chests holding an item. The open chest's row is lit, and the list scrolls to it when a
 /// chest opens, however it was opened. Positions are measured from the live UI (rule R2). Rows are built once and reused. Main thread only.
 /// </summary>
 internal static class BaseMenuPanel
@@ -54,19 +54,28 @@ internal static class BaseMenuPanel
     private const string PlaceId = "menu.place";
     private const string HighlightId = "menu.highlight";
     private const string ShareId = "menu.share";
+    private const string MarkId = "menu.mark";
+    private const string SearchId = "menu.search";
+    private const string SearchTextId = "menu.search.text";
+    private const string SearchHintId = "menu.search.hint";
     private const float SecondRow = -92f;
-    private const float ListTop = -140f;
+    private const float SearchTop = -140f;
+    private const float SearchHeight = 36f;
+    private const float ListTop = -184f;
     private const float RowTint = 0.18f;
     private const float FarEnough = 200f;
     private const float ScrollSpeed = 120f;
     private const int MaxRows = 150;
     private static readonly TimeSpan ReloadInterval = TimeSpan.FromSeconds(1);
     private static readonly Color RestTint = new Color(1f, 1f, 1f, 0.35f);
+    private static readonly Color MarkTint = new Color(1f, 0.8f, 0.3f, 1f);
 
     private static readonly List<RowView> RowViews = new List<RowView>();
     private static readonly Dictionary<ContainerId, Container> Loaded = new Dictionary<ContainerId, Container>();
     private static readonly List<Container> Scratch = new List<Container>();
     private static readonly Vector3[] Corners = new Vector3[4];
+    private static readonly Dictionary<string, string> ItemNames = new Dictionary<string, string>(StringComparer.Ordinal);
+    private static readonly List<ContainerSnapshot> Fresh = new List<ContainerSnapshot>();
 
     private static PluginWorld? world;
     private static IClock? clock;
@@ -86,8 +95,23 @@ internal static class BaseMenuPanel
     private static Button? placeButton;
     private static Button? highlightButton;
     private static Button? shareButton;
+    private static Button? markButton;
+    private static TMP_InputField? searchInput;
+    private static string query = string.Empty;
+    private static bool marking;
     private static TimeSpan lastLoad = TimeSpan.Zero;
     private static IReadOnlyList<BaseMenuRow> rows = Array.Empty<BaseMenuRow>();
+
+    /// <summary>Gets a value indicating whether a left click on the inventory marks favourites.</summary>
+    internal static bool MarkMode => open && marking;
+
+    /// <summary>Gets a value indicating whether the search box must keep the screen open. Esc takes the focus from the box first, and the game still closes it when the player cannot stay.</summary>
+    internal static bool TypingBlocksClose =>
+        searchInput != null
+        && searchInput.isFocused
+        && Player.m_localPlayer != null
+        && !Player.m_localPlayer.IsDead()
+        && !Player.m_localPlayer.IsTeleporting();
 
     /// <summary>Stores the services the menu reads.</summary>
     /// <param name="current">The plugin world.</param>
@@ -144,6 +168,11 @@ internal static class BaseMenuPanel
         // A gap in the frames means the menu or the inventory was closed, so the same chest counts as newly opened.
         bool resumed = Time.frameCount - seenFrame > 1;
         seenFrame = Time.frameCount;
+        if (resumed)
+        {
+            SetMarking(false);
+        }
+
         Container? current = gui.m_currentContainer;
         if (resumed || !ReferenceEquals(current, seenChest))
         {
@@ -302,6 +331,12 @@ internal static class BaseMenuPanel
     {
         FeedPanel.Close();
         open = !open;
+        SetMarking(false);
+        if (!open && searchInput != null)
+        {
+            searchInput.text = string.Empty;
+        }
+
         lastLoad = TimeSpan.Zero;
         CategoryDropdown.Close();
         if (panel != null)
@@ -333,9 +368,11 @@ internal static class BaseMenuPanel
         header = Text(gui, panel.transform, HeaderId, Margin, -Margin, MaxWidth - (2 * Margin), 30f);
         Transform parent = panel.transform;
         // Not cloned from Craft: a clone keeps the colours its template had at that moment as its normal look, and Craft is often greyed out.
-        Place(VanillaButtonFactory.Create(gui.m_stackAllButton, parent, OrganizeId, StringKeys.StationActionsOrganizeButton, OnOrganizeClick), Margin, 170f);
-        Place(VanillaButtonFactory.Create(gui.m_stackAllButton, parent, DepositId, StringKeys.StationActionsDepositButton, OnDepositClick), Margin + 176f, 200f);
-        Place(VanillaButtonFactory.Create(gui.m_stackAllButton, parent, CloseId, StringKeys.MenuClose, OnOpenClick), Margin + 382f, 130f);
+        Place(VanillaButtonFactory.Create(gui.m_stackAllButton, parent, OrganizeId, StringKeys.StationActionsOrganizeButton, OnOrganizeClick), Margin, 150f);
+        Place(VanillaButtonFactory.Create(gui.m_stackAllButton, parent, DepositId, StringKeys.StationActionsDepositButton, OnDepositClick), Margin + 156f, 186f);
+        markButton = VanillaButtonFactory.Create(gui.m_stackAllButton, parent, MarkId, StringKeys.MenuMark, OnMarkClick);
+        Place(markButton, Margin + 348f, 90f);
+        Place(VanillaButtonFactory.Create(gui.m_stackAllButton, parent, CloseId, StringKeys.MenuClose, OnOpenClick), Margin + 444f, 90f);
         takeButton = VanillaButtonFactory.Create(gui.m_takeAllButton, parent, TakeId, StringKeys.MenuTakeAll, OnTakeClick);
         Place(takeButton, Margin, 130f, SecondRow);
         placeButton = VanillaButtonFactory.Create(gui.m_stackAllButton, parent, PlaceId, StringKeys.MenuPlaceStacks, OnPlaceClick);
@@ -344,6 +381,7 @@ internal static class BaseMenuPanel
         Place(highlightButton, Margin + 302f, 120f, SecondRow);
         shareButton = VanillaButtonFactory.Create(gui.m_stackAllButton, parent, ShareId, StringKeys.MenuShare, OnShareClick);
         Place(shareButton, Margin + 428f, 108f, SecondRow);
+        CreateSearch(gui);
         CreateList(gui);
         Fit(gui);
     }
@@ -381,6 +419,55 @@ internal static class BaseMenuPanel
         return parent.InverseTransformPoint(Corners[right ? 2 : 0]).x;
     }
 
+    /// <summary>Builds the search box by hand: the game has no input field to clone here, and text from the panel keeps its look.</summary>
+    private static void CreateSearch(InventoryGui gui)
+    {
+        float width = MaxWidth - (2 * Margin);
+        GameObject box = VanillaButtonFactory.CreateNode(panel!.transform, SearchId, new Vector2(width, SearchHeight), new Vector2(Margin, SearchTop), typeof(RectTransform), typeof(Image), typeof(RectMask2D));
+        box.SetActive(false);
+        box.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.55f);
+        TMP_Text? text = SearchText(gui, box.transform, SearchTextId, width);
+        TMP_Text? hint = SearchText(gui, box.transform, SearchHintId, width);
+        if (text == null || hint == null)
+        {
+            return;
+        }
+
+        text.raycastTarget = true;
+        hint.text = StringTable.English.Get(StringKeys.MenuSearch);
+        hint.alpha = 0.55f;
+        TMP_InputField input = box.AddComponent<TMP_InputField>();
+        input.textViewport = (RectTransform)box.transform;
+        input.textComponent = text;
+        input.placeholder = hint;
+        input.lineType = TMP_InputField.LineType.SingleLine;
+        input.onValueChanged.AddListener(OnSearchChanged);
+        searchInput = input;
+        box.SetActive(true);
+    }
+
+    private static TMP_Text? SearchText(InventoryGui gui, Transform parent, string id, float width)
+    {
+        TMP_Text? text = Text(gui, parent, id, 8f, 0f, width - 16f, SearchHeight, gui.m_recipeDecription);
+        ContentSizeFitter? fitter = text == null ? null : text.GetComponent<ContentSizeFitter>();
+        if (fitter != null)
+        {
+            fitter.enabled = false;
+        }
+
+        return text;
+    }
+
+    private static void OnSearchChanged(string value) => PatchSafety.Run(ClickKey, value, static text =>
+    {
+        query = text.Trim();
+        lastLoad = TimeSpan.Zero;
+        if (listContent != null)
+        {
+            listContent.anchoredPosition = new Vector2(listContent.anchoredPosition.x, 0f);
+        }
+    });
+
     private static void CreateList(InventoryGui gui)
     {
         float width = MaxWidth - (2 * Margin);
@@ -401,9 +488,9 @@ internal static class BaseMenuPanel
         }
     }
 
-    private static TMP_Text? Text(InventoryGui gui, Transform parent, string id, float x, float y, float width, float height)
+    private static TMP_Text? Text(InventoryGui gui, Transform parent, string id, float x, float y, float width, float height, TMP_Text? template = null)
     {
-        TMP_Text? text = VanillaButtonFactory.CreateText(gui.m_craftingStationName, parent, id);
+        TMP_Text? text = VanillaButtonFactory.CreateText(template == null ? gui.m_craftingStationName : template, parent, id);
         if (text != null)
         {
             VanillaButtonFactory.Pin((RectTransform)text.transform, new Vector2(width, height), new Vector2(x, y));
@@ -455,9 +542,44 @@ internal static class BaseMenuPanel
             }
         }
 
-        rows = BaseMenuBuilder.Rows(resolution.Containers, assignments, position, null, StringTable.English);
-        SetText(header, StringTable.English.Format(StringKeys.MenuHeader, resolution.Stations.Count, resolution.Containers.Count, BaseMenuBuilder.FillPercent(resolution.Containers)));
+        rows = BaseMenuBuilder.Rows(query.Length == 0 ? resolution.Containers : CurrentContents(current, resolution.Containers), assignments, position, null, StringTable.English);
+        if (query.Length == 0)
+        {
+            SetText(header, StringTable.English.Format(StringKeys.MenuHeader, resolution.Stations.Count, resolution.Containers.Count, BaseMenuBuilder.FillPercent(resolution.Containers)));
+        }
+        else
+        {
+            rows = BaseSearch.Apply(rows, query, NameOf);
+            SetText(header, StringTable.English.Format(StringKeys.MenuSearchHeader, BaseSearch.Total(rows), rows.Count));
+        }
+
         Show();
+    }
+
+    /// <summary>Reads each chest as it is now, because a search must not show the base cache's older contents.</summary>
+    private static List<ContainerSnapshot> CurrentContents(PluginWorld current, IReadOnlyList<ContainerSnapshot> containers)
+    {
+        Fresh.Clear();
+        for (int i = 0; i < containers.Count; i++)
+        {
+            ContainerSnapshot? fresh = Loaded.TryGetValue(containers[i].Id, out Container? chest) ? current.Snapshots.Snapshot(chest) : null;
+            Fresh.Add(fresh ?? containers[i]);
+        }
+
+        return Fresh;
+    }
+
+    private static string NameOf(string prefab)
+    {
+        if (!ItemNames.TryGetValue(prefab, out string? name))
+        {
+            GameObject? item = ObjectDB.instance == null ? null : ObjectDB.instance.GetItemPrefab(prefab);
+            ItemDrop? drop = item == null ? null : item.GetComponent<ItemDrop>();
+            name = drop == null || Localization.instance == null ? prefab : Localization.instance.Localize(drop.m_itemData.m_shared.m_name);
+            ItemNames[prefab] = name;
+        }
+
+        return name;
     }
 
     private static void LoadContainers(PluginWorld current)
@@ -481,7 +603,7 @@ internal static class BaseMenuPanel
         Container? current = builtFor == null ? null : builtFor.m_currentContainer;
         SetEnabled(takeButton, current != null);
         SetEnabled(placeButton, current != null);
-        SetEnabled(highlightButton, current != null);
+        SetEnabled(highlightButton, current != null || (query.Length > 0 && rows.Count > 0));
         SetEnabled(shareButton, current != null);
         int openRow = -1;
         for (int i = 0; i < RowViews.Count; i++)
@@ -577,8 +699,37 @@ internal static class BaseMenuPanel
 
     private static void OnPlaceClick() => PatchSafety.Run(ClickKey, static () => builtFor?.OnStackAll());
 
+    private static void OnMarkClick() => PatchSafety.Run(ClickKey, static () => SetMarking(!marking));
+
+    private static void SetMarking(bool on)
+    {
+        marking = on;
+        if (markButton != null)
+        {
+            ColorBlock colors = markButton.colors;
+            colors.normalColor = on ? MarkTint : Color.white;
+            colors.selectedColor = colors.normalColor;
+            markButton.colors = colors;
+        }
+    }
+
     private static void OnHighlightClick() => PatchSafety.Run(ClickKey, static () =>
     {
+        if (query.Length > 0)
+        {
+            var found = new List<Container>(rows.Count);
+            for (int i = 0; i < rows.Count; i++)
+            {
+                if (Loaded.TryGetValue(rows[i].Chest.Id, out Container? match))
+                {
+                    found.Add(match);
+                }
+            }
+
+            ChestHighlight.ShowAll(found);
+            return;
+        }
+
         Container? current = builtFor == null ? null : builtFor.m_currentContainer;
         if (current != null)
         {
@@ -652,6 +803,17 @@ internal static class BaseMenuPanel
             root.SetActive(false);
         }
 
+        private static string HitText(BaseMenuRow row)
+        {
+            if (row.Hits.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            string hit = StringTable.English.Format(StringKeys.MenuHit, row.Hits[0].Name, row.Hits[0].Count);
+            return row.Hits.Count == 1 ? hit : StringTable.English.Format(StringKeys.MenuHitMore, hit, row.Hits.Count - 1);
+        }
+
         private static GameObject Cell(Transform parent, string id, float width, float x, Action click)
         {
             GameObject cell = VanillaButtonFactory.CreateNode(parent, id, new Vector2(width, RowHeight - 2f), new Vector2(x, 0f), typeof(RectTransform), typeof(Image), typeof(Button));
@@ -690,7 +852,7 @@ internal static class BaseMenuPanel
             background.color = isOpen ? new Color(1f, 0.8f, 0.3f, 0.6f) : new Color(1f, 1f, 1f, RowTint);
             SetText(openHint, StringTable.English.Get(isOpen ? StringKeys.MenuClose : StringKeys.MenuOpen));
 
-            string state = row.AccessDenied ? StringTable.English.Get(StringKeys.MenuNoAccess) : row.InUse ? StringTable.English.Get(StringKeys.MenuInUse) : string.Empty;
+            string state = row.AccessDenied ? StringTable.English.Get(StringKeys.MenuNoAccess) : row.InUse ? StringTable.English.Get(StringKeys.MenuInUse) : HitText(row);
             SetText(label, StringTable.English.Format(StringKeys.MenuRow, row.FillPercent, (int)Mathf.Sqrt(row.DistanceSquared), state));
             SetText(rule, row.RuleLabel);
         }

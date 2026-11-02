@@ -62,6 +62,7 @@ public sealed class HarmonyAgreementTests
             "InventoryGrid.OnLeftDown(UIInputHandler)",
             "InventoryGrid.UpdateGui(Player,ItemDrop+ItemData)",
             "InventoryGui.DoCrafting(Player)",
+            "InventoryGui.Hide()",
             "InventoryGui.SetupRequirement(UnityEngine.Transform,Piece+Requirement,Player,System.Boolean,System.Int32,System.Int32)",
             "InventoryGui.SetupRequirementList(System.Int32,Player,System.Boolean,System.Int32)",
             "InventoryGui.UpdateContainer(Player)",
@@ -84,6 +85,7 @@ public sealed class HarmonyAgreementTests
             new[]
             {
                 // Edited by S-E003-006, ADR-GWIN-132 (GW-U-1655): the three building patch classes join the fifteen (eighteen classes).
+                "BaseStorage.Plugin.BaseMenu.InventoryGuiHidePatch",
                 "BaseStorage.Plugin.Building.PlayerHaveRequirementsPiecePatch",
                 "BaseStorage.Plugin.Building.PlayerPlacePiecePatch",
                 "BaseStorage.Plugin.Building.PlayerTryPlacePiecePatch",

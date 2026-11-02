@@ -143,6 +143,7 @@ public sealed class PluginCategoryFileSourceScanTests
         // Edited by integration: plus the S-E003-004 Crafting, S-E003-005 Requirements and S-E003-006 Building patches and the S-E006-002 Networking postfixes.
         string[] expected =
         {
+            "src/BaseStorage.Plugin/BaseMenu/InventoryGuiHidePatch.cs",
             "src/BaseStorage.Plugin/Building/PlayerHaveRequirementsPiecePatch.cs",
             "src/BaseStorage.Plugin/Building/PlayerPlacePiecePatch.cs",
             "src/BaseStorage.Plugin/Building/PlayerTryPlacePiecePatch.cs",

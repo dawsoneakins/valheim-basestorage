@@ -632,6 +632,9 @@ internal static class PatchTargetNames
         /// <summary>The Hide method.</summary>
         public const string Hide = "Hide";
 
+        /// <summary>Parameter type full names of the Hide overload: none.</summary>
+        public const string HideParametersNone = "";
+
         /// <summary>The CloseContainer method.</summary>
         public const string CloseContainer = "CloseContainer";
 
@@ -1501,6 +1504,9 @@ internal static class PatchTargetNames
 
         /// <summary>The Switch.GetHoverText postfix that adds the feed panel hint.</summary>
         public const string SwitchGetHoverText = "Switch.GetHoverText()";
+
+        /// <summary>The InventoryGui.Hide prefix that keeps the screen open while the search box is typed in.</summary>
+        public const string InventoryGuiHide = "InventoryGui.Hide()";
 
         /// <summary>The Container.Awake patch target.</summary>
         public const string ContainerAwake = "Container.Awake()";

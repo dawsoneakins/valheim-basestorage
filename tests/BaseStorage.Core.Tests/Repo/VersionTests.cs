@@ -19,7 +19,7 @@ public sealed class VersionTests
     {
         string[] versions = RepoRoot.ValuesOf(ContractPaths.VersionProps, "Version");
 
-        Assert.Equal(new[] { "0.4.0" }, versions);
+        Assert.Equal(new[] { "0.4.1" }, versions);
     }
 
     // GW-U-017
@@ -57,6 +57,6 @@ public sealed class VersionTests
         DotnetResult result = DotnetProcess.Msbuild(RepoRoot.Combine(project), ["-getProperty:Version"]);
 
         Assert.Equal(0, result.ExitCode);
-        Assert.Equal("0.4.0", result.Output.Trim());
+        Assert.Equal("0.4.1", result.Output.Trim());
     }
 }

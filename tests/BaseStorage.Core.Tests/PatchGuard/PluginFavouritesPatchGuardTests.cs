@@ -29,6 +29,7 @@ public sealed class PluginFavouritesPatchGuardTests
         Assert.Equal(
             new[]
             {
+                "BaseStorage.Plugin.BaseMenu.InventoryGuiHidePatch.Prefix",
                 "BaseStorage.Plugin.Building.PlayerHaveRequirementsPiecePatch.Prefix",
                 "BaseStorage.Plugin.Building.PlayerPlacePiecePatch.Prefix",
                 "BaseStorage.Plugin.Building.PlayerTryPlacePiecePatch.Postfix",
