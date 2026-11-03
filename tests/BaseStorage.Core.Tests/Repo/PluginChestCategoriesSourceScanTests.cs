@@ -90,7 +90,7 @@ public sealed class PluginChestCategoriesSourceScanTests
         Assert.Equal(new[] { Storage }, PluginSourceScan.FilesMatching(sources, @"\.Set\(\s*PersistenceKeys\.ChestCategory\b"));
         Assert.Equal(1, PluginSourceScan.CountMatches(sources, @"\.Set\(\s*PersistenceKeys\.ChestCategory\b"));
         Assert.Contains("zdo.Set(PersistenceKeys.ChestCategory, value);", sources[Storage], StringComparison.Ordinal);
-        Assert.Empty(PluginSourceScan.FilesMatching(sources, @"RemoveString|GetStableHashCode|ZDOExtraData"));
+        Assert.Equal(new[] { "src/BaseStorage.Plugin/Feeding/FermenterFeedTarget.cs" }, PluginSourceScan.FilesMatching(sources, @"RemoveString|GetStableHashCode|ZDOExtraData")); // The game's fermenter call takes the item's hash; no key is touched.
         Assert.Equal(new[] { Storage, HoverLines }, PluginSourceScan.FilesMatching(sources, @"PersistenceKeys\.ChestCategory\b").OrderBy(f => f == Storage ? 0 : 1).ToArray());
         Assert.Contains("GetString(PersistenceKeys.ChestCategory, string.Empty)", sources[Storage], StringComparison.Ordinal);
         Assert.Contains("GetString(PersistenceKeys.ChestCategory, string.Empty)", sources[HoverLines], StringComparison.Ordinal);

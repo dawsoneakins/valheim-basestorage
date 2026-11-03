@@ -14,6 +14,7 @@ using BaseStorage.Core.Ui;
 using BaseStorage.Plugin.Categories;
 using BaseStorage.Plugin.CategoryButton;
 using BaseStorage.Plugin.ChestCategories;
+using BaseStorage.Plugin.ChestNames;
 using BaseStorage.Plugin.Feeding;
 using BaseStorage.Plugin.Organize;
 using BaseStorage.Plugin.Patching;
@@ -46,6 +47,7 @@ internal static class BaseMenuPanel
     private const float OpenHintWidth = 64f;
     private const string OrganizeId = "menu.organize";
     private const string DepositId = "menu.deposit";
+    private const string RestockId = "menu.restock";
     private const string CloseId = "menu.close";
     private const float MinWidth = 380f;
     internal const float MaxWidth = 560f;
@@ -75,10 +77,9 @@ internal static class BaseMenuPanel
     private const float SearchPadding = 10f;
     private const float RowIconSize = 26f;
     private const float RowIconSpace = 34f;
-    private const float SecondRow = -92f;
-    private const float SearchTop = -138f;
     private const float SearchHeight = 40f;
-    private const float ListTop = -184f;
+    private const float ButtonHeight = 40f;
+    private const int TakeIndex = 5;
     private const float RowTint = 0.18f;
     private const float FarEnough = 200f;
     private const float ScrollSpeed = 120f;
@@ -90,6 +91,8 @@ internal static class BaseMenuPanel
     private static readonly Color SearchIconTint = new Color(1f, 0.85f, 0.45f, 0.85f);
     private static readonly Color SearchFocused = new Color(1f, 0.8f, 0.3f, 0.9f);
 
+    private static readonly float[] ButtonWidths = { 150f, 186f, 110f, 90f, 90f, 130f, 160f, 120f, 108f };
+    private static readonly Button?[] MenuButtons = new Button?[9];
     private static readonly List<RowView> RowViews = new List<RowView>();
     private static readonly Dictionary<ContainerId, Container> Loaded = new Dictionary<ContainerId, Container>();
     private static readonly List<Container> Scratch = new List<Container>();
@@ -117,6 +120,10 @@ internal static class BaseMenuPanel
     private static Button? highlightButton;
     private static Button? shareButton;
     private static Button? markButton;
+    private static RectTransform? searchBoxRect;
+    private static RectTransform? searchAreaRect;
+    private static RectTransform? searchClearRect;
+    private static RectTransform? listViewRect;
     private static TMP_InputField? searchInput;
     private static Outline? searchOutline;
     private static GameObject? searchClear;
@@ -136,6 +143,54 @@ internal static class BaseMenuPanel
         && Player.m_localPlayer != null
         && !Player.m_localPlayer.IsDead()
         && !Player.m_localPlayer.IsTeleporting();
+
+    /// <summary>Gets a value indicating whether the menu is open.</summary>
+    internal static bool IsOpen => open && panel != null && panel.activeSelf;
+
+    /// <summary>Gets the buttons in one row of the gamepad's focus.</summary>
+    internal static int ButtonColumns => 5;
+
+    /// <summary>Gets the search box, for the gamepad's highlight.</summary>
+    internal static Selectable? SearchTarget => searchInput;
+
+    /// <summary>Lists the menu's controls for the gamepad: its buttons, then each visible row's two cells.</summary>
+    /// <param name="add">Receives each button and what pressing it does.</param>
+    /// <param name="addRow">Receives each row cell and what pressing it does.</param>
+    internal static void CopyTargets(Action<Selectable?, Action> add, Action<Selectable?, Action> addRow)
+    {
+        for (int i = 0; i < MenuButtons.Length; i++)
+        {
+            Button? button = MenuButtons[i];
+            if (button != null && button.gameObject.activeInHierarchy)
+            {
+                add(button, button.onClick.Invoke);
+            }
+        }
+
+        for (int i = 0; i < rows.Count && i < RowViews.Count; i++)
+        {
+            int index = i;
+            addRow(RowViews[i].OpenTarget, () => OpenChest(index));
+            addRow(RowViews[i].RuleTarget, () => CycleRule(index));
+        }
+    }
+
+    /// <summary>Opens or closes the menu from the gamepad.</summary>
+    internal static void ToggleFromGamepad() => OnOpenClick();
+
+    /// <summary>Scrolls the list to a row.</summary>
+    /// <param name="row">The row.</param>
+    internal static void ScrollToRow(int row) => ScrollTo(row);
+
+    /// <summary>Opens the game's text entry for the search box. A gamepad gets the game's own on-screen keyboard from it.</summary>
+    internal static void AskSearchText()
+    {
+        TextInput? input = TextInput.instance;
+        if (input != null && searchInput != null)
+        {
+            input.RequestText(new SearchReceiver(), StringTable.English.Get(StringKeys.MenuSearchTopic), 64);
+        }
+    }
 
     /// <summary>Stores the services the menu reads.</summary>
     /// <param name="current">The plugin world.</param>
@@ -411,35 +466,102 @@ internal static class BaseMenuPanel
         header = Text(gui, panel.transform, HeaderId, Margin, -Margin, MaxWidth - (2 * Margin), 30f);
         Transform parent = panel.transform;
         // Not cloned from Craft: a clone keeps the colours its template had at that moment as its normal look, and Craft is often greyed out.
-        Place(VanillaButtonFactory.Create(gui.m_stackAllButton, parent, OrganizeId, StringKeys.StationActionsOrganizeButton, OnOrganizeClick), Margin, 150f);
-        Place(VanillaButtonFactory.Create(gui.m_stackAllButton, parent, DepositId, StringKeys.StationActionsDepositButton, OnDepositClick), Margin + 156f, 186f);
+        Button? organize = VanillaButtonFactory.Create(gui.m_stackAllButton, parent, OrganizeId, StringKeys.StationActionsOrganizeButton, OnOrganizeClick);
+        Button? deposit = VanillaButtonFactory.Create(gui.m_stackAllButton, parent, DepositId, StringKeys.StationActionsDepositButton, OnDepositClick);
+        Button? restock = VanillaButtonFactory.Create(gui.m_stackAllButton, parent, RestockId, StringKeys.MenuRestock, OnRestockClick);
         markButton = VanillaButtonFactory.Create(gui.m_stackAllButton, parent, MarkId, StringKeys.MenuMark, OnMarkClick);
-        Place(markButton, Margin + 348f, 90f);
-        Place(VanillaButtonFactory.Create(gui.m_stackAllButton, parent, CloseId, StringKeys.MenuClose, OnOpenClick), Margin + 444f, 90f);
+        Button? close = VanillaButtonFactory.Create(gui.m_stackAllButton, parent, CloseId, StringKeys.MenuClose, OnOpenClick);
         takeButton = VanillaButtonFactory.Create(gui.m_takeAllButton, parent, TakeId, StringKeys.MenuTakeAll, OnTakeClick);
-        Place(takeButton, Margin, 130f, SecondRow);
         placeButton = VanillaButtonFactory.Create(gui.m_stackAllButton, parent, PlaceId, StringKeys.MenuPlaceStacks, OnPlaceClick);
-        Place(placeButton, Margin + 136f, 160f, SecondRow);
         highlightButton = VanillaButtonFactory.Create(gui.m_stackAllButton, parent, HighlightId, StringKeys.MenuHighlight, OnHighlightClick);
-        Place(highlightButton, Margin + 302f, 120f, SecondRow);
         shareButton = VanillaButtonFactory.Create(gui.m_stackAllButton, parent, ShareId, StringKeys.MenuShare, OnShareClick);
-        Place(shareButton, Margin + 428f, 108f, SecondRow);
+
+        // The nine buttons in the order of contract restock-run-contracts.md 2.3; the layout reads their widths back from sizeDelta.
+        MenuButtons[0] = organize;
+        MenuButtons[1] = deposit;
+        MenuButtons[2] = restock;
+        MenuButtons[3] = markButton;
+        MenuButtons[4] = close;
+        MenuButtons[5] = takeButton;
+        MenuButtons[6] = placeButton;
+        MenuButtons[7] = highlightButton;
+        MenuButtons[8] = shareButton;
+        for (int i = 0; i < MenuButtons.Length; i++)
+        {
+            Size(MenuButtons[i], ButtonWidths[i]);
+        }
+
         CreateSearch(gui);
         CreateList(gui);
         Fit(gui);
     }
 
-    private static void Place(Button? button, float x, float width, float y = -48f)
+    /// <summary>Gives a button its design width and height once; where it sits is the Core layout's decision on every Fit.</summary>
+    private static void Size(Button? button, float width)
     {
         if (button != null)
         {
-            VanillaButtonFactory.Pin((RectTransform)button.transform, new Vector2(width, 40f), new Vector2(x, y));
+            VanillaButtonFactory.Pin((RectTransform)button.transform, new Vector2(width, ButtonHeight), Vector2.zero);
             button.interactable = true;
             button.gameObject.SetActive(true);
         }
     }
 
-    private static void Fit(InventoryGui gui) => FitBetween(gui, (RectTransform)panel!.transform, PanelHeight);
+    private static void Fit(InventoryGui gui)
+    {
+        var rect = (RectTransform)panel!.transform;
+        FitBetween(gui, rect, PanelHeight);
+        ApplyLayout(rect.sizeDelta.x);
+    }
+
+    /// <summary>
+    /// Places the nine buttons, the search box and the list from <see cref="MenuButtonLayout"/>, using each button's measured width. Every
+    /// control is pinned at (X, -Top) from the panel's top-left corner, so the buttons wrap at a narrow panel and nothing overlaps.
+    /// </summary>
+    private static void ApplyLayout(float panelWidth)
+    {
+        var specs = new MenuButtonSpec[MenuButtons.Length];
+        for (int i = 0; i < specs.Length; i++)
+        {
+            Button? button = MenuButtons[i];
+            float measured = button == null ? 0f : ((RectTransform)button.transform).sizeDelta.x;
+            specs[i] = new MenuButtonSpec(measured > 0f ? measured : ButtonWidths[i], i == TakeIndex);
+        }
+
+        float searchHeight = searchBoxRect == null || searchBoxRect.sizeDelta.y <= 0f ? SearchHeight : searchBoxRect.sizeDelta.y;
+        MenuLayout layout = MenuButtonLayout.Arrange(panelWidth, PanelHeight, specs, searchHeight);
+        for (int i = 0; i < specs.Length; i++)
+        {
+            Button? button = MenuButtons[i];
+            if (button != null)
+            {
+                MenuRect rect = layout.Buttons[i];
+                VanillaButtonFactory.Pin((RectTransform)button.transform, new Vector2(rect.Width, rect.Height), new Vector2(rect.X, -rect.Top));
+            }
+        }
+
+        MenuRect search = layout.Search;
+        if (searchBoxRect != null)
+        {
+            VanillaButtonFactory.Pin(searchBoxRect, new Vector2(search.Width, search.Height), new Vector2(search.X, -search.Top));
+            if (searchAreaRect != null)
+            {
+                float areaLeft = SearchPadding + SearchIconSize + SearchPadding;
+                VanillaButtonFactory.Pin(searchAreaRect, new Vector2(Math.Max(0f, search.Width - areaLeft - SearchClearWidth - SearchPadding), search.Height), new Vector2(areaLeft, 0f));
+            }
+
+            if (searchClearRect != null)
+            {
+                VanillaButtonFactory.Pin(searchClearRect, new Vector2(SearchClearWidth - 6f, search.Height - 8f), new Vector2(search.Width - SearchClearWidth + 2f, -4f));
+            }
+        }
+
+        MenuRect list = layout.List;
+        if (listViewRect != null)
+        {
+            VanillaButtonFactory.Pin(listViewRect, new Vector2(list.Width, list.Height), new Vector2(list.X, -list.Top));
+        }
+    }
 
     /// <summary>Sits a panel between the chest window and the crafting panel, measured from both.</summary>
     /// <param name="gui">The inventory GUI.</param>
@@ -469,7 +591,8 @@ internal static class BaseMenuPanel
     private static void CreateSearch(InventoryGui gui)
     {
         float width = MaxWidth - (2 * Margin);
-        GameObject box = VanillaButtonFactory.CreateNode(panel!.transform, SearchId, new Vector2(width, SearchHeight), new Vector2(Margin, SearchTop), typeof(RectTransform), typeof(Image));
+        GameObject box = VanillaButtonFactory.CreateNode(panel!.transform, SearchId, new Vector2(width, SearchHeight), Vector2.zero, typeof(RectTransform), typeof(Image));
+        searchBoxRect = (RectTransform)box.transform;
         box.SetActive(false);
         box.GetComponent<Image>().color = new Color(0.07f, 0.05f, 0.05f, 0.9f);
         searchOutline = box.AddComponent<Outline>();
@@ -481,6 +604,7 @@ internal static class BaseMenuPanel
         glass.raycastTarget = false;
         float areaLeft = SearchPadding + SearchIconSize + SearchPadding;
         var area = (RectTransform)VanillaButtonFactory.CreateNode(box.transform, SearchAreaId, new Vector2(width - areaLeft - SearchClearWidth - SearchPadding, SearchHeight), new Vector2(areaLeft, 0f), typeof(RectTransform), typeof(RectMask2D)).transform;
+        searchAreaRect = area;
         TMP_Text? text = SearchText(gui, area, SearchTextId);
         TMP_Text? hint = SearchText(gui, area, SearchHintId);
         if (text == null || hint == null)
@@ -545,6 +669,7 @@ internal static class BaseMenuPanel
 
         clear.SetActive(false);
         searchClear = clear;
+        searchClearRect = (RectTransform)clear.transform;
     }
 
     private static TMP_Text? SearchText(InventoryGui gui, Transform area, string id)
@@ -592,8 +717,9 @@ internal static class BaseMenuPanel
     private static void CreateList(InventoryGui gui)
     {
         float width = MaxWidth - (2 * Margin);
-        GameObject view = VanillaButtonFactory.CreateNode(panel!.transform, ListId, new Vector2(width, PanelHeight + ListTop - Margin), new Vector2(Margin, ListTop), typeof(RectTransform), typeof(RectMask2D), typeof(ScrollRect), typeof(Image));
+        GameObject view = VanillaButtonFactory.CreateNode(panel!.transform, ListId, new Vector2(width, RowHeight), Vector2.zero, typeof(RectTransform), typeof(RectMask2D), typeof(ScrollRect), typeof(Image));
         var viewRect = (RectTransform)view.transform;
+        listViewRect = viewRect;
         view.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.35f);
         listContent = (RectTransform)VanillaButtonFactory.CreateNode(view.transform, RowsId, new Vector2(width, 0f), Vector2.zero, typeof(RectTransform)).transform;
         ScrollRect scroll = view.GetComponent<ScrollRect>();
@@ -659,6 +785,7 @@ internal static class BaseMenuPanel
 
         LoadContainers(current);
         var assignments = new Dictionary<ContainerId, CategoryAssignment>();
+        var names = new Dictionary<ContainerId, string>();
         for (int i = 0; i < resolution.Containers.Count; i++)
         {
             ContainerId id = resolution.Containers[i].Id;
@@ -669,10 +796,16 @@ internal static class BaseMenuPanel
                 {
                     assignments[id] = assignment;
                 }
+
+                string name = ChestNames.Read(chest);
+                if (name.Length > 0)
+                {
+                    names[id] = name;
+                }
             }
         }
 
-        rows = BaseMenuBuilder.Rows(query.Length == 0 ? resolution.Containers : CurrentContents(current, resolution.Containers), assignments, position, null, StringTable.English);
+        rows = BaseMenuBuilder.Rows(query.Length == 0 ? resolution.Containers : CurrentContents(current, resolution.Containers), assignments, names, position, null, StringTable.English);
         if (query.Length == 0)
         {
             SetText(header, StringTable.English.Format(StringKeys.MenuHeader, resolution.Stations.Count, resolution.Containers.Count, BaseMenuBuilder.FillPercent(resolution.Containers)));
@@ -889,6 +1022,14 @@ internal static class BaseMenuPanel
         }
     }
 
+    private static void CycleRule(int index)
+    {
+        if (index < rows.Count && Loaded.TryGetValue(rows[index].Chest.Id, out Container? chest))
+        {
+            ChestCategoryButton.Cycle(chest, true);
+        }
+    }
+
     private static void OnTakeClick() => PatchSafety.Run(ClickKey, static () => builtFor?.OnTakeAll());
 
     private static void OnPlaceClick() => PatchSafety.Run(ClickKey, static () => builtFor?.OnStackAll());
@@ -944,6 +1085,22 @@ internal static class BaseMenuPanel
 
     private static void OnDepositClick() => PatchSafety.Run(ClickKey, static () => Start(deposit: true));
 
+    private static void OnRestockClick() => PatchSafety.Run(ClickKey, static () => StartRestock());
+
+    private static void StartRestock()
+    {
+        Player player = Player.m_localPlayer;
+        if (player == null)
+        {
+            return;
+        }
+
+        // The coordinator has already shown any notice; the outcome needs nothing more here.
+        Vector3 at = player.transform.position;
+        OrganizeStartOutcome _ = OrganizeRunner.StartRestockAt(new WorldPosition(at.x, at.y, at.z));
+        lastLoad = TimeSpan.Zero;
+    }
+
     private static void Start(bool deposit)
     {
         Player player = Player.m_localPlayer;
@@ -958,11 +1115,25 @@ internal static class BaseMenuPanel
         lastLoad = TimeSpan.Zero;
     }
 
+    private sealed class SearchReceiver : TextReceiver
+    {
+        public string GetText() => query;
+
+        public void SetText(string text)
+        {
+            if (searchInput != null)
+            {
+                searchInput.text = text ?? string.Empty;
+            }
+        }
+    }
+
     private sealed class RowView
     {
         private readonly GameObject root;
         private readonly Image background;
         private readonly Button click;
+        private readonly Button? ruleClick;
         private readonly TMP_Text? label;
         private readonly TMP_Text? rule;
         private readonly TMP_Text? openHint;
@@ -1000,6 +1171,7 @@ internal static class BaseMenuPanel
             RectTransform? cycleRect = null;
             GameObject cycle = Cell(root.transform, RuleId, RuleWidth, width - RuleWidth, () => OpenRules(index, cycleRect!));
             cycleRect = (RectTransform)cycle.transform;
+            ruleClick = cycle.GetComponent<Button>();
             rule = Text(gui, cycle.transform, RuleLabelId, 6f, 0f, RuleWidth - 10f, RowHeight - 2f);
             root.SetActive(false);
         }
@@ -1015,6 +1187,9 @@ internal static class BaseMenuPanel
             return row.Hits.Count == 1 ? hit : StringTable.English.Format(StringKeys.MenuHitMore, hit, row.Hits.Count - 1);
         }
 
+        private static string WithName(BaseMenuRow row, string text) =>
+            row.Name.Length == 0 ? text : BaseSearch.Mark(row.Name, query, MatchOpen, MatchClose) + "  " + text;
+
         private static GameObject Cell(Transform parent, string id, float width, float x, Action click)
         {
             GameObject cell = VanillaButtonFactory.CreateNode(parent, id, new Vector2(width, RowHeight - 2f), new Vector2(x, 0f), typeof(RectTransform), typeof(Image), typeof(Button));
@@ -1022,6 +1197,10 @@ internal static class BaseMenuPanel
             cell.GetComponent<Button>().onClick.AddListener(() => PatchSafety.Run(ClickKey, click));
             return cell;
         }
+
+        internal Selectable OpenTarget => click;
+
+        internal Selectable? RuleTarget => ruleClick;
 
         internal void Show(BaseMenuRow? row, bool isOpen)
         {
@@ -1061,7 +1240,7 @@ internal static class BaseMenuPanel
             string state = row.AccessDenied ? StringTable.English.Get(StringKeys.MenuNoAccess) : row.InUse ? StringTable.English.Get(StringKeys.MenuInUse) : string.Empty;
             SetText(label, found
                 ? (state.Length == 0 ? HitText(row) : HitText(row) + "  (" + state + ")")
-                : StringTable.English.Format(StringKeys.MenuRow, row.FillPercent, distance, state));
+                : WithName(row, StringTable.English.Format(StringKeys.MenuRow, row.FillPercent, distance, state)));
             SetText(rule, BaseSearch.Mark(row.RuleLabel, query, MatchOpen, MatchClose));
         }
 

@@ -62,6 +62,9 @@ Host-synced settings take the host's value in multiplayer; the others are local 
 | `CycleCategoryKey` | `[Keys]` | unbound | no | Hotkey that cycles the category of the chest you are looking at. |
 | `OrganizeKey` | `[Keys]` | unbound | no | Hotkey that starts Organize base for the base that contains the player. |
 | `DepositKey` | `[Keys]` | unbound | no | Hotkey that starts Put away inventory at the nearest crafting station. |
+| `RestockKey` | `[Keys]` | unbound | no | Hotkey that starts Restock for the base that contains the player. |
+| `ChestLabels` | `[General]` | `true` | no | Show chest names and categories as labels in the world, inside a base. |
+| `ChestLabelDistance` | `[General]` | `6` | no | How close, in metres, a chest must be for its label to show. |
 | `DebugLogging` | `[Debug]` | `false` | no | Write per-move detail to the log at Debug level. |
 
 ## Categories file
@@ -90,6 +93,16 @@ The button is disabled, with a tooltip saying why, while an Organize runs in the
 
 **Put away inventory**, next to Organize base, moves your inventory into the station's base chests by their categories. It never moves the hotbar (top row), equipped items, favourites (Alt+click a slot) or anything in `DepositNeverItems` (default: meads, arrows and bolts, the hammer, hoe, cultivator, fishing rod and bait). Set `DepositPreview = true` under `[Organize]` to show a preview first (default off). The optional `DepositKey` under `[Keys]` (unbound by default) puts away into the base you stand in. It ends with one line such as `Put away: 4 stacks moved, 2 no room`, and it shares the disabled state and the one-per-base lock with Organize base.
 
+**Restock**, next to Put away inventory, tops up the stacks you carry from the base chests. It only fills the stacks in your hotbar (top row) and your favourites (Alt+click a slot), one stack at a time, and it only takes from a chest the items that really arrived. Set `RestockKey` under `[Keys]` (unbound by default) to restock the base you stand in. It ends with one line such as `Restocked 2 stacks, 60 items`, and it shares the one-per-base lock with Organize base.
+
+**Sort** and **Name** sit under the Category button of an open chest. Sort merges identical stacks and orders the chest by category, then name. It works only on that chest, keeps item data, and stacks that differ in quality, durability or crafter stay separate. Name gives the chest a name of up to 32 characters; an empty name clears it. Names show in the base menu and on hover, and search finds them.
+
+Named and categorised chests show a floating label within `ChestLabelDistance` metres, inside a base. Set `ChestLabels = false` to turn these off.
+
+Shift + use also opens the feed panel on fires, torches, fermenters and cooking stations. Fires and ovens keep fuel topped up, fermenters take a mead base when empty, and cooking stations fill their free slots while their fire is lit.
+
+With a gamepad, press the right stick in the inventory to open the base menu, or to take the focus on an open chest's buttons. The stick or D-pad moves the gold highlight, A selects and B closes.
+
 ## Console command
 
 Start Valheim with the `-console` launch option, press F5 and type `basestorage organize` to organize the base you stand in. It uses the same preview (closing the console shows it), the same one-Organize-per-base lock and the same summary as the Organize base button. Outside a base it prints `Not in a base`. While another player organizes the base it prints `Organize in progress by <name>`. `basestorage` alone prints `Usage: basestorage organize`. This is the in-game console, not a game console.
@@ -98,12 +111,11 @@ Start Valheim with the `-console` launch option, press F5 and type `basestorage 
 
 - Console and crossplay players are not supported.
 - Dedicated servers are not supported; it is verified only on peer-hosted games.
-- Fires, torches, fermenters and cooking stations are not fed from chests.
+- Stations are only filled: finished food and mead are not collected, so food left on a cooking station can burn.
 - Carts and ships are not used as storage (excluded by default, `ExcludeVehicles`).
-- There is no chest renaming and no visual chest labels.
 - There is no dedicated sorting table piece.
 - Compatibility with other storage or inventory mods is not guaranteed.
-- No gamepad bindings. The station and chest-panel buttons can be clicked with the gamepad cursor where vanilla allows it, and the hotkeys are keyboard shortcuts.
+- The gamepad control is new and has not been tried on every layout. The category dropdown needs a pointer, so a gamepad cycles categories instead, and the hotkeys stay keyboard only.
 
 ## Uninstall
 

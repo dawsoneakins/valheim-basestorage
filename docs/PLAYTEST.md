@@ -923,6 +923,26 @@ Expected: `Registry: station added (5 loaded)` and `Base at station <id>: 5 stat
 
 Expected: no `BaseStorage` line contains `failed and was skipped`, and while you stand still for 30 seconds no new `Registry:` or `Base at station` line appears (nothing runs every frame).
 
+## Station feeder and Keep chests (S-QF-001, R4)
+
+Status: unverified until a person runs it. The Keep exclusion in `StationFeeder` only runs in the game, so a source scan (`PluginFeedingSourceScanTests`) is its only automated check.
+
+The feeder takes nothing from a chest set to Keep when `KeepChestsCraftable` is false. When it is true (default), the feeder may feed from a Keep chest, as before.
+
+### Solo
+
+1. Build a smelter or kiln with a chest in range. Put 30 Coal or Wood (the station's fuel) in the chest and set the chest to Keep. Leave `KeepChestsCraftable = true` (default) under `[General]` in `<ValheimDir>\BepInEx\config\dawso.valheim.basestorage.cfg`. Open the station and use its feed button.
+
+Expected: the station is fed from the Keep chest, and the chest count drops by the amount fed.
+
+2. Set `KeepChestsCraftable = false`, restart, and put the station back to low fuel. Open the station and use the feed button again, with the Keep chest still the only chest holding fuel. Set it back to `true` afterwards.
+
+Expected: the feeder takes nothing from the Keep chest and the chest count does not change. The station is not fed.
+
+3. With `KeepChestsCraftable = false`, put fuel in a second chest that is not set to Keep and use the feed button.
+
+Expected: the station is fed from the second chest only. The Keep chest is untouched.
+
 ## Hover inspect (AC-2.6, AC-8.3)
 
 Checks the line that BaseStorage adds to the hover text of a chest and of a crafting station. Point the crosshair at the object and read the hover text. BaseStorage adds exactly one line at the end of the vanilla hover text; the vanilla lines stay as they are. Debug logging is not needed.

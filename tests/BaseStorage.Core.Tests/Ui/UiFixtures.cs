@@ -127,6 +127,15 @@ public static class UiFixtures
         ("menu.highlight", "Highlight"),
         ("menu.share", "Share"),
         ("feed.hover", "Feed from base"),
+        ("feed.kept", "Kept fed from the base"),
+        ("chest.sort", "Sort"),
+        ("chest.name", "Name"),
+        ("chest.name.topic", "Name this chest"),
+        ("message.chest.sorted", "Sorted: {0} stacks"),
+        ("message.chest.sort-busy", "Chest in use, not sorted"),
+        ("menu.gamepad.hint", "Right stick: focus   A: select   B: close"),
+        ("menu.search.topic", "Search the base"),
+        ("feed.status.fuel-only", "Fuel {0} of {1}"),
         ("feed.header.item", "Item"),
         ("feed.header.fed", "Keep fed"),
         ("feed.header.keep", "Leave in base"),
@@ -143,6 +152,20 @@ public static class UiFixtures
         ("menu.hit", "{0} x{1}"),
         ("menu.hit.more", "{0} +{1} more"),
         ("tooltip.favourite", "Favourite: Put away and Place stacks leave this"),
+        // Edited by S-QR-002 (ADR-GWIN-176)
+        
+        ("menu.restock", "Restock"),
+        ("message.restock.summary", "{0}"),
+        ("message.restock.moved.one.one", "Restocked 1 stack, 1 item"),
+        ("message.restock.moved.one.other", "Restocked 1 stack, {1} items"),
+        ("message.restock.moved.other.one", "Restocked {0} stacks, 1 item"),
+        ("message.restock.moved.other.other", "Restocked {0} stacks, {1} items"),
+        ("message.restock.nothing", "Nothing to restock"),
+        ("message.restock.nothing-moved", "Nothing restocked"),
+        ("message.restock.left-behind.one", "1 item left behind"),
+        ("message.restock.left-behind.other", "{0} items left behind"),
+        ("message.restock.stopped", "stopped early"),
+        ("message.restock.capture-failed", "Restock failed: could not read your inventory"),
     ];
 
     /// <summary>The number of StringKeys constants: 31 from contract 3.2, 16 from contract section 10 (S-E004-009), 1 from S-E005-002 (PlayerUnknown), 5 from S-E004-003 (category refusals), 1 from S-E006-002 (NetworkVersionMissing), 1 from S-E004-004 (ChestCategoryButton) and 10 from S-E004-011 (run summary and stop reasons).</summary>
@@ -150,7 +173,7 @@ public static class UiFixtures
     // Edited by S-E008-001 (ADR-GWIN-153): 68, with MessageCraftUsedBase (contract 4.1).
     // Edited by S-E010-002 (organize-console-command 5): 68 plus the five console keys, 73.
     // Edited by S-A-003: 73 plus the rules key and the two no-room reasons, 76.
-    public const int StringKeyCount = 112;
+    public const int StringKeyCount = 129; // Edited by S-QR-002 (ADR-GWIN-176)
 
     /// <summary>Contract 3.2 "Const" column (31 constants), contract section 10 (16 more) and S-E005-002 section 2.6 (PlayerUnknown): the StringKeys constants and the value each one holds.</summary>
     public static readonly (string Name, string Value)[] StringKeyValues =
@@ -204,6 +227,15 @@ public static class UiFixtures
         ("MenuHighlight", "menu.highlight"),
         ("MenuShare", "menu.share"),
         ("FeedHover", "feed.hover"),
+        ("FeedKept", "feed.kept"),
+        ("ChestSort", "chest.sort"),
+        ("ChestName", "chest.name"),
+        ("ChestNameTopic", "chest.name.topic"),
+        ("MessageChestSorted", "message.chest.sorted"),
+        ("MessageChestSortBusy", "message.chest.sort-busy"),
+        ("MenuGamepadHint", "menu.gamepad.hint"),
+        ("MenuSearchTopic", "menu.search.topic"),
+        ("FeedStatusFuelOnly", "feed.status.fuel-only"),
         ("FeedHeaderItem", "feed.header.item"),
         ("FeedHeaderFed", "feed.header.fed"),
         ("FeedHeaderKeep", "feed.header.keep"),
@@ -270,6 +302,16 @@ public static class UiFixtures
         ("ConsoleOrganizeNoPlayer", "console.organize.no-player"),
         ("ConsoleBasestorageUsage", "console.basestorage.usage"),
         ("ConsoleBasestorageDescription", "console.basestorage.description"),
+        // Edited by S-QR-002 (ADR-GWIN-176)
+        
+        ("MenuRestock", "menu.restock"),
+        ("MessageRestockSummary", "message.restock.summary"),
+        ("MessageRestockMoved", "message.restock.moved"),
+        ("MessageRestockNothing", "message.restock.nothing"),
+        ("MessageRestockNothingMoved", "message.restock.nothing-moved"),
+        ("MessageRestockLeftBehind", "message.restock.left-behind"),
+        ("MessageRestockStopped", "message.restock.stopped"),
+        ("MessageRestockCaptureFailed", "message.restock.capture-failed"),
     ];
 
     /// <summary>The plural base keys that have no text of their own (every base except station.actions.status-line).</summary>

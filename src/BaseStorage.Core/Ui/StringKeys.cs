@@ -270,6 +270,33 @@ public static class StringKeys
     /// <summary>The hover hint that opens a station's feed panel.</summary>
     public const string FeedHover = "feed.hover";
 
+    /// <summary>Label of the Sort button of the open-chest panel.</summary>
+    public const string ChestSort = "chest.sort";
+
+    /// <summary>Label of the Name button of the open-chest panel.</summary>
+    public const string ChestName = "chest.name";
+
+    /// <summary>Title of the text entry that names a chest.</summary>
+    public const string ChestNameTopic = "chest.name.topic";
+
+    /// <summary>Notice after a chest is sorted; the argument is the stack count.</summary>
+    public const string MessageChestSorted = "message.chest.sorted";
+
+    /// <summary>Notice when a chest could not be held for sorting.</summary>
+    public const string MessageChestSortBusy = "message.chest.sort-busy";
+
+    /// <summary>Hint shown in panels while a gamepad is in use.</summary>
+    public const string MenuGamepadHint = "menu.gamepad.hint";
+
+    /// <summary>Title of the text entry that fills the search box.</summary>
+    public const string MenuSearchTopic = "menu.search.topic";
+
+    /// <summary>Line on a station that is kept fed.</summary>
+    public const string FeedKept = "feed.kept";
+
+    /// <summary>Feed panel status of a station that only burns fuel.</summary>
+    public const string FeedStatusFuelOnly = "feed.status.fuel-only";
+
     /// <summary>The feed panel's item column.</summary>
     public const string FeedHeaderItem = "feed.header.item";
 
@@ -338,4 +365,28 @@ public static class StringKeys
 
     /// <summary>The tooltip line of a favourite item.</summary>
     public const string TooltipFavourite = "tooltip.favourite";
+
+    /// <summary>The label of the Restock button.</summary>
+    public const string MenuRestock = "menu.restock";
+
+    /// <summary>The Restock result line notice; the one argument is the composed line.</summary>
+    public const string MessageRestockSummary = "message.restock.summary";
+
+    /// <summary>Key base (two plural forms appended) of the Restock moved head: stacks, then items.</summary>
+    public const string MessageRestockMoved = "message.restock.moved";
+
+    /// <summary>The Restock line when there was nothing to move and nothing left behind.</summary>
+    public const string MessageRestockNothing = "message.restock.nothing";
+
+    /// <summary>The Restock line head when nothing moved but items were left or the run stopped.</summary>
+    public const string MessageRestockNothingMoved = "message.restock.nothing-moved";
+
+    /// <summary>Key base (plural form appended) of the items left behind part of the Restock line.</summary>
+    public const string MessageRestockLeftBehind = "message.restock.left-behind";
+
+    /// <summary>The Restock line part for a run that stopped early.</summary>
+    public const string MessageRestockStopped = "message.restock.stopped";
+
+    /// <summary>The notice when the player's inventory could not be read for a Restock.</summary>
+    public const string MessageRestockCaptureFailed = "message.restock.capture-failed";
 }

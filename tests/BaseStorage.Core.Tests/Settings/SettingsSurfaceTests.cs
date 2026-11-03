@@ -47,7 +47,7 @@ public sealed class SettingsSurfaceTests
     {
         FieldInfo[] fields = typeof(SettingKeys).GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
 
-        Assert.Equal(20, fields.Length);
+        Assert.Equal(23, fields.Length); // Edited by S-QR-002 (ADR-GWIN-176)
         foreach (FieldInfo field in fields)
         {
             Assert.True(field.IsPublic && field.IsLiteral && field.FieldType == typeof(string), field.Name + " is not a public string constant.");
@@ -159,7 +159,7 @@ public sealed class SettingsSurfaceTests
     {
         Type type = typeof(BaseStorageSettings);
         PropertyInfo[] properties = type.GetProperties(PublicDeclared);
-        Assert.Equal(20, properties.Length);
+        Assert.Equal(23, properties.Length); // Edited by S-QR-002 (ADR-GWIN-176)
 
         foreach (var row in Section7Table.Rows)
         {

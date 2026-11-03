@@ -15,7 +15,7 @@ public sealed class AutoAssignMixedChestsSettingTests
     [Fact]
     public void TheCatalogRowIsTheLastRowHostSyncedWithTheExactDescription()
     {
-        Assert.Equal(20, SettingsCatalog.All.Count);
+        Assert.Equal(23, SettingsCatalog.All.Count); // Edited by S-QR-002 (ADR-GWIN-176)
 
         SettingDefinition row = SettingsCatalog.All[18];
         Assert.Equal(SettingSections.Organize, row.Section);

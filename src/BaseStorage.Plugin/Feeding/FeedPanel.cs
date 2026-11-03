@@ -15,7 +15,7 @@ using UnityEngine.UI;
 
 /// <summary>
 /// The panel of one station: every item it accepts, how many the base holds, whether the station is kept fed with it, and how many must
-/// stay in the base. Shift + use on the station's ore or fuel switch opens it inside the inventory screen, which gives it a cursor and
+/// stay in the base. Shift + use on the station, or on its ore or fuel switch, opens it inside the inventory screen, which gives it a cursor and
 /// closes it with the usual keys. Rows are built once and reused. Main thread only.
 /// </summary>
 internal static class FeedPanel
@@ -52,13 +52,14 @@ internal static class FeedPanel
     private static readonly List<RowView> RowViews = new List<RowView>();
     private static readonly List<RowItem> Items = new List<RowItem>();
     private static readonly List<ContainerSnapshot> Chests = new List<ContainerSnapshot>();
+    private static readonly List<ItemDrop> Accepted = new List<ItemDrop>();
 
     private static IClock? clock;
     private static InventoryGui? builtFor;
     private static GameObject? panel;
     private static TMP_Text? title;
     private static TMP_Text? status;
-    private static Smelter? station;
+    private static FeedTarget? station;
     private static FeedSelection selection = FeedSelection.Empty;
     private static TimeSpan lastLoad = TimeSpan.Zero;
     private static TimeSpan lastEdit = TimeSpan.Zero;
@@ -78,7 +79,24 @@ internal static class FeedPanel
             return true;
         }
 
-        Smelter? target = StationOf(used);
+        FeedTarget? target = StationOf(used);
+        if (target == null)
+        {
+            return true;
+        }
+
+        Open(target);
+        return false;
+    }
+
+    /// <summary>Opens the panel from Shift + use on a station with no switch of its own.</summary>
+    /// <param name="used">The station.</param>
+    /// <param name="hold">True when the use key is being held down.</param>
+    /// <param name="alt">True when Shift was held.</param>
+    /// <returns>True to run vanilla; false when the panel took the interaction.</returns>
+    internal static bool OnStationInteract(Component used, bool hold, bool alt)
+    {
+        FeedTarget? target = !alt || hold ? null : FeedTargets.Of(used);
         if (target == null)
         {
             return true;
@@ -94,13 +112,30 @@ internal static class FeedPanel
     /// <returns>The text to show.</returns>
     internal static string HoverText(Switch hovered, string text)
     {
-        if (StationOf(hovered) == null || Localization.instance == null)
+        return WithHint(StationOf(hovered), text);
+    }
+
+    /// <summary>Adds the panel's hint to a station's hover text.</summary>
+    /// <param name="hovered">The station.</param>
+    /// <param name="text">The vanilla text.</param>
+    /// <returns>The text to show.</returns>
+    internal static string HoverText(Component hovered, string text) => WithHint(FeedTargets.Of(hovered), text);
+
+    /// <summary>Gets a value indicating whether the panel is open.</summary>
+    internal static bool IsOpen => station != null && panel != null && panel.activeSelf;
+
+    /// <summary>Lists the panel's controls for the gamepad, row by row.</summary>
+    /// <param name="add">Receives each control and what pressing it does.</param>
+    /// <returns>The controls in one row.</returns>
+    internal static int CopyTargets(Action<Selectable?, Action> add)
+    {
+        for (int i = 0; i < Items.Count && i < RowViews.Count; i++)
         {
-            return text;
+            int index = i;
+            RowViews[i].CopyTargets(add, () => Toggle(index), () => ChangeKeep(index, -KeepStep), () => ChangeKeep(index, KeepStep));
         }
 
-        return text + "\n" + Localization.instance.Localize("[<color=yellow><b>$KEY_AltPlace + $KEY_Use</b></color>] ")
-            + StringTable.English.Get(StringKeys.FeedHover);
+        return 3;
     }
 
     /// <summary>Closes the panel.</summary>
@@ -138,7 +173,7 @@ internal static class FeedPanel
             return;
         }
 
-        if (station == null)
+        if (station == null || !station.IsAlive)
         {
             Close();
             return;
@@ -157,14 +192,32 @@ internal static class FeedPanel
         }
     }
 
-    /// <summary>Finds the station of a switch: only its ore and fuel switches count, not the one that empties it.</summary>
-    private static Smelter? StationOf(Switch used)
+    private static string WithHint(FeedTarget? target, string text)
     {
-        Smelter? found = used == null ? null : used.GetComponentInParent<Smelter>();
-        return found != null && (found.m_addOreSwitch == used || found.m_addWoodSwitch == used) ? found : null;
+        if (target == null || Localization.instance == null)
+        {
+            return text;
+        }
+
+        string hint = text + "\n" + Localization.instance.Localize("[<color=yellow><b>$KEY_AltPlace + $KEY_Use</b></color>] ")
+            + StringTable.English.Get(StringKeys.FeedHover);
+        return StationFeeder.Read(target).Entries.Count == 0 ? hint : hint + "\n" + StringTable.English.Get(StringKeys.FeedKept);
     }
 
-    private static void Open(Smelter target)
+    /// <summary>Finds the station of a switch: only its input and fuel switches count, not the one that empties it.</summary>
+    private static FeedTarget? StationOf(Switch used)
+    {
+        Smelter? smelter = used == null ? null : used.GetComponentInParent<Smelter>();
+        if (smelter != null && (smelter.m_addOreSwitch == used || smelter.m_addWoodSwitch == used))
+        {
+            return FeedTargets.Of(smelter);
+        }
+
+        CookingStation? cooker = used == null ? null : used.GetComponentInParent<CookingStation>();
+        return cooker != null && (cooker.m_addFoodSwitch == used || cooker.m_addFuelSwitch == used) ? FeedTargets.Of(cooker) : null;
+    }
+
+    private static void Open(FeedTarget target)
     {
         InventoryGui? gui = InventoryGui.instance;
         if (gui == null || clock == null)
@@ -184,22 +237,19 @@ internal static class FeedPanel
         }
 
         Items.Clear();
-        if (target.m_fuelItem != null)
+        Accepted.Clear();
+        target.CopyItems(Accepted);
+        for (int i = 0; i < Accepted.Count && Items.Count < MaxRows; i++)
         {
-            Items.Add(new RowItem(target.m_fuelItem));
-        }
-
-        foreach (Smelter.ItemConversion conversion in target.m_conversion)
-        {
-            if (conversion.m_from != null && Items.Count < MaxRows && !Listed(conversion.m_from.gameObject.name))
+            if (!Listed(Accepted[i].gameObject.name))
             {
-                Items.Add(new RowItem(conversion.m_from));
+                Items.Add(new RowItem(Accepted[i]));
             }
         }
 
         panel!.SetActive(true);
         BaseMenuPanel.FitBetween(gui, (RectTransform)panel.transform, PanelHeight);
-        SetText(title, Localization.instance.Localize(target.m_name));
+        SetText(title, Localization.instance.Localize(target.Name));
         Show();
         lastLoad = clock.Elapsed;
     }
@@ -253,17 +303,19 @@ internal static class FeedPanel
 
     private static void Show()
     {
-        Smelter? target = station;
-        if (target == null)
+        FeedTarget? target = station;
+        if (target == null || !target.IsAlive)
         {
             return;
         }
 
         FeedStationState state = StationFeeder.StateOf(target);
-        SetText(status, state.FuelPrefab == null
+        SetText(status, state.Shape == FeedStationShape.FuelOnly
+            ? StringTable.English.Format(StringKeys.FeedStatusFuelOnly, Mathf.CeilToInt(state.Fuel), Mathf.FloorToInt(state.MaxFuel))
+            : state.FuelPrefab == null
             ? StringTable.English.Format(StringKeys.FeedStatusNoFuel, state.Queued, state.MaxQueued)
-            : StringTable.English.Format(StringKeys.FeedStatus, state.Queued, state.MaxQueued, Mathf.CeilToInt(state.Fuel), state.MaxFuel));
-        bool inBase = StationFeeder.LoadChests(target.transform.position, Chests);
+            : StringTable.English.Format(StringKeys.FeedStatus, state.Queued, state.MaxQueued, Mathf.CeilToInt(state.Fuel), Mathf.FloorToInt(state.MaxFuel)));
+        bool inBase = StationFeeder.LoadChests(target.Station.transform.position, Chests);
         for (int i = 0; i < RowViews.Count; i++)
         {
             RowItem? item = i < Items.Count ? Items[i] : null;
@@ -309,7 +361,7 @@ internal static class FeedPanel
 
     private static void Store(FeedSelection changed)
     {
-        Smelter? target = station;
+        FeedTarget? target = station;
         if (target == null || clock == null)
         {
             return;
@@ -397,6 +449,8 @@ internal static class FeedPanel
         private readonly TMP_Text? stock;
         private readonly TMP_Text? keep;
         private readonly Button? toggle;
+        private readonly Button? less;
+        private readonly Button? more;
         private readonly TMP_Text? toggleLabel;
 
         internal RowView(InventoryGui gui, Transform parent, int index)
@@ -423,19 +477,26 @@ internal static class FeedPanel
                 toggleLabel = toggle.GetComponentInChildren<TMP_Text>();
             }
 
-            Button? less = VanillaButtonFactory.Create(gui.m_stackAllButton, row, LessId, StringKeys.FeedLess, () => PatchSafety.Run(ClickKey, () => ChangeKeep(index, -KeepStep)));
+            less = VanillaButtonFactory.Create(gui.m_stackAllButton, row, LessId, StringKeys.FeedLess, () => PatchSafety.Run(ClickKey, () => ChangeKeep(index, -KeepStep)));
             if (less != null)
             {
                 Pin(less, StepWidth, 34f, LessX, -2f);
             }
 
-            Button? more = VanillaButtonFactory.Create(gui.m_stackAllButton, row, MoreId, StringKeys.FeedMore, () => PatchSafety.Run(ClickKey, () => ChangeKeep(index, KeepStep)));
+            more = VanillaButtonFactory.Create(gui.m_stackAllButton, row, MoreId, StringKeys.FeedMore, () => PatchSafety.Run(ClickKey, () => ChangeKeep(index, KeepStep)));
             if (more != null)
             {
                 Pin(more, StepWidth, 34f, LessX + StepWidth + KeepWidth, -2f);
             }
 
             root.SetActive(false);
+        }
+
+        internal void CopyTargets(Action<Selectable?, Action> add, Action onToggle, Action onLess, Action onMore)
+        {
+            add(toggle, onToggle);
+            add(less, onLess);
+            add(more, onMore);
         }
 
         internal void Show(RowItem? item, FeedEntry? entry, int inBase)

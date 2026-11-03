@@ -2,6 +2,8 @@ namespace BaseStorage.Core.Feeding;
 
 using System;
 using System.Collections.Generic;
+using BaseStorage.Core.Bases.Membership;
+using BaseStorage.Core.Persistence;
 using BaseStorage.Core.Snapshots;
 
 /// <summary>
@@ -97,6 +99,80 @@ public static class FeedPlanner
         }
 
         return null;
+    }
+
+    /// <summary>Plans the next transfer from the chests the feeder may use: Keep chests only when KeepChestsCraftable is on.</summary>
+    /// <param name="station">The station.</param>
+    /// <param name="selection">The items it is kept fed with.</param>
+    /// <param name="chests">The base's member chests with current contents, unfiltered.</param>
+    /// <param name="assignments">The persisted assignment per chest id; only Keep matters. A missing id means not Keep.</param>
+    /// <param name="options">The ExcludeVehicles and KeepChestsCraftable settings.</param>
+    /// <param name="stationPosition">Where the station is.</param>
+    /// <param name="skip">Chests to leave alone for now.</param>
+    /// <returns>The order, or null when there is nothing to do.</returns>
+    public static FeedOrder? Next(
+        FeedStationState station,
+        FeedSelection selection,
+        IReadOnlyList<ContainerSnapshot> chests,
+        IReadOnlyDictionary<ContainerId, CategoryAssignment> assignments,
+        EligibilityOptions options,
+        WorldPosition stationPosition,
+        ICollection<ContainerId> skip)
+    {
+        if (station is null)
+        {
+            throw new ArgumentNullException(nameof(station));
+        }
+
+        if (selection is null)
+        {
+            throw new ArgumentNullException(nameof(selection));
+        }
+
+        if (chests is null)
+        {
+            throw new ArgumentNullException(nameof(chests));
+        }
+
+        for (var i = 0; i < chests.Count; i++)
+        {
+            if (chests[i] is null)
+            {
+                throw new ArgumentException("The chests contain a null element.", nameof(chests));
+            }
+        }
+
+        if (assignments is null)
+        {
+            throw new ArgumentNullException(nameof(assignments));
+        }
+
+        var pairs = new List<KeyValuePair<ContainerId, CategoryAssignment>>(assignments);
+        for (var i = 0; i < pairs.Count; i++)
+        {
+            if (pairs[i].Value is null)
+            {
+                throw new ArgumentException("The assignments contain a null value.", nameof(assignments));
+            }
+        }
+
+        if (skip is null)
+        {
+            throw new ArgumentNullException(nameof(skip));
+        }
+
+        var sources = new List<ContainerSnapshot>(chests.Count);
+        for (var i = 0; i < chests.Count; i++)
+        {
+            var chest = chests[i];
+            var isKeep = assignments.TryGetValue(chest.Id, out var assignment) && assignment.IsKeep;
+            if (ContainerEligibility.GetExclusionReason(chest, isKeep, ContainerPurpose.CraftAvailability, options) is null)
+            {
+                sources.Add(chest);
+            }
+        }
+
+        return Next(station, selection, sources, stationPosition, skip);
     }
 
     private static bool Accepts(FeedStationState station, string prefabName)

@@ -93,7 +93,7 @@ public sealed class PluginOrganizeSourceScanTests
             Assert.DoesNotContain("ClaimOwnership", sources[file], StringComparison.Ordinal);
         }
 
-        Assert.Empty(PluginSourceScan.FilesMatching(sources, @"RemoveString|GetStableHashCode|ZDOExtraData"));
+        Assert.Equal(new[] { "src/BaseStorage.Plugin/Feeding/FermenterFeedTarget.cs" }, PluginSourceScan.FilesMatching(sources, @"RemoveString|GetStableHashCode|ZDOExtraData")); // The game's fermenter call takes the item's hash; no key is touched.
     }
 
     // GW-U-1383 (RN9, RN10): the layer reserves only through the driver, writes only behind CanWrite, and never takes a chest from a player.

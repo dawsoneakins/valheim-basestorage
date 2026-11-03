@@ -10,7 +10,7 @@ using BaseStorage.Core.Settings;
 /// </summary>
 internal static class Section7Table
 {
-    /// <summary>The 20 rows in table order, including StationButtons at index 13 and AutoAssignMixedChests at index 18 (S-A-001).</summary>
+    /// <summary>The 23 rows in table order, including StationButtons at index 13, AutoAssignMixedChests at index 18 (S-A-001) and RestockKey last at index 20 (S-QR-002).</summary>
     public static readonly (string Section, string Key, SettingKind Kind, string DefaultText, bool HostSynced)[] Rows =
     {
         ("General", "CraftFromBase", SettingKind.Bool, "true", true),
@@ -33,6 +33,10 @@ internal static class Section7Table
         ("Debug", "DebugLogging", SettingKind.Bool, "false", false),
         ("Organize", "AutoAssignMixedChests", SettingKind.Bool, "true", true),
         ("General", "ShowCategoryTooltip", SettingKind.Bool, "true", false),
+        // Edited by S-QR-002 (ADR-GWIN-176)
+        ("Keys", "RestockKey", SettingKind.Hotkey, "", false),
+        ("General", "ChestLabels", SettingKind.Bool, "true", false),
+        ("General", "ChestLabelDistance", SettingKind.Int, "6", false),
     };
 
     /// <summary>The 9 host-synced keys, in table order.</summary>

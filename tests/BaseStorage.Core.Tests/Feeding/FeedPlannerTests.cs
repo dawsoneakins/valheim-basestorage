@@ -14,7 +14,7 @@ public sealed class FeedPlannerTests
     private static readonly string[] Ores = { "CopperOre", "TinOre" };
 
     private static FeedStationState Smelter(int queued = 0, float fuel = 20f) =>
-        new FeedStationState(queued, 10, fuel, 20, "Coal", Ores);
+        FeedStationState.SmelterClass(queued, 10, fuel, 20, "Coal", Ores);
 
     private static FeedOrder? Next(FeedStationState state, FeedSelection selection, params ContainerSnapshot[] chests) =>
         FeedPlanner.Next(state, selection, chests, Station, NoSkip);
@@ -53,7 +53,7 @@ public sealed class FeedPlannerTests
 
     [Fact]
     public void AStationThatBurnsNothingHasNoFuelRoom() =>
-        Assert.Equal(0, new FeedStationState(0, 10, 0f, 0, null, Ores).FuelRoom);
+        Assert.Equal(0, FeedStationState.SmelterClass(0, 10, 0f, 0, null, Ores).FuelRoom);
 
     [Fact]
     public void AnItemTheStationCannotProcessIsIgnored() =>

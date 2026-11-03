@@ -13,5 +13,5 @@ internal static class SmelterAwakePatch
     internal const string PatchKey = "BaseStorage.Plugin.Feeding.SmelterAwakePatch.Postfix";
 
     private static void Postfix(Smelter __instance) =>
-        PatchSafety.Run(PatchKey, __instance, static station => PluginWorld.Current?.OnSmelterAwake(station));
+        PatchSafety.Run(PatchKey, __instance, static station => PluginWorld.Current?.OnFeedStationAwake(station));
 }

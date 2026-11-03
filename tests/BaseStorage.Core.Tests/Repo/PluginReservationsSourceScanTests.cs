@@ -180,7 +180,7 @@ public sealed class PluginReservationsSourceScanTests
         // Edited by integration (S-E004-004): plus the Category button postfix, twenty-five.
         // Edited by S-E004-012 (ADR-GWIN-136): plus the UpdateRecipe postfix of the station actions, twenty-six.
         // Edited by S-E010-002 (organize-console-command 6.2): plus TerminalInitTerminalPatch.Postfix, twenty-seven.
-        Assert.Equal(34, PluginSourceScan.CountMatches(PluginSourceScan.Sources(), @"static (bool|void) (Prefix|Postfix)\("));
+        Assert.Equal(45, PluginSourceScan.CountMatches(PluginSourceScan.Sources(), @"static (bool|void) (Prefix|Postfix)\("));
     }
 
     // GW-U-776 (SR6): exactly two patch files, each with the contracted attribute, key and single-statement prefix.
@@ -224,6 +224,7 @@ public sealed class PluginReservationsSourceScanTests
             new[]
             {
                 "src/BaseStorage.Plugin/BaseMenu/InventoryGuiHidePatch.cs", // Blocks Hide only while the menu's search box has focus.
+                "src/BaseStorage.Plugin/BaseMenu/InventoryGuiRecipeGamepadPatch.cs", // Waits only while one of the mod's panels has the gamepad.
                 "src/BaseStorage.Plugin/CategoryButton/InventoryGuiUpdateContainerPatch.cs",
                 "src/BaseStorage.Plugin/Crafting/InventoryGuiDoCraftingPatch.cs",
                 "src/BaseStorage.Plugin/Requirements/InventoryGuiSetupRequirementListPatch.cs",

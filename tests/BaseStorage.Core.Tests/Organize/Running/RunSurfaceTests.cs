@@ -70,14 +70,16 @@ public sealed class RunSurfaceTests
             .Select(m => m.Name).Where(n => !n.StartsWith("get_", StringComparison.Ordinal) && n != ".ctor").OrderBy(n => n, StringComparer.Ordinal).ToArray();
         // Edited by S-E004-015 (ADR-GWIN-143): plus StartDeposit (deposit-button contract 2.2).
         // Edited by S-E010-002 (organize-console-command 3): plus RefusedBy.
-        Assert.Equal(new[] { "Cancel", "Confirm", "Plan", "RefusedBy", "Start", "StartDeposit", "State", "Tick" }, coordinator);
+        // Edited by S-QR-002 (ADR-GWIN-176)
+        Assert.Equal(new[] { "Cancel", "Confirm", "Plan", "RefusedBy", "Start", "StartDeposit", "StartRestock", "State", "Tick" }, coordinator);
         Assert.Equal(6, typeof(OrganizeRunCoordinator).GetConstructors().Single().GetParameters().Length);
 
         string[] port = typeof(IOrganizeRunPort).GetMembers()
             .Select(m => m.Name).Where(n => !n.StartsWith("get_", StringComparison.Ordinal)).OrderBy(n => n, StringComparer.Ordinal).ToArray();
         // Edited by S-E004-015 (ADR-GWIN-143): plus CaptureInventory, Favourites and CreateDepositLayer (deposit-button contract 2.1).
         Assert.Equal(
-            new[] { "CaptureInventory", "Catalog", "CreateDepositLayer", "CreateLayer", "Favourites", "GatherFacts", "HolderId", "HolderName", "InWorld", "ItemKinds", "SaveCategoryRules", "ShowNotice", "ShowPreview" },
+            // Edited by S-QR-002 (ADR-GWIN-176)
+            new[] { "CaptureCarried", "CaptureChests", "CaptureInventory", "Catalog", "CreateDepositLayer", "CreateLayer", "CreateRestockLayer", "Favourites", "GatherFacts", "HolderId", "HolderName", "InWorld", "ItemKinds", "SaveCategoryRules", "ShowNotice", "ShowPreview" },
             port);
     }
 

@@ -120,13 +120,13 @@ public sealed class PlaytestGamepadCursorTests
         Assert.Contains("no dedicated gamepad binding", section.Substring(0, solo), StringComparison.OrdinalIgnoreCase);
     }
 
-    // GW-U-2224 (AC-4): the player README known limits still say there are no gamepad bindings.
+    // GW-U-2224 (AC-4), edited by S-QG-002: the player README known limits say what the gamepad still cannot do.
     [Fact]
-    public void ThePlayerReadmeKnownLimitsStillSaysNoGamepadBindings()
+    public void ThePlayerReadmeKnownLimitsSayWhatTheGamepadCannotDo()
     {
         string limits = KnownLimits(RepoRoot.ReadText(PackageReadme));
 
-        Assert.Contains("No gamepad bindings", limits, StringComparison.Ordinal);
+        Assert.Contains("The category dropdown needs a pointer", limits, StringComparison.Ordinal);
     }
 
     private static string Section()

@@ -21,8 +21,11 @@ public static class PersistenceKeys
     /// <summary>The key on a station that holds what it is kept fed with.</summary>
     public const string StationFeed = "basestorage.feed";
 
+    /// <summary>The key on a chest that holds its name.</summary>
+    public const string ChestName = "basestorage.name";
+
     private static readonly ReadOnlyCollection<string> AllKeys =
-        new ReadOnlyCollection<string>(new[] { ChestCategory, OrganizeLock, Favourites, StationFeed, FavouriteItems });
+        new ReadOnlyCollection<string>(new[] { ChestCategory, OrganizeLock, Favourites, StationFeed, ChestName, FavouriteItems });
 
     /// <summary>Gets every persistent key, in the order chest category, organize lock, favourites.</summary>
     public static IReadOnlyList<string> All => AllKeys;

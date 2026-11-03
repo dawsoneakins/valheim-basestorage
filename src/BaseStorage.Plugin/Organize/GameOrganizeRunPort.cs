@@ -7,6 +7,7 @@ using BaseStorage.Core.Categories;
 using BaseStorage.Core.Categories.AutoAssign;
 using BaseStorage.Core.Categories.Defaults;
 using BaseStorage.Core.ChestAccess;
+using BaseStorage.Core.Logging;
 using BaseStorage.Core.Organize;
 using BaseStorage.Core.Organize.Deposit;
 using BaseStorage.Core.Organize.Run;
@@ -19,6 +20,7 @@ using BaseStorage.Plugin.ChestCategories;
 using BaseStorage.Plugin.Deposit;
 using BaseStorage.Plugin.Favourites;
 using BaseStorage.Plugin.Reservations;
+using BaseStorage.Plugin.Restock;
 using BaseStorage.Plugin.Ui;
 using BaseStorage.Plugin.World;
 
@@ -35,15 +37,20 @@ internal sealed class GameOrganizeRunPort : IOrganizeRunPort
     private readonly ReservationDriver<Container> reservations;
     private readonly List<Container> scratch = new List<Container>();
     private readonly Dictionary<ContainerId, Container> containers = new Dictionary<ContainerId, Container>();
+    private readonly ILogSink? sink;
+    private readonly Dictionary<ContainerId, ContainerSnapshot> restockChests = new Dictionary<ContainerId, ContainerSnapshot>();
     private Dictionary<string, ItemKind>? kinds;
+    private Vector2i[] carriedSlots = Array.Empty<Vector2i>();
 
     /// <summary>Creates the port over the plugin world and the reservation driver.</summary>
     /// <param name="world">The plugin world.</param>
     /// <param name="reservations">The reservation driver.</param>
-    internal GameOrganizeRunPort(PluginWorld world, ReservationDriver<Container> reservations)
+    /// <param name="sink">The log sink that receives the reason of a failed inventory capture; null logs nothing.</param>
+    internal GameOrganizeRunPort(PluginWorld world, ReservationDriver<Container> reservations, ILogSink? sink)
     {
         this.world = world;
         this.reservations = reservations;
+        this.sink = sink;
     }
 
     /// <summary>Gets a value that is true when a world exists and a local session is known.</summary>
@@ -162,8 +169,16 @@ internal sealed class GameOrganizeRunPort : IOrganizeRunPort
 
     /// <summary>Captures the local player's inventory in the game's list order.</summary>
     /// <returns>The snapshot, or null when there is no player or a stack cannot be mapped.</returns>
-    public PlayerInventorySnapshot? CaptureInventory() =>
-        PlayerInventoryCapture.Capture(Player.m_localPlayer, PlayerInventoryCapture.InventoryId());
+    public PlayerInventorySnapshot? CaptureInventory()
+    {
+        PlayerInventorySnapshot? snapshot = PlayerInventoryCapture.Capture(Player.m_localPlayer, PlayerInventoryCapture.InventoryId(), out string? reason);
+        if (snapshot == null)
+        {
+            sink?.Log(LogSeverity.Error, "Inventory capture failed: " + reason);
+        }
+
+        return snapshot;
+    }
 
     /// <summary>Gets the local player's favourite slots; empty when there are none or no player.</summary>
     public FavouriteSlots Favourites => FavouriteSession.OccupiedSlots();
@@ -173,6 +188,59 @@ internal sealed class GameOrganizeRunPort : IOrganizeRunPort
     /// <returns>The layer.</returns>
     public IContainerLayer CreateDepositLayer(DepositPlan plan) =>
         new GameDepositContainerLayer(plan, new Dictionary<ContainerId, Container>(containers), reservations, world.Snapshots, Player.m_localPlayer);
+
+    /// <summary>Captures the carried stacks with identity and marks, and keeps their inventory slots for <see cref="CreateRestockLayer"/> (S-QR-002 P2).</summary>
+    /// <returns>The carried stacks in the game's list order, or null after logging the reason at Error.</returns>
+    public IReadOnlyList<BaseStorage.Core.Restock.CarriedStack>? CaptureCarried()
+    {
+        carriedSlots = Array.Empty<Vector2i>();
+        List<BaseStorage.Core.Restock.CarriedStack>? stacks = PlayerInventoryCapture.CaptureCarried(Player.m_localPlayer, out string? reason, out Vector2i[] found);
+        if (stacks == null)
+        {
+            sink?.Log(LogSeverity.Error, "Inventory capture failed: " + reason);
+            return null;
+        }
+
+        carriedSlots = found;
+        return stacks;
+    }
+
+    /// <summary>Re-reads the chests of the last <see cref="GatherFacts"/> with identity-filled stacks (S-QR-002 P4); a chest that cannot be read is left out.</summary>
+    /// <param name="containers">The chests of the last GatherFacts.</param>
+    /// <returns>The re-read chests, in the same order.</returns>
+    public IReadOnlyList<ContainerSnapshot> CaptureChests(IReadOnlyList<ContainerSnapshot> containers)
+    {
+        restockChests.Clear();
+        var read = new List<ContainerSnapshot>(containers.Count);
+        for (int i = 0; i < containers.Count; i++)
+        {
+            ContainerSnapshot listed = containers[i];
+            if (!this.containers.TryGetValue(listed.Id, out Container? container))
+            {
+                continue;
+            }
+
+            ContainerSnapshot? snapshot = RestockChestCapture.Read(listed, container);
+            if (snapshot != null)
+            {
+                read.Add(snapshot);
+                restockChests[listed.Id] = snapshot;
+            }
+        }
+
+        return read;
+    }
+
+    /// <summary>Creates the restock layer over the chests of the last <see cref="CaptureChests"/> and the slots of the last <see cref="CaptureCarried"/> (S-QR-002 P5).</summary>
+    /// <param name="plan">The restock plan about to run.</param>
+    /// <returns>The layer.</returns>
+    public BaseStorage.Core.Restock.Run.IRestockLayer CreateRestockLayer(BaseStorage.Core.Restock.RestockPlan plan) =>
+        new GameRestockLayer(
+            new Dictionary<ContainerId, Container>(containers),
+            new Dictionary<ContainerId, ContainerSnapshot>(restockChests),
+            reservations,
+            Player.m_localPlayer,
+            (Vector2i[])carriedSlots.Clone());
 
     /// <summary>Shows the confirm popup; cancels the run when no popup can be shown (fail closed).</summary>
     /// <param name="header">The popup header.</param>

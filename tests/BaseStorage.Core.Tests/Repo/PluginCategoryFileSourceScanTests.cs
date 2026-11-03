@@ -143,7 +143,9 @@ public sealed class PluginCategoryFileSourceScanTests
         // Edited by integration: plus the S-E003-004 Crafting, S-E003-005 Requirements and S-E003-006 Building patches and the S-E006-002 Networking postfixes.
         string[] expected =
         {
+            "src/BaseStorage.Plugin/BaseMenu/InventoryGridGamepadPatch.cs",
             "src/BaseStorage.Plugin/BaseMenu/InventoryGuiHidePatch.cs",
+            "src/BaseStorage.Plugin/BaseMenu/InventoryGuiRecipeGamepadPatch.cs",
             "src/BaseStorage.Plugin/Building/PlayerHaveRequirementsPiecePatch.cs",
             "src/BaseStorage.Plugin/Building/PlayerPlacePiecePatch.cs",
             "src/BaseStorage.Plugin/Building/PlayerTryPlacePiecePatch.cs",
@@ -157,6 +159,15 @@ public sealed class PluginCategoryFileSourceScanTests
             "src/BaseStorage.Plugin/Favourites/InventoryGridOnLeftDownPatch.cs",
             "src/BaseStorage.Plugin/Favourites/InventoryGridUpdateGuiPatch.cs",
             "src/BaseStorage.Plugin/Favourites/InventoryStackAllPatch.cs",
+            "src/BaseStorage.Plugin/Feeding/CookingStationAwakePatch.cs",
+            "src/BaseStorage.Plugin/Feeding/CookingStationHoverTextPatch.cs",
+            "src/BaseStorage.Plugin/Feeding/CookingStationInteractPatch.cs",
+            "src/BaseStorage.Plugin/Feeding/FermenterAwakePatch.cs",
+            "src/BaseStorage.Plugin/Feeding/FermenterHoverTextPatch.cs",
+            "src/BaseStorage.Plugin/Feeding/FermenterInteractPatch.cs",
+            "src/BaseStorage.Plugin/Feeding/FireplaceAwakePatch.cs",
+            "src/BaseStorage.Plugin/Feeding/FireplaceHoverTextPatch.cs",
+            "src/BaseStorage.Plugin/Feeding/FireplaceInteractPatch.cs",
             "src/BaseStorage.Plugin/Feeding/SmelterAwakePatch.cs",
             "src/BaseStorage.Plugin/Feeding/SwitchGetHoverTextPatch.cs",
             "src/BaseStorage.Plugin/Feeding/SwitchInteractPatch.cs",

@@ -14,8 +14,10 @@ public sealed class BaseMenuRow
     /// <param name="ruleLabel">The display label of the assignment.</param>
     /// <param name="fillPercent">The percent of the chest's slots in use.</param>
     /// <param name="distanceSquared">The squared distance from the player, in metres.</param>
-    internal BaseMenuRow(ContainerSnapshot chest, CategoryAssignment? assignment, string ruleLabel, int fillPercent, float distanceSquared)
+    /// <param name="name">The chest's name; empty for none.</param>
+    internal BaseMenuRow(ContainerSnapshot chest, CategoryAssignment? assignment, string ruleLabel, int fillPercent, float distanceSquared, string name = "")
     {
+        Name = name;
         Chest = chest;
         Assignment = assignment;
         RuleLabel = ruleLabel;
@@ -25,6 +27,9 @@ public sealed class BaseMenuRow
 
     /// <summary>Gets the chest.</summary>
     public ContainerSnapshot Chest { get; }
+
+    /// <summary>Gets the chest's name; empty for none.</summary>
+    public string Name { get; }
 
     /// <summary>Gets the stored assignment; null for Auto.</summary>
     public CategoryAssignment? Assignment { get; }
@@ -55,5 +60,5 @@ public sealed class BaseMenuRow
     /// <param name="rank">How well the chest matched.</param>
     /// <returns>The copy.</returns>
     internal BaseMenuRow WithHits(IReadOnlyList<BaseSearchHit> hits, int rank) =>
-        new BaseMenuRow(Chest, Assignment, RuleLabel, FillPercent, DistanceSquared) { Hits = hits, SearchRank = rank };
+        new BaseMenuRow(Chest, Assignment, RuleLabel, FillPercent, DistanceSquared, Name) { Hits = hits, SearchRank = rank };
 }

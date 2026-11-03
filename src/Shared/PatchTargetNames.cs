@@ -618,11 +618,20 @@ internal static class PatchTargetNames
 
         /// <summary>Parameter type full names of the RemoveItem overload.</summary>
         public const string RemoveItemParametersItemAmount = "ItemDrop+ItemData,System.Int32";
+
+        /// <summary>Parameter type full names of the slot-specific AddItem overload (item, position).</summary>
+        public const string AddItemParametersItemPosition = "ItemDrop+ItemData,Vector2i";
     }
 
     /// <summary>The InventoryGui type.</summary>
     public static class InventoryGui
     {
+        /// <summary>The method that reads the gamepad for the recipe list.</summary>
+        public const string UpdateRecipeGamepadInput = "UpdateRecipeGamepadInput";
+
+        /// <summary>Parameter type full names of the UpdateRecipeGamepadInput overload: none.</summary>
+        public const string UpdateRecipeGamepadInputParametersNone = "";
+
         /// <summary>The reflection full name of the type.</summary>
         public const string TypeName = "InventoryGui";
 
@@ -838,6 +847,12 @@ internal static class PatchTargetNames
     /// <summary>The InventoryGrid type.</summary>
     public static class InventoryGrid
     {
+        /// <summary>The method that reads the gamepad.</summary>
+        public const string UpdateGamepad = "UpdateGamepad";
+
+        /// <summary>Parameter type full names of the UpdateGamepad overload: none.</summary>
+        public const string UpdateGamepadParametersNone = "";
+
         /// <summary>The reflection full name of the type.</summary>
         public const string TypeName = "InventoryGrid";
 
@@ -938,6 +953,36 @@ internal static class PatchTargetNames
 
         /// <summary>The type full name of the m_gridPos field.</summary>
         public const string FieldGridPosType = "Vector2i";
+
+        /// <summary>The m_crafterID field.</summary>
+        public const string FieldCrafterId = "m_crafterID";
+
+        /// <summary>The type full name of the m_crafterID field.</summary>
+        public const string FieldCrafterIdType = "System.Int64";
+
+        /// <summary>The m_crafterName field.</summary>
+        public const string FieldCrafterName = "m_crafterName";
+
+        /// <summary>The type full name of the m_crafterName field.</summary>
+        public const string FieldCrafterNameType = "System.String";
+
+        /// <summary>The m_variant field.</summary>
+        public const string FieldVariant = "m_variant";
+
+        /// <summary>The type full name of the m_variant field.</summary>
+        public const string FieldVariantType = "System.Int32";
+
+        /// <summary>The m_worldLevel field.</summary>
+        public const string FieldWorldLevel = "m_worldLevel";
+
+        /// <summary>The type full name of the m_worldLevel field.</summary>
+        public const string FieldWorldLevelType = "System.Int32";
+
+        /// <summary>The m_customData field.</summary>
+        public const string FieldCustomData = "m_customData";
+
+        /// <summary>The type full name of the m_customData field.</summary>
+        public const string FieldCustomDataType = "System.Collections.Generic.Dictionary`2[System.String,System.String]";
     }
 
     /// <summary>The ItemDrop.ItemData.SharedData nested type.</summary>
@@ -1462,6 +1507,90 @@ internal static class PatchTargetNames
         public const string AwakeParametersNone = "";
     }
 
+    /// <summary>The Fireplace type: a station the feeder can fill.</summary>
+    public static class Fireplace
+    {
+        /// <summary>The reflection full name of the type.</summary>
+        public const string TypeName = "Fireplace";
+
+        /// <summary>The Awake method.</summary>
+        public const string Awake = "Awake";
+
+        /// <summary>Parameter type full names of the Awake overload: none.</summary>
+        public const string AwakeParametersNone = "";
+
+        /// <summary>The Interact method.</summary>
+        public const string Interact = "Interact";
+
+        /// <summary>Parameter type full names of the Interact overload.</summary>
+        public const string InteractParametersUserHoldAlt = "Humanoid,System.Boolean,System.Boolean";
+
+        /// <summary>The GetHoverText method.</summary>
+        public const string GetHoverText = "GetHoverText";
+
+        /// <summary>Parameter type full names of the GetHoverText overload: none.</summary>
+        public const string GetHoverTextParametersNone = "";
+    }
+
+    /// <summary>The Fermenter type: a station the feeder can fill.</summary>
+    public static class Fermenter
+    {
+        /// <summary>The reflection full name of the type.</summary>
+        public const string TypeName = "Fermenter";
+
+        /// <summary>The Awake method.</summary>
+        public const string Awake = "Awake";
+
+        /// <summary>Parameter type full names of the Awake overload: none.</summary>
+        public const string AwakeParametersNone = "";
+
+        /// <summary>The Interact method.</summary>
+        public const string Interact = "Interact";
+
+        /// <summary>Parameter type full names of the Interact overload.</summary>
+        public const string InteractParametersUserHoldAlt = "Humanoid,System.Boolean,System.Boolean";
+
+        /// <summary>The GetHoverText method.</summary>
+        public const string GetHoverText = "GetHoverText";
+
+        /// <summary>Parameter type full names of the GetHoverText overload: none.</summary>
+        public const string GetHoverTextParametersNone = "";
+
+        /// <summary>The routed call that puts an item into an empty fermenter.</summary>
+        public const string AddItemRpc = "RPC_AddItem";
+    }
+
+    /// <summary>The CookingStation type: a station the feeder can fill.</summary>
+    public static class CookingStation
+    {
+        /// <summary>The reflection full name of the type.</summary>
+        public const string TypeName = "CookingStation";
+
+        /// <summary>The Awake method.</summary>
+        public const string Awake = "Awake";
+
+        /// <summary>Parameter type full names of the Awake overload: none.</summary>
+        public const string AwakeParametersNone = "";
+
+        /// <summary>The Interact method.</summary>
+        public const string Interact = "Interact";
+
+        /// <summary>Parameter type full names of the Interact overload.</summary>
+        public const string InteractParametersUserHoldAlt = "Humanoid,System.Boolean,System.Boolean";
+
+        /// <summary>The GetHoverText method.</summary>
+        public const string GetHoverText = "GetHoverText";
+
+        /// <summary>Parameter type full names of the GetHoverText overload: none.</summary>
+        public const string GetHoverTextParametersNone = "";
+
+        /// <summary>The routed call that puts an item into a free slot.</summary>
+        public const string AddItemRpc = "RPC_AddItem";
+
+        /// <summary>The routed call that adds one fuel item.</summary>
+        public const string AddFuelRpc = "RPC_AddFuel";
+    }
+
     /// <summary>The Switch type: the ore and fuel inputs of a station.</summary>
     public static class Switch
     {
@@ -1487,6 +1616,39 @@ internal static class PatchTargetNames
     /// </summary>
     public static class HarmonyPatched
     {
+        /// <summary>A patch of the feeder or the mod's gamepad focus.</summary>
+        public const string CookingStationAwake = "CookingStation.Awake()";
+
+        /// <summary>A patch of the feeder or the mod's gamepad focus.</summary>
+        public const string CookingStationGetHoverText = "CookingStation.GetHoverText()";
+
+        /// <summary>A patch of the feeder or the mod's gamepad focus.</summary>
+        public const string CookingStationInteract = "CookingStation.Interact(Humanoid,System.Boolean,System.Boolean)";
+
+        /// <summary>A patch of the feeder or the mod's gamepad focus.</summary>
+        public const string FermenterAwake = "Fermenter.Awake()";
+
+        /// <summary>A patch of the feeder or the mod's gamepad focus.</summary>
+        public const string FermenterGetHoverText = "Fermenter.GetHoverText()";
+
+        /// <summary>A patch of the feeder or the mod's gamepad focus.</summary>
+        public const string FermenterInteract = "Fermenter.Interact(Humanoid,System.Boolean,System.Boolean)";
+
+        /// <summary>A patch of the feeder or the mod's gamepad focus.</summary>
+        public const string FireplaceAwake = "Fireplace.Awake()";
+
+        /// <summary>A patch of the feeder or the mod's gamepad focus.</summary>
+        public const string FireplaceGetHoverText = "Fireplace.GetHoverText()";
+
+        /// <summary>A patch of the feeder or the mod's gamepad focus.</summary>
+        public const string FireplaceInteract = "Fireplace.Interact(Humanoid,System.Boolean,System.Boolean)";
+
+        /// <summary>A patch of the feeder or the mod's gamepad focus.</summary>
+        public const string InventoryGridUpdateGamepad = "InventoryGrid.UpdateGamepad()";
+
+        /// <summary>A patch of the feeder or the mod's gamepad focus.</summary>
+        public const string InventoryGuiUpdateRecipeGamepadInput = "InventoryGui.UpdateRecipeGamepadInput()";
+
         /// <summary>The InventoryGrid.OnLeftDown(UIInputHandler) prefix of the favourites toggle.</summary>
         public const string InventoryGridOnLeftDown = "InventoryGrid.OnLeftDown(UIInputHandler)";
 

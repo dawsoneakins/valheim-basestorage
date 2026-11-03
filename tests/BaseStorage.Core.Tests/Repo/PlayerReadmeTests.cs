@@ -164,8 +164,8 @@ public sealed class PlayerReadmeTests
         string section = Section(ReadReadme(), "Known limits");
         string[] terms =
         [
-            "console", "crossplay", "dedicated server", "peer-hosted", "fire", "fermenter", "cart", "ship",
-            "renam", "label", "sorting table", "inventory mods",
+            "console", "crossplay", "dedicated server", "peer-hosted", "collect", "cart", "ship",
+            "sorting table", "inventory mods",
         ];
         string[] missing = terms.Where(term => !section.Contains(term, StringComparison.OrdinalIgnoreCase)).ToArray();
 
@@ -174,10 +174,10 @@ public sealed class PlayerReadmeTests
 
     // GW-U-2008 (AC-5): Known limits says there are no gamepad bindings and mentions the gamepad cursor.
     [Fact]
-    public void KnownLimitsStatesNoGamepadBindings()
+    public void KnownLimitsStatesTheGamepadLimits()
     {
         string section = Section(ReadReadme(), "Known limits");
-        string[] terms = ["No gamepad bindings", "gamepad cursor"];
+        string[] terms = ["gamepad control", "hotkeys stay keyboard only"];
         string[] missing = terms.Where(term => !section.Contains(term, StringComparison.OrdinalIgnoreCase)).ToArray();
 
         Assert.True(missing.Length == 0, $"package/README.md ## Known limits must contain: {string.Join(", ", missing)}");

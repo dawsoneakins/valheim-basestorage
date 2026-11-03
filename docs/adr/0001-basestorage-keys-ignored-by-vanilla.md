@@ -12,6 +12,7 @@ BaseStorage persists a small amount of data inside vanilla game data:
 - `basestorage.lock`: the organize lock record (holder id, holder name, expiry), in the ZDO of the lowest-id station in a base.
 - `basestorage.fav`: the favourite inventory slots of versions before 0.4.1, in the player profile custom data. It is read once, converted and removed.
 - `basestorage.favitems`: the favourite item types, in the player profile custom data.
+- `basestorage.name`: a chest's name, stored on the chest and cleaned on every read.
 - `basestorage.feed`: what a station is kept fed with and how much to leave in the base, in the station's ZDO.
 
 Players must be able to remove the mod without damaging their world or characters.

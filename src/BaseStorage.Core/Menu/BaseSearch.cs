@@ -201,9 +201,13 @@ public static class BaseSearch
         return total;
     }
 
-    /// <summary>Matches the chest's own label. An Auto chest has no category of its own, so it is found only by what it holds.</summary>
-    private static int ChestRank(BaseMenuRow row, string text, string[] words) =>
-        row.Assignment is null ? NoMatch : RankOf(row.RuleLabel, string.Empty, text, words, null);
+    /// <summary>Matches the chest's name and own label. An Auto chest has no category of its own, so it is found by its name or what it holds.</summary>
+    private static int ChestRank(BaseMenuRow row, string text, string[] words)
+    {
+        var byName = row.Name.Length == 0 ? NoMatch : RankOf(row.Name, string.Empty, text, words, null);
+        var byLabel = row.Assignment is null ? NoMatch : RankOf(row.RuleLabel, string.Empty, text, words, null);
+        return byName == NoMatch ? byLabel : byLabel == NoMatch ? byName : Math.Min(byName, byLabel);
+    }
 
     private static int RankOf(string name, string prefab, string text, string[] words, Func<string, string>? categoryOf)
     {

@@ -13,6 +13,8 @@ using BaseStorage.Core.Ui;
 /// </summary>
 public static class BaseMenuBuilder
 {
+    private static readonly IReadOnlyDictionary<ContainerId, string> NoNames = new Dictionary<ContainerId, string>();
+
     /// <summary>Builds the rows of a base.</summary>
     /// <param name="containers">The chests of the base.</param>
     /// <param name="assignments">The stored assignment per chest id; a missing id is Auto.</param>
@@ -25,6 +27,23 @@ public static class BaseMenuBuilder
         IReadOnlyDictionary<ContainerId, CategoryAssignment> assignments,
         WorldPosition player,
         string? filter,
+        StringTable strings) =>
+        Rows(containers, assignments, NoNames, player, filter, strings);
+
+    /// <summary>Builds the rows of a base, with the chests' names.</summary>
+    /// <param name="containers">The chests of the base.</param>
+    /// <param name="assignments">The stored assignment per chest id; a missing id is Auto.</param>
+    /// <param name="names">The name per chest id; a missing id has no name.</param>
+    /// <param name="player">The player's position.</param>
+    /// <param name="filter">A rule label to keep, or null for every chest.</param>
+    /// <param name="strings">The strings table.</param>
+    /// <returns>The sorted rows.</returns>
+    public static IReadOnlyList<BaseMenuRow> Rows(
+        IReadOnlyList<ContainerSnapshot> containers,
+        IReadOnlyDictionary<ContainerId, CategoryAssignment> assignments,
+        IReadOnlyDictionary<ContainerId, string> names,
+        WorldPosition player,
+        string? filter,
         StringTable strings)
     {
         if (containers is null)
@@ -35,6 +54,11 @@ public static class BaseMenuBuilder
         if (assignments is null)
         {
             throw new ArgumentNullException(nameof(assignments));
+        }
+
+        if (names is null)
+        {
+            throw new ArgumentNullException(nameof(names));
         }
 
         if (strings is null)
@@ -50,7 +74,8 @@ public static class BaseMenuBuilder
             var label = ChestCategoryReader.Label(assignment, strings);
             if (filter is null || string.Equals(label, filter, StringComparison.Ordinal))
             {
-                rows.Add(new BaseMenuRow(chest, assignment, label, FillPercent(chest), DistanceSquared(chest.Position, player)));
+                names.TryGetValue(chest.Id, out var name);
+                rows.Add(new BaseMenuRow(chest, assignment, label, FillPercent(chest), DistanceSquared(chest.Position, player), name ?? string.Empty));
             }
         }
 

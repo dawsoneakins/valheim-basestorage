@@ -11,6 +11,8 @@ using BaseStorage.Core.Settings;
 using BaseStorage.Plugin.Categories;
 using BaseStorage.Plugin.CategoryButton;
 using BaseStorage.Plugin.ChestCategories;
+using BaseStorage.Plugin.ChestNames;
+using BaseStorage.Plugin.ChestSort;
 using BaseStorage.Plugin.Building;
 using BaseStorage.Plugin.Crafting;
 using BaseStorage.Plugin.BaseMenu;
@@ -97,6 +99,8 @@ public sealed class BaseStoragePlugin : BaseUnityPlugin
         ChestHighlight.Initialize(new GameClock());
         StationFeeder.Initialize(world, reservations, new GameClock(), Settings);
         FeedPanel.Initialize(new GameClock());
+        ChestSorter.Initialize(reservations);
+        ChestLabels.Initialize(world, new GameClock(), Settings);
         Harmony instance = new Harmony(PluginGuid);
         harmony = instance;
         Type[] patchClasses = PatchDiscovery.FindPatchClasses(typeof(BaseStoragePlugin).Assembly);

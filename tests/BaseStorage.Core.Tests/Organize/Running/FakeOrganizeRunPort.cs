@@ -8,8 +8,11 @@ using BaseStorage.Core.Organize;
 using BaseStorage.Core.Organize.Deposit;
 using BaseStorage.Core.Organize.Run;
 using BaseStorage.Core.Persistence;
+using BaseStorage.Core.Restock;
+using BaseStorage.Core.Restock.Run;
 using BaseStorage.Core.Snapshots;
 using BaseStorage.Core.Tests.Fakes;
+using BaseStorage.Core.Tests.Restock.Run;
 using BaseStorage.Core.Tests.Organize.Execution;
 using BaseStorage.Core.Tests.Organize.Deposit;
 
@@ -176,4 +179,47 @@ internal sealed class FakeOrganizeRunPort : IOrganizeRunPort
 
     /// <inheritdoc />
     public void ShowNotice(OrganizeNoticePlacement placement, string key, object?[] args) => Notices.Add((placement, key, args));
+    // Edited by S-QR-002 (ADR-GWIN-176): the Restock members of IOrganizeRunPort (contract section 4.1).
+
+    /// <summary>Gets or sets the carried stacks <see cref="CaptureCarried"/> returns; null means the capture failed (RR3). Empty by default.</summary>
+    public List<CarriedStack>? Carried { get; set; } = new List<CarriedStack>();
+
+    /// <summary>Gets the number of <see cref="CaptureCarried"/> calls so far.</summary>
+    public int CarriedCalls { get; private set; }
+
+    /// <summary>Gets the number of <see cref="CaptureChests"/> calls so far.</summary>
+    public int ChestCalls { get; private set; }
+
+    /// <summary>Gets the plans of every <see cref="CreateRestockLayer"/> call, in order.</summary>
+    public List<RestockPlan> RestockLayerCalls { get; } = new List<RestockPlan>();
+
+    /// <summary>Gets the fake restock layer of the last <see cref="CreateRestockLayer"/>, or null.</summary>
+    public FakeRestockLayer? RestockFake { get; private set; }
+
+    /// <summary>Gets or sets an action applied to the restock layer right after it is built (faults).</summary>
+    public Action<FakeRestockLayer>? RestockArrange { get; set; }
+
+    /// <inheritdoc />
+    public IReadOnlyList<CarriedStack>? CaptureCarried()
+    {
+        CarriedCalls++;
+        return Carried;
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<ContainerSnapshot> CaptureChests(IReadOnlyList<ContainerSnapshot> containers)
+    {
+        ChestCalls++;
+        return containers;
+    }
+
+    /// <inheritdoc />
+    public IRestockLayer CreateRestockLayer(RestockPlan plan)
+    {
+        RestockLayerCalls.Add(plan);
+        var fake = new FakeRestockLayer(Carried ?? new List<CarriedStack>(), input.Containers);
+        RestockArrange?.Invoke(fake);
+        RestockFake = fake;
+        return fake;
+    }
 }

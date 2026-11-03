@@ -29,7 +29,9 @@ public sealed class PluginFavouritesPatchGuardTests
         Assert.Equal(
             new[]
             {
+                "BaseStorage.Plugin.BaseMenu.InventoryGridGamepadPatch.Prefix",
                 "BaseStorage.Plugin.BaseMenu.InventoryGuiHidePatch.Prefix",
+                "BaseStorage.Plugin.BaseMenu.InventoryGuiRecipeGamepadPatch.Prefix",
                 "BaseStorage.Plugin.Building.PlayerHaveRequirementsPiecePatch.Prefix",
                 "BaseStorage.Plugin.Building.PlayerPlacePiecePatch.Prefix",
                 "BaseStorage.Plugin.Building.PlayerTryPlacePiecePatch.Postfix",
@@ -45,6 +47,15 @@ public sealed class PluginFavouritesPatchGuardTests
                 "BaseStorage.Plugin.Favourites.InventoryGridUpdateGuiPatch.Postfix",
                 "BaseStorage.Plugin.Favourites.InventoryStackAllPatch.Finalizer",
                 "BaseStorage.Plugin.Favourites.InventoryStackAllPatch.Prefix",
+                "BaseStorage.Plugin.Feeding.CookingStationAwakePatch.Postfix",
+                "BaseStorage.Plugin.Feeding.CookingStationHoverTextPatch.Postfix",
+                "BaseStorage.Plugin.Feeding.CookingStationInteractPatch.Prefix",
+                "BaseStorage.Plugin.Feeding.FermenterAwakePatch.Postfix",
+                "BaseStorage.Plugin.Feeding.FermenterHoverTextPatch.Postfix",
+                "BaseStorage.Plugin.Feeding.FermenterInteractPatch.Prefix",
+                "BaseStorage.Plugin.Feeding.FireplaceAwakePatch.Postfix",
+                "BaseStorage.Plugin.Feeding.FireplaceHoverTextPatch.Postfix",
+                "BaseStorage.Plugin.Feeding.FireplaceInteractPatch.Prefix",
                 "BaseStorage.Plugin.Feeding.SmelterAwakePatch.Postfix",
                 "BaseStorage.Plugin.Feeding.SwitchGetHoverTextPatch.Postfix",
                 "BaseStorage.Plugin.Feeding.SwitchInteractPatch.Prefix",

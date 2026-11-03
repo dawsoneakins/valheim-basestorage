@@ -11,6 +11,7 @@ using BaseStorage.Plugin.ChestCategories;
 using BaseStorage.Plugin.Deposit;
 using BaseStorage.Plugin.Patching;
 using BaseStorage.Plugin.Reservations;
+using BaseStorage.Plugin.Restock;
 using BaseStorage.Plugin.World;
 using UnityEngine;
 
@@ -75,7 +76,7 @@ internal static class OrganizeRunner
             OrganizeRunner.settings = settings;
             OrganizeRunner.clock = clock;
             ChestCategoryWriter.QuietLog = sink;
-            var port = new GameOrganizeRunPort(world, reservations);
+            var port = new GameOrganizeRunPort(world, reservations, sink);
             Current = new OrganizeRunCoordinator(port, world.Cache, new GameOrganizeLockStore(world), clock, settings, sink);
         }
 
@@ -104,6 +105,15 @@ internal static class OrganizeRunner
     {
         OrganizeRunCoordinator? coordinator = Current;
         return coordinator == null ? OrganizeStartOutcome.NoPlayer : coordinator.StartDeposit(start);
+    }
+
+    /// <summary>Starts a Restock for the base that holds a position (the base menu button and the RestockKey of S-QR-002).</summary>
+    /// <param name="position">The player's position.</param>
+    /// <returns>The outcome; NoPlayer when the plugin did not boot.</returns>
+    public static OrganizeStartOutcome StartRestockAt(WorldPosition position)
+    {
+        OrganizeRunCoordinator? coordinator = Current;
+        return coordinator == null ? OrganizeStartOutcome.NoPlayer : coordinator.StartRestock(position);
     }
 
     /// <summary>Forwards the popup's yes button.</summary>
@@ -146,6 +156,15 @@ internal static class OrganizeRunner
             {
                 Vector3 at = player.transform.position;
                 coordinator.StartDeposit(BaseStart.FromPosition(new WorldPosition(at.x, at.y, at.z)));
+            }
+        }
+        else if (coordinator.State == OrganizeRunState.Idle && RestockHotkey.IsPressed(current, time))
+        {
+            Player player = Player.m_localPlayer;
+            if (player != null)
+            {
+                Vector3 at = player.transform.position;
+                coordinator.StartRestock(new WorldPosition(at.x, at.y, at.z));
             }
         }
     }

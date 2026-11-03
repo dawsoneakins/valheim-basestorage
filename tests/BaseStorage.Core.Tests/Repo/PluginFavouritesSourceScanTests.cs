@@ -21,6 +21,7 @@ public sealed class PluginFavouritesSourceScanTests
     private const string UpdateGuiFile = FavouritesFolder + "InventoryGridUpdateGuiPatch.cs";
     private const string ClicksFile = FavouritesFolder + "FavouriteClicks.cs";
     private const string SessionFile = FavouritesFolder + "FavouriteSession.cs";
+    private const string RestockIdentityFile = "src/BaseStorage.Plugin/Restock/GameItemIdentity.cs"; // Edited by S-QR-002 (ADR-GWIN-174)
     private const string MarkersFile = FavouritesFolder + "FavouriteMarkers.cs";
     private const string CoreTestsProject = "tests/BaseStorage.Core.Tests/BaseStorage.Core.Tests.csproj";
     private const string MarkerLiteral = "\"BaseStorage.inventory.slot.favourite-marker\"";
@@ -150,7 +151,7 @@ public sealed class PluginFavouritesSourceScanTests
     [Fact]
     public void TheCustomDataFieldIsReadOnlyInTheSessionFileOnly()
     {
-        Assert.Equal(new[] { SessionFile }, PluginSourceScan.FilesMatching(ScanWithFavourites(), "m_customData"));
+        Assert.Equal(new[] { SessionFile, RestockIdentityFile }, PluginSourceScan.FilesMatching(ScanWithFavourites(), "m_customData")); // Edited by S-QR-002 (ADR-GWIN-174)
     }
 
     // GW-U-710
@@ -249,7 +250,9 @@ public sealed class PluginFavouritesSourceScanTests
         Assert.Equal(
             new[]
             {
+                "src/BaseStorage.Plugin/BaseMenu/InventoryGridGamepadPatch.cs",
                 "src/BaseStorage.Plugin/BaseMenu/InventoryGuiHidePatch.cs",
+                "src/BaseStorage.Plugin/BaseMenu/InventoryGuiRecipeGamepadPatch.cs",
                 "src/BaseStorage.Plugin/Building/PlayerHaveRequirementsPiecePatch.cs",
                 "src/BaseStorage.Plugin/Building/PlayerPlacePiecePatch.cs",
                 "src/BaseStorage.Plugin/Building/PlayerTryPlacePiecePatch.cs",
@@ -263,6 +266,15 @@ public sealed class PluginFavouritesSourceScanTests
                 OnLeftDownFile,
                 UpdateGuiFile,
                 "src/BaseStorage.Plugin/Favourites/InventoryStackAllPatch.cs",
+                "src/BaseStorage.Plugin/Feeding/CookingStationAwakePatch.cs",
+                "src/BaseStorage.Plugin/Feeding/CookingStationHoverTextPatch.cs",
+                "src/BaseStorage.Plugin/Feeding/CookingStationInteractPatch.cs",
+                "src/BaseStorage.Plugin/Feeding/FermenterAwakePatch.cs",
+                "src/BaseStorage.Plugin/Feeding/FermenterHoverTextPatch.cs",
+                "src/BaseStorage.Plugin/Feeding/FermenterInteractPatch.cs",
+                "src/BaseStorage.Plugin/Feeding/FireplaceAwakePatch.cs",
+                "src/BaseStorage.Plugin/Feeding/FireplaceHoverTextPatch.cs",
+                "src/BaseStorage.Plugin/Feeding/FireplaceInteractPatch.cs",
                 "src/BaseStorage.Plugin/Feeding/SmelterAwakePatch.cs",
                 "src/BaseStorage.Plugin/Feeding/SwitchGetHoverTextPatch.cs",
                 "src/BaseStorage.Plugin/Feeding/SwitchInteractPatch.cs",
@@ -337,7 +349,7 @@ public sealed class PluginFavouritesSourceScanTests
     [Fact]
     public void NoPluginFileMentionsTheExcludedHandlersOrGridFields()
     {
-        Assert.Empty(PluginSourceScan.FilesMatching(ScanWithFavourites(), "OnRightDown|UpdateGamepad|m_containerGrid|OnSelectedItem"));
+        Assert.Equal(new[] { "src/BaseStorage.Plugin/BaseMenu/InventoryGridGamepadPatch.cs" }, PluginSourceScan.FilesMatching(ScanWithFavourites(), "OnRightDown|UpdateGamepad|m_containerGrid|OnSelectedItem")); // Pauses the grid for the mod's panels; it does not touch favourites.
     }
 
     // GW-U-713
@@ -621,5 +633,16 @@ public sealed class PluginFavouritesSourceScanTests
         }
 
         return found;
+    }
+
+    // Edited by S-QR-002 (ADR-GWIN-174): GameItemIdentity reads m_customData only as the read `item.m_customData ??`.
+    [Fact]
+    public void GameItemIdentityReadsCustomDataOnly()
+    {
+        string text = PluginSourceScan.StripComments(RepoRoot.ReadText(RestockIdentityFile));
+        Assert.Contains("item.m_customData ??", text, StringComparison.Ordinal);
+        Assert.DoesNotMatch(new Regex(@"m_customData\s*=[^=]"), text);
+        Assert.DoesNotMatch(new Regex(@"m_customData\s*\["), text);
+        Assert.DoesNotMatch(new Regex(@"m_customData\s*\.\s*(Add|Remove|Clear)\("), text);
     }
 }

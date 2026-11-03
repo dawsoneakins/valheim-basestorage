@@ -11,6 +11,9 @@ using BaseStorage.Core.Persistence;
 using BaseStorage.Core.Reservations;
 using BaseStorage.Core.Settings;
 using BaseStorage.Core.Snapshots;
+using BaseStorage.Plugin.ChestCategories;
+using BaseStorage.Plugin.ChestNames;
+using BaseStorage.Plugin.ChestSort;
 using BaseStorage.Plugin.Reservations;
 using BaseStorage.Plugin.World;
 using UnityEngine;
@@ -28,9 +31,9 @@ internal static class StationFeeder
     private static readonly TimeSpan PassInterval = TimeSpan.FromSeconds(2);
     private static readonly TimeSpan NextOrderDelay = TimeSpan.FromSeconds(0.1);
     private static readonly TimeSpan BusyChestCooldown = TimeSpan.FromSeconds(15);
-    private static readonly Dictionary<ContainerId, CategoryAssignment> NoAssignments = new Dictionary<ContainerId, CategoryAssignment>();
+    private static readonly Dictionary<ContainerId, CategoryAssignment> Assignments = new Dictionary<ContainerId, CategoryAssignment>();
 
-    private static readonly List<Smelter> Stations = new List<Smelter>();
+    private static readonly List<FeedTarget> Stations = new List<FeedTarget>();
     private static readonly List<Container> Scratch = new List<Container>();
     private static readonly List<ContainerSnapshot> Chests = new List<ContainerSnapshot>();
     private static readonly Dictionary<ContainerId, Container> ById = new Dictionary<ContainerId, Container>();
@@ -60,9 +63,9 @@ internal static class StationFeeder
 
     /// <summary>Registers a station's selection message, so a player who does not own the station can change its selection.</summary>
     /// <param name="station">The station.</param>
-    internal static void Register(Smelter station)
+    internal static void Register(FeedTarget station)
     {
-        ZNetView view = station.m_nview;
+        ZNetView view = station.View;
         view.Register<string>(SetSelectionRpc, (sender, value) =>
         {
             if (view.IsValid() && view.IsOwner())
@@ -75,9 +78,9 @@ internal static class StationFeeder
     /// <summary>Reads a station's selection.</summary>
     /// <param name="station">The station.</param>
     /// <returns>The selection; empty for an invalid view.</returns>
-    internal static FeedSelection Read(Smelter station)
+    internal static FeedSelection Read(FeedTarget station)
     {
-        ZNetView view = station.m_nview;
+        ZNetView view = station.View;
         return view != null && view.IsValid()
             ? FeedSelection.Decode(view.GetZDO().GetString(PersistenceKeys.StationFeed, string.Empty))
             : FeedSelection.Empty;
@@ -86,9 +89,9 @@ internal static class StationFeeder
     /// <summary>Stores a station's selection through its owner.</summary>
     /// <param name="station">The station.</param>
     /// <param name="selection">The selection.</param>
-    internal static void Write(Smelter station, FeedSelection selection)
+    internal static void Write(FeedTarget station, FeedSelection selection)
     {
-        ZNetView view = station.m_nview;
+        ZNetView view = station.View;
         if (view != null && view.IsValid())
         {
             view.InvokeRPC(SetSelectionRpc, selection.Encode());
@@ -98,20 +101,7 @@ internal static class StationFeeder
     /// <summary>Reads what a station holds and accepts.</summary>
     /// <param name="station">The station.</param>
     /// <returns>The state.</returns>
-    internal static FeedStationState StateOf(Smelter station)
-    {
-        var inputs = new List<string>(station.m_conversion.Count);
-        foreach (Smelter.ItemConversion conversion in station.m_conversion)
-        {
-            if (conversion.m_from != null)
-            {
-                inputs.Add(conversion.m_from.gameObject.name);
-            }
-        }
-
-        string? fuel = station.m_fuelItem == null ? null : station.m_fuelItem.gameObject.name;
-        return new FeedStationState(station.GetQueueSize(), station.m_maxOre, station.GetFuel(), station.m_maxFuel, fuel, inputs);
-    }
+    internal static FeedStationState StateOf(FeedTarget station) => station.State();
 
     /// <summary>Fills a list with the chests of the base around a position, with their contents as they are now.</summary>
     /// <param name="position">The position.</param>
@@ -147,8 +137,22 @@ internal static class StationFeeder
             }
         }
 
+        Assignments.Clear();
+        for (int i = 0; i < resolution.Containers.Count; i++)
+        {
+            ContainerId id = resolution.Containers[i].Id;
+            if (ById.TryGetValue(id, out Container? member))
+            {
+                CategoryAssignment? assignment = ChestCategoryWriter.Read(member);
+                if (assignment != null)
+                {
+                    Assignments[id] = assignment;
+                }
+            }
+        }
+
         // The base cache may hold older contents, and the keep amount needs the real counts.
-        EligibilityResult eligibility = ContainerEligibility.Evaluate(resolution.Containers, NoAssignments, ContainerPurpose.CraftAvailability, EligibilityOptions.FromSettings(config));
+        EligibilityResult eligibility = ContainerEligibility.Evaluate(resolution.Containers, Assignments, ContainerPurpose.CraftAvailability, EligibilityOptions.FromSettings(config));
         for (int i = 0; i < eligibility.Eligible.Count; i++)
         {
             if (ById.TryGetValue(eligibility.Eligible[i].Id, out Container? chest))
@@ -168,6 +172,8 @@ internal static class StationFeeder
     internal static void Tick()
     {
         FeedPanel.Tick();
+        ChestSorter.Tick();
+        ChestLabels.Tick();
         if (clock == null || driver == null || world == null)
         {
             return;
@@ -188,10 +194,10 @@ internal static class StationFeeder
         nextPass = now + PassInterval;
         ForgetCooldowns(now);
         Stations.Clear();
-        world.Smelters.CopyItemsTo(Stations);
+        world.FeedStations.CopyItemsTo(Stations);
         for (int i = 0; i < Stations.Count; i++)
         {
-            Smelter station = Stations[(cursor + i) % Stations.Count];
+            FeedTarget station = Stations[(cursor + i) % Stations.Count];
             if (TryStart(station))
             {
                 cursor = (cursor + i + 1) % Stations.Count;
@@ -201,22 +207,22 @@ internal static class StationFeeder
         }
     }
 
-    private static bool TryStart(Smelter station)
+    private static bool TryStart(FeedTarget station)
     {
-        ZNetView view = station == null ? null! : station.m_nview;
+        ZNetView? view = station.IsAlive ? station.View : null;
         if (view == null || !view.IsValid() || !view.IsOwner())
         {
             return false;
         }
 
-        FeedSelection selection = Read(station!);
-        if (selection.Entries.Count == 0 || !LoadChests(station!.transform.position, Chests))
+        FeedSelection selection = Read(station);
+        if (selection.Entries.Count == 0 || !station.IsReady || !LoadChests(station.Station.transform.position, Chests))
         {
             return false;
         }
 
-        Vector3 at = station.transform.position;
-        FeedOrder? order = FeedPlanner.Next(StateOf(station), selection, Chests, new WorldPosition(at.x, at.y, at.z), Cooldowns.Keys);
+        Vector3 at = station.Station.transform.position;
+        FeedOrder? order = FeedPlanner.Next(StateOf(station), selection, Chests, Assignments, EligibilityOptions.FromSettings(settings!), new WorldPosition(at.x, at.y, at.z), Cooldowns.Keys);
         if (order == null || !ById.TryGetValue(order.Chest, out Container? chest))
         {
             return false;
@@ -269,9 +275,9 @@ internal static class StationFeeder
     /// <summary>Takes the items out of the chest and puts them into the station, in one frame, after checking the station is still ours.</summary>
     private static void Move(Job current)
     {
-        Smelter station = current.Station;
+        FeedTarget station = current.Station;
         Inventory? inventory = current.Chest == null ? null : current.Chest.GetInventory();
-        if (station == null || inventory == null || !station.m_nview.IsValid() || !station.m_nview.IsOwner())
+        if (!station.IsAlive || inventory == null || !station.View.IsValid() || !station.View.IsOwner() || !station.IsReady)
         {
             return;
         }
@@ -305,7 +311,7 @@ internal static class StationFeeder
             {
                 for (int i = 0; i < take; i++)
                 {
-                    station.QueueOre(order.PrefabName, cheated);
+                    station.AddInput(order.PrefabName, cheated);
                 }
             }
         }
@@ -315,15 +321,13 @@ internal static class StationFeeder
             return;
         }
 
-        Transform spot = station.transform;
         if (order.IsFuel)
         {
-            station.SetFuel(station.GetFuel() + moved);
-            station.m_fuelAddedEffects.Create(spot.position, spot.rotation, spot);
+            station.AddFuel(moved);
         }
         else
         {
-            station.m_oreAddedEffects.Create(spot.position, spot.rotation);
+            station.InputsAdded();
         }
     }
 
@@ -348,14 +352,14 @@ internal static class StationFeeder
 
     private sealed class Job
     {
-        internal Job(Smelter station, Container chest, FeedOrder order)
+        internal Job(FeedTarget station, Container chest, FeedOrder order)
         {
             Station = station;
             Chest = chest;
             Order = order;
         }
 
-        internal Smelter Station { get; }
+        internal FeedTarget Station { get; }
 
         internal Container Chest { get; }
 

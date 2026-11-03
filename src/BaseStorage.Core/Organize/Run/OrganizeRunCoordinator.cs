@@ -9,6 +9,8 @@ using BaseStorage.Core.Locking;
 using BaseStorage.Core.Logging;
 using BaseStorage.Core.Organize.Deposit;
 using BaseStorage.Core.Organize.Execution;
+using BaseStorage.Core.Restock;
+using BaseStorage.Core.Restock.Run;
 using BaseStorage.Core.Settings;
 using BaseStorage.Core.Snapshots;
 using BaseStorage.Core.Ui;
@@ -38,6 +40,8 @@ public sealed class OrganizeRunCoordinator
     private long holderId;
     private string holderName = string.Empty;
     private OrganizeExecutor? executor;
+    private RestockExecutor? restock;
+    private RunStepper? stepper;
     private TimeSpan renewInterval;
     private TimeSpan lastRenew;
 
@@ -86,16 +90,22 @@ public sealed class OrganizeRunCoordinator
     /// <param name="start">A station or position start.</param>
     /// <returns>What happened.</returns>
     /// <exception cref="ArgumentException"><paramref name="start"/> has no defined kind.</exception>
-    public OrganizeStartOutcome Start(BaseStart start) => StartRun(start, asDeposit: false);
+    public OrganizeStartOutcome Start(BaseStart start) => StartRun(start, RunMode.Organize, default);
+
+    /// <summary>Starts a Restock for the base that holds the player (S-QR-002 RR1-RR5). Never previews.</summary>
+    /// <param name="player">The player's position; the base is the one that contains it and the plan orders sources by distance from it.</param>
+    /// <returns>What happened.</returns>
+    public OrganizeStartOutcome StartRestock(WorldPosition player) => StartRun(BaseStart.FromPosition(player), RunMode.Restock, player);
 
     /// <summary>Starts a Deposit (put away inventory) for the base that contains a start (DB2). Every refusal shows its notice and leaves the state idle.</summary>
     /// <param name="start">A station or position start.</param>
     /// <returns>What happened.</returns>
     /// <exception cref="ArgumentException"><paramref name="start"/> has no defined kind.</exception>
-    public OrganizeStartOutcome StartDeposit(BaseStart start) => StartRun(start, asDeposit: true);
+    public OrganizeStartOutcome StartDeposit(BaseStart start) => StartRun(start, RunMode.Deposit, default);
 
-    private OrganizeStartOutcome StartRun(BaseStart start, bool asDeposit)
+    private OrganizeStartOutcome StartRun(BaseStart start, RunMode runMode, WorldPosition player)
     {
+        bool asDeposit = runMode == RunMode.Deposit;
         if (start.Kind != BaseStartKind.Station && start.Kind != BaseStartKind.Position)
         {
             throw new ArgumentException("The start has no defined kind.", nameof(start));
@@ -124,6 +134,11 @@ public sealed class OrganizeRunCoordinator
         }
 
         OrganizeBaseFacts facts = port.GatherFacts(resolution.Containers);
+        if (runMode == RunMode.Restock)
+        {
+            return StartRestockRun(resolution, facts, player, id, name);
+        }
+
         DepositPlan? madeDeposit = null;
         OrganizePlan made;
         int minLayouts;
@@ -194,6 +209,63 @@ public sealed class OrganizeRunCoordinator
                 StringTable table = StringTable.English;
                 string header = table.Get(asDeposit ? StringKeys.DepositPreviewHeader : StringKeys.OrganizePreviewHeader);
                 port.ShowPreview(header, OrganizeSummaryFormatter.PreviewBody(made, port.Catalog));
+            }
+        }
+        catch (Exception)
+        {
+            AbandonBeforeRunning();
+            throw;
+        }
+
+        return OrganizeStartOutcome.Started;
+    }
+
+    /// <summary>Steps 5 to 10 of a Restock start (contract 4.3): capture, plan, lock, then run or the one "nothing to restock" line.</summary>
+    private OrganizeStartOutcome StartRestockRun(BaseResolution resolution, OrganizeBaseFacts facts, WorldPosition player, long id, string name)
+    {
+        IReadOnlyList<CarriedStack>? carried = port.CaptureCarried();
+        if (carried is null)
+        {
+            Notice(OrganizeNoticePlacement.Centre, StringKeys.MessageRestockCaptureFailed);
+            return OrganizeStartOutcome.NoPlayer;
+        }
+
+        IReadOnlyList<ContainerSnapshot> read = port.CaptureChests(resolution.Containers);
+        var chests = new List<ContainerSnapshot>(read.Count);
+        foreach (ContainerSnapshot chest in read)
+        {
+            chests.Add(facts.InUseBy.ContainsKey(chest.Id)
+                ? new ContainerSnapshot(chest.Id, chest.Position, chest.Width, chest.Height, chest.Contents, chest.Flags | ContainerFlags.InUseByOther)
+                : chest);
+        }
+
+        RestockPlan made = RestockPlanner.Plan(carried, player, chests, facts.Assignments, EligibilityOptions.FromSettings(settings));
+        OrganizeLockResult acquired = locks.Acquire(resolution.Stations, id, name);
+        if (!acquired.IsGranted)
+        {
+            RefusedBy = acquired.HolderName;
+            Notice(OrganizeNoticePlacement.Centre, StringKeys.MessageBaseInProgress, acquired.HolderName);
+            return OrganizeStartOutcome.LockRefused;
+        }
+
+        stations = resolution.Stations;
+        holderId = id;
+        holderName = name;
+        try
+        {
+            if (made.Moves.Count == 0)
+            {
+                locks.Release(stations, id);
+                string text = RestockRunText.Summary(0, 0, made.LeftBehind, false);
+                WriteSummary(StringKeys.MessageRestockSummary, new object?[] { text }, text, false);
+                Reset();
+            }
+            else
+            {
+                RestockExecutor started = new RestockExecutor(made, port.CreateRestockLayer(made), clock, settings);
+                restock = started;
+                stepper = new RunStepper(started.Step, () => started.IsComplete, () => started.Abort(), () => started.Abort(RestockStopReason.LockLost));
+                MarkRunning();
             }
         }
         catch (Exception)
@@ -277,7 +349,7 @@ public sealed class OrganizeRunCoordinator
 
         if (!port.InWorld)
         {
-            executor?.Abort();
+            stepper?.Abort();
             Reset();
             return;
         }
@@ -307,7 +379,7 @@ public sealed class OrganizeRunCoordinator
             if (!renewed.IsGranted)
             {
                 sink?.Log(LogSeverity.Warning, "Organize lock renewal refused; run stopped");
-                executor!.Abort();
+                stepper!.LockLost();
                 Finish(OrganizeRunText.LockLostKey, releaseLock: false);
                 return;
             }
@@ -315,8 +387,8 @@ public sealed class OrganizeRunCoordinator
             lastRenew = now;
         }
 
-        executor!.Step();
-        if (executor.IsComplete)
+        stepper!.Step();
+        if (stepper.IsComplete)
         {
             Finish(null, releaseLock: true);
         }
@@ -325,7 +397,7 @@ public sealed class OrganizeRunCoordinator
     /// <summary>Ends a run whose tick threw: aborts the executor, releases the lock once and shows the one summary (never throws).</summary>
     private void FailRun()
     {
-        if (state != OrganizeRunState.Running || executor is null)
+        if (state != OrganizeRunState.Running || stepper is null)
         {
             Reset();
             return;
@@ -333,7 +405,7 @@ public sealed class OrganizeRunCoordinator
 
         try
         {
-            executor.Abort();
+            stepper.Abort();
         }
         catch (Exception)
         {
@@ -380,7 +452,14 @@ public sealed class OrganizeRunCoordinator
     private void BeginRun()
     {
         IContainerLayer layer = deposit is null ? port.CreateLayer(plan!) : port.CreateDepositLayer(deposit);
-        executor = new OrganizeExecutor(plan!, layer, clock, settings);
+        OrganizeExecutor started = new OrganizeExecutor(plan!, layer, clock, settings);
+        executor = started;
+        stepper = new RunStepper(started.Step, () => started.IsComplete, () => started.Abort(), () => started.Abort());
+        MarkRunning();
+    }
+
+    private void MarkRunning()
+    {
         int seconds = Math.Max(1, settings.OrganizeLockSeconds);
         renewInterval = TimeSpan.FromTicks(seconds * TimeSpan.TicksPerSecond / RenewDivisor);
         lastRenew = clock.Elapsed;
@@ -407,6 +486,12 @@ public sealed class OrganizeRunCoordinator
             locks.Release(stations!, holderId);
         }
 
+        if (restock is not null)
+        {
+            FinishRestock();
+            return;
+        }
+
         OrganizeExecutionResult result = executor!.Result;
         bool stopped = result.Status == ExecutionStatus.Stopped;
         string? reason = stopped ? StringTable.English.Get(reasonKey ?? OrganizeRunText.StopReasonKey(result.StopReason)) : null;
@@ -430,13 +515,34 @@ public sealed class OrganizeRunCoordinator
             text = SingleLine.Of(StringTable.English.Format(key, args));
         }
 
+        WriteSummary(key, args, text, !stopped && plan!.RulesToSave.Count > 0);
+        Reset();
+    }
+
+    /// <summary>Ends a Restock: the one result line, plus one Error line when the stop leaves a doubt or a duplicate (contract 4.4).</summary>
+    private void FinishRestock()
+    {
+        RestockRunResult result = restock!.Result;
+        string text = RestockRunText.Summary(result);
+        if (result.StopReason == RestockStopReason.ConfirmFailed || result.StopReason == RestockStopReason.RollbackFailed)
+        {
+            sink?.Log(LogSeverity.Error, "Restock stopped: " + result.StopReason + "; unrecovered items: " + result.UnrecoveredItems);
+        }
+
+        WriteSummary(StringKeys.MessageRestockSummary, new object?[] { text }, text, false);
+        Reset();
+    }
+
+    /// <summary>The one place a run's TopLeft summary notice and Info line are written (all three modes).</summary>
+    private void WriteSummary(string key, object?[] args, string text, bool saveRules)
+    {
         port.ShowNotice(OrganizeNoticePlacement.TopLeft, key, args);
-        if (!stopped && plan!.RulesToSave.Count > 0)
+        if (saveRules)
         {
             SaveRules();
         }
+
         LogPolicy.Write(sink, LogCategory.OrganizeSummary, text);
-        Reset();
     }
 
     private void Reset()
@@ -446,10 +552,44 @@ public sealed class OrganizeRunCoordinator
         deposit = null;
         stations = null;
         executor = null;
+        restock = null;
+        stepper = null;
     }
 
     private void Notice(OrganizeNoticePlacement placement, string key) => port.ShowNotice(placement, key, NoArgs);
 
     private void Notice(OrganizeNoticePlacement placement, string key, string? argument) =>
         port.ShowNotice(placement, key, new object?[] { argument });
+
+    private enum RunMode
+    {
+        Organize,
+        Deposit,
+        Restock,
+    }
+
+    /// <summary>Steps, completes, aborts and lock-aborts either executor through one shape, so the coordinator has one step site.</summary>
+    private sealed class RunStepper
+    {
+        private readonly Func<int> step;
+        private readonly Func<bool> isComplete;
+        private readonly Action abort;
+        private readonly Action lockLost;
+
+        public RunStepper(Func<int> step, Func<bool> isComplete, Action abort, Action lockLost)
+        {
+            this.step = step;
+            this.isComplete = isComplete;
+            this.abort = abort;
+            this.lockLost = lockLost;
+        }
+
+        public bool IsComplete => isComplete();
+
+        public int Step() => step();
+
+        public void Abort() => abort();
+
+        public void LockLost() => lockLost();
+    }
 }

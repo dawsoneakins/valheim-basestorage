@@ -77,6 +77,15 @@ public sealed class PatchTargetShapeTests
             new("Container", "SetInUse", TargetKind.MethodNameOnly, "SetInUse", null),
             new("Container", "TypeName", TargetKind.TypeEntry, "Container", null),
             new("Container", "UpdateUseVisual", TargetKind.MethodNameOnly, "UpdateUseVisual", null),
+            new("CookingStation", "AddFuelRpc", TargetKind.MethodNameOnly, "RPC_AddFuel", null),
+            new("CookingStation", "AddItemRpc", TargetKind.MethodNameOnly, "RPC_AddItem", null),
+            new("CookingStation", "Awake", TargetKind.MethodOverloads, "Awake", null),
+            new("CookingStation", "AwakeParametersNone", TargetKind.OverloadCompanion, "", "Awake"),
+            new("CookingStation", "GetHoverText", TargetKind.MethodOverloads, "GetHoverText", null),
+            new("CookingStation", "GetHoverTextParametersNone", TargetKind.OverloadCompanion, "", "GetHoverText"),
+            new("CookingStation", "Interact", TargetKind.MethodOverloads, "Interact", null),
+            new("CookingStation", "InteractParametersUserHoldAlt", TargetKind.OverloadCompanion, "Humanoid,System.Boolean,System.Boolean", "Interact"),
+            new("CookingStation", "TypeName", TargetKind.TypeEntry, "CookingStation", null),
             new("CraftingStation", "FieldCraftingSkill", TargetKind.FieldEntry, "m_craftingSkill", null),
             new("CraftingStation", "FieldCraftingSkillType", TargetKind.FieldTypeCompanion, "Skills+SkillType", "FieldCraftingSkill"),
             new("CraftingStation", "FieldNview", TargetKind.FieldEntry, "m_nview", null),
@@ -107,6 +116,21 @@ public sealed class PatchTargetShapeTests
             new("FejdStartup", "ShowConnectError", TargetKind.MethodOverloads, "ShowConnectError", null),
             new("FejdStartup", "ShowConnectErrorParametersStatus", TargetKind.OverloadCompanion, "ZNet+ConnectionStatus", "ShowConnectError"),
             new("FejdStartup", "TypeName", TargetKind.TypeEntry, "FejdStartup", null),
+            new("Fermenter", "AddItemRpc", TargetKind.MethodNameOnly, "RPC_AddItem", null),
+            new("Fermenter", "Awake", TargetKind.MethodOverloads, "Awake", null),
+            new("Fermenter", "AwakeParametersNone", TargetKind.OverloadCompanion, "", "Awake"),
+            new("Fermenter", "GetHoverText", TargetKind.MethodOverloads, "GetHoverText", null),
+            new("Fermenter", "GetHoverTextParametersNone", TargetKind.OverloadCompanion, "", "GetHoverText"),
+            new("Fermenter", "Interact", TargetKind.MethodOverloads, "Interact", null),
+            new("Fermenter", "InteractParametersUserHoldAlt", TargetKind.OverloadCompanion, "Humanoid,System.Boolean,System.Boolean", "Interact"),
+            new("Fermenter", "TypeName", TargetKind.TypeEntry, "Fermenter", null),
+            new("Fireplace", "Awake", TargetKind.MethodOverloads, "Awake", null),
+            new("Fireplace", "AwakeParametersNone", TargetKind.OverloadCompanion, "", "Awake"),
+            new("Fireplace", "GetHoverText", TargetKind.MethodOverloads, "GetHoverText", null),
+            new("Fireplace", "GetHoverTextParametersNone", TargetKind.OverloadCompanion, "", "GetHoverText"),
+            new("Fireplace", "Interact", TargetKind.MethodOverloads, "Interact", null),
+            new("Fireplace", "InteractParametersUserHoldAlt", TargetKind.OverloadCompanion, "Humanoid,System.Boolean,System.Boolean", "Interact"),
+            new("Fireplace", "TypeName", TargetKind.TypeEntry, "Fireplace", null),
             new("Game", "FieldDurabilityRate", TargetKind.FieldEntry, "m_durabilityRate", null),
             new("Game", "FieldDurabilityRateType", TargetKind.FieldTypeCompanion, "System.Single", "FieldDurabilityRate"),
             new("Game", "GetInstance", TargetKind.MethodNameOnly, "get_instance", null),
@@ -129,6 +153,7 @@ public sealed class PatchTargetShapeTests
             new("Humanoid", "TypeName", TargetKind.TypeEntry, "Humanoid", null),
             new("Inventory", "AddItem", TargetKind.MethodOverloads, "AddItem", null),
             new("Inventory", "AddItemParametersItem", TargetKind.OverloadCompanion, "ItemDrop+ItemData", "AddItem"),
+            new("Inventory", "AddItemParametersItemPosition", TargetKind.OverloadCompanion, "ItemDrop+ItemData,Vector2i", "AddItem"), // Edited by S-QR-002 (ADR-GWIN-176)
             new("Inventory", "CanAddItem", TargetKind.MethodOverloads, "CanAddItem", null),
             new("Inventory", "CanAddItemParametersItemStack", TargetKind.OverloadCompanion, "ItemDrop+ItemData,System.Int32", "CanAddItem"),
             new("Inventory", "CanAddItemParametersPrefabStack", TargetKind.OverloadCompanion, "UnityEngine.GameObject,System.Int32", "CanAddItem"),
@@ -156,6 +181,8 @@ public sealed class PatchTargetShapeTests
             new("InventoryGrid", "OnLeftDown", TargetKind.MethodOverloads, "OnLeftDown", null),
             new("InventoryGrid", "OnLeftDownParametersHandler", TargetKind.OverloadCompanion, "UIInputHandler", "OnLeftDown"),
             new("InventoryGrid", "TypeName", TargetKind.TypeEntry, "InventoryGrid", null),
+            new("InventoryGrid", "UpdateGamepad", TargetKind.MethodOverloads, "UpdateGamepad", null),
+            new("InventoryGrid", "UpdateGamepadParametersNone", TargetKind.OverloadCompanion, "", "UpdateGamepad"),
             new("InventoryGrid", "UpdateGui", TargetKind.MethodOverloads, "UpdateGui", null),
             new("InventoryGrid", "UpdateGuiParametersPlayerDragItem", TargetKind.OverloadCompanion, "Player,ItemDrop+ItemData", "UpdateGui"),
             new("InventoryGui", "CloseContainer", TargetKind.MethodNameOnly, "CloseContainer", null),
@@ -213,8 +240,17 @@ public sealed class PatchTargetShapeTests
             new("InventoryGui", "UpdateContainer", TargetKind.MethodOverloads, "UpdateContainer", null),
             new("InventoryGui", "UpdateContainerParametersPlayer", TargetKind.OverloadCompanion, "Player", "UpdateContainer"),
             new("InventoryGui", "UpdateRecipe", TargetKind.MethodOverloads, "UpdateRecipe", null),
+            new("InventoryGui", "UpdateRecipeGamepadInput", TargetKind.MethodOverloads, "UpdateRecipeGamepadInput", null),
+            new("InventoryGui", "UpdateRecipeGamepadInputParametersNone", TargetKind.OverloadCompanion, "", "UpdateRecipeGamepadInput"),
             new("InventoryGui", "UpdateRecipeParametersPlayerDeltaTime", TargetKind.OverloadCompanion, "Player,System.Single", "UpdateRecipe"),
             new("ItemData", "Clone", TargetKind.MethodNameOnly, "Clone", null),
+            // Edited by S-QR-002 (ADR-GWIN-176): the restock field rows of ItemData.
+            new("ItemData", "FieldCrafterId", TargetKind.FieldEntry, "m_crafterID", null),
+            new("ItemData", "FieldCrafterIdType", TargetKind.FieldTypeCompanion, "System.Int64", "FieldCrafterId"),
+            new("ItemData", "FieldCrafterName", TargetKind.FieldEntry, "m_crafterName", null),
+            new("ItemData", "FieldCrafterNameType", TargetKind.FieldTypeCompanion, "System.String", "FieldCrafterName"),
+            new("ItemData", "FieldCustomData", TargetKind.FieldEntry, "m_customData", null),
+            new("ItemData", "FieldCustomDataType", TargetKind.FieldTypeCompanion, "System.Collections.Generic.Dictionary`2[System.String,System.String]", "FieldCustomData"),
             new("ItemData", "FieldDropPrefab", TargetKind.FieldEntry, "m_dropPrefab", null),
             new("ItemData", "FieldDropPrefabType", TargetKind.FieldTypeCompanion, "UnityEngine.GameObject", "FieldDropPrefab"),
             new("ItemData", "FieldDurability", TargetKind.FieldEntry, "m_durability", null),
@@ -230,6 +266,10 @@ public sealed class PatchTargetShapeTests
             new("ItemData", "FieldSharedType", TargetKind.FieldTypeCompanion, "ItemDrop+ItemData+SharedData", "FieldShared"),
             new("ItemData", "FieldStack", TargetKind.FieldEntry, "m_stack", null),
             new("ItemData", "FieldStackType", TargetKind.FieldTypeCompanion, "System.Int32", "FieldStack"),
+            new("ItemData", "FieldVariant", TargetKind.FieldEntry, "m_variant", null), // Edited by S-QR-002 (ADR-GWIN-176)
+            new("ItemData", "FieldVariantType", TargetKind.FieldTypeCompanion, "System.Int32", "FieldVariant"), // Edited by S-QR-002 (ADR-GWIN-176)
+            new("ItemData", "FieldWorldLevel", TargetKind.FieldEntry, "m_worldLevel", null), // Edited by S-QR-002 (ADR-GWIN-176)
+            new("ItemData", "FieldWorldLevelType", TargetKind.FieldTypeCompanion, "System.Int32", "FieldWorldLevel"), // Edited by S-QR-002 (ADR-GWIN-176)
             new("ItemData", "GetTooltip", TargetKind.MethodOverloads, "GetTooltip", null),
             new("ItemData", "GetTooltipParametersItem", TargetKind.OverloadCompanion, "ItemDrop+ItemData,System.Int32,System.Boolean,System.Single,System.Int32,System.Boolean", "GetTooltip"),
             new("ItemData", "TypeName", TargetKind.TypeEntry, "ItemDrop+ItemData", null),
@@ -465,13 +505,13 @@ public sealed class PatchTargetShapeTests
         // Edited by S-E004-012 (ADR-GWIN-136): plus the 15 station-actions rows (1, 1, 1, 0, 6, 6) = 385.
         // Edited by S-E004-015 (ADR-GWIN-143): plus the seven Deposit rows (0, 0, 0, 1, 3, 3) = 392, as 48, 41, 45, 102, 78 and 78.
         // Edited by S-E010-002 (organize-console-command 6.2): 404, by kind 52, 43, 47, 102, 80 and 80.
-        Assert.Equal(419, entries.Count);
-        Assert.Equal(54, entries.Count(e => e.Kind == TargetKind.TypeEntry));
-        Assert.Equal(50, entries.Count(e => e.Kind == TargetKind.MethodOverloads));
-        Assert.Equal(54, entries.Count(e => e.Kind == TargetKind.OverloadCompanion));
-        Assert.Equal(101, entries.Count(e => e.Kind == TargetKind.MethodNameOnly));
-        Assert.Equal(80, entries.Count(e => e.Kind == TargetKind.FieldEntry));
-        Assert.Equal(80, entries.Count(e => e.Kind == TargetKind.FieldTypeCompanion));
+        Assert.Equal(458, entries.Count); // Edited by S-QR-002 (ADR-GWIN-176)
+        Assert.Equal(57, entries.Count(e => e.Kind == TargetKind.TypeEntry));
+        Assert.Equal(61, entries.Count(e => e.Kind == TargetKind.MethodOverloads));
+        Assert.Equal(66, entries.Count(e => e.Kind == TargetKind.OverloadCompanion)); // Edited by S-QR-002 (ADR-GWIN-176)
+        Assert.Equal(104, entries.Count(e => e.Kind == TargetKind.MethodNameOnly));
+        Assert.Equal(85, entries.Count(e => e.Kind == TargetKind.FieldEntry)); // Edited by S-QR-002 (ADR-GWIN-176)
+        Assert.Equal(85, entries.Count(e => e.Kind == TargetKind.FieldTypeCompanion)); // Edited by S-QR-002 (ADR-GWIN-176)
         Assert.Equal(
             new[]
             {
@@ -479,13 +519,23 @@ public sealed class PatchTargetShapeTests
                 new HarmonyEntry("ContainerGetHoverText", "Container.GetHoverText()"),
                 new HarmonyEntry("ContainerInteract", "Container.Interact(Humanoid,System.Boolean,System.Boolean)"),
                 new HarmonyEntry("ContainerRpcOpenResponse", "Container.RPC_OpenResponse(System.Int64,System.Boolean)"),
+                new HarmonyEntry("CookingStationAwake", "CookingStation.Awake()"),
+                new HarmonyEntry("CookingStationGetHoverText", "CookingStation.GetHoverText()"),
+                new HarmonyEntry("CookingStationInteract", "CookingStation.Interact(Humanoid,System.Boolean,System.Boolean)"),
                 new HarmonyEntry("CraftingStationGetHoverText", "CraftingStation.GetHoverText()"),
                 new HarmonyEntry("CraftingStationOnDestroy", "CraftingStation.OnDestroy()"),
                 new HarmonyEntry("CraftingStationStart", "CraftingStation.Start()"),
                 new HarmonyEntry("FejdStartupShowConnectError", "FejdStartup.ShowConnectError(ZNet+ConnectionStatus)"),
+                new HarmonyEntry("FermenterAwake", "Fermenter.Awake()"),
+                new HarmonyEntry("FermenterGetHoverText", "Fermenter.GetHoverText()"),
+                new HarmonyEntry("FermenterInteract", "Fermenter.Interact(Humanoid,System.Boolean,System.Boolean)"),
+                new HarmonyEntry("FireplaceAwake", "Fireplace.Awake()"),
+                new HarmonyEntry("FireplaceGetHoverText", "Fireplace.GetHoverText()"),
+                new HarmonyEntry("FireplaceInteract", "Fireplace.Interact(Humanoid,System.Boolean,System.Boolean)"),
                 new HarmonyEntry("HudSetupPieceInfo", "Hud.SetupPieceInfo(Piece)"),
                 new HarmonyEntry("HumanoidIsItemEquiped", "Humanoid.IsItemEquiped(ItemDrop+ItemData)"),
                 new HarmonyEntry("InventoryGridOnLeftDown", "InventoryGrid.OnLeftDown(UIInputHandler)"),
+                new HarmonyEntry("InventoryGridUpdateGamepad", "InventoryGrid.UpdateGamepad()"),
                 new HarmonyEntry("InventoryGridUpdateGui", "InventoryGrid.UpdateGui(Player,ItemDrop+ItemData)"),
                 new HarmonyEntry("InventoryGuiDoCrafting", "InventoryGui.DoCrafting(Player)"),
                 new HarmonyEntry("InventoryGuiHide", "InventoryGui.Hide()"),
@@ -493,6 +543,7 @@ public sealed class PatchTargetShapeTests
                 new HarmonyEntry("InventoryGuiSetupRequirementList", "InventoryGui.SetupRequirementList(System.Int32,Player,System.Boolean,System.Int32)"),
                 new HarmonyEntry("InventoryGuiUpdateContainer", "InventoryGui.UpdateContainer(Player)"),
                 new HarmonyEntry("InventoryGuiUpdateRecipe", "InventoryGui.UpdateRecipe(Player,System.Single)"), // Edited by S-E004-012 (ADR-GWIN-136).
+                new HarmonyEntry("InventoryGuiUpdateRecipeGamepadInput", "InventoryGui.UpdateRecipeGamepadInput()"),
                 new HarmonyEntry("InventoryStackAll", "Inventory.StackAll(Inventory,System.Boolean)"),
                 new HarmonyEntry("ItemDataGetTooltip", "ItemDrop+ItemData.GetTooltip(ItemDrop+ItemData,System.Int32,System.Boolean,System.Single,System.Int32,System.Boolean)"),
                 new HarmonyEntry("PlayerConsumeResources", "Player.ConsumeResources(Piece+Requirement[],System.Int32,System.Int32,System.Int32)"),

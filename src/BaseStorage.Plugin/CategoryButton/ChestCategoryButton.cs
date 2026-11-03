@@ -9,6 +9,7 @@ using BaseStorage.Core.Snapshots;
 using BaseStorage.Core.Ui;
 using BaseStorage.Plugin.BaseMenu;
 using BaseStorage.Plugin.ChestCategories;
+using BaseStorage.Plugin.ChestSort;
 using BaseStorage.Plugin.Patching;
 using BaseStorage.Plugin.Ui;
 using UnityEngine;
@@ -50,6 +51,8 @@ internal static class ChestCategoryButton
             return;
         }
 
+        PanelGamepad.Tick(gui);
+
         Button? control = EnsureButton(gui);
         if (control == null)
         {
@@ -65,6 +68,7 @@ internal static class ChestCategoryButton
                 controlObject.SetActive(false);
             }
 
+            ChestPanelButtons.Show(false);
             cachedChest = null;
             cachedRaw = null;
             return;
@@ -75,6 +79,7 @@ internal static class ChestCategoryButton
             controlObject.SetActive(true);
         }
 
+        ChestPanelButtons.Show(true);
         string? raw = Storage.ReadRaw(chest);
         if (!ReferenceEquals(chest, cachedChest) || !string.Equals(raw, cachedRaw, StringComparison.Ordinal))
         {
@@ -88,6 +93,14 @@ internal static class ChestCategoryButton
         {
             control.interactable = interactable;
         }
+    }
+
+    /// <summary>Lists the open chest's controls for the gamepad. The Category control cycles, because the dropdown needs a pointer.</summary>
+    /// <param name="add">Receives each control and what pressing it does.</param>
+    internal static void CopyTargets(Action<Selectable?, Action> add)
+    {
+        add(button, static () => CycleOpenChest(forward: true));
+        ChestPanelButtons.CopyTargets(add);
     }
 
     /// <summary>Cycles the open chest back by one value. Called by the right-click relay.</summary>
@@ -172,6 +185,7 @@ internal static class ChestCategoryButton
 
         cachedGui = gui;
         button = created;
+        ChestPanelButtons.Build(template, created);
         cachedChest = null;
         cachedRaw = null;
         return created;

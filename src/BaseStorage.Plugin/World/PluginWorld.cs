@@ -9,6 +9,8 @@ using BaseStorage.Core.Logging;
 using BaseStorage.Core.Persistence;
 using BaseStorage.Core.Settings;
 using BaseStorage.Core.Snapshots;
+using BaseStorage.Plugin.ChestCategories;
+using BaseStorage.Plugin.ChestNames;
 using BaseStorage.Plugin.Feeding;
 
 /// <summary>
@@ -17,8 +19,6 @@ using BaseStorage.Plugin.Feeding;
 /// </summary>
 internal sealed class PluginWorld
 {
-    private static readonly Dictionary<ContainerId, CategoryAssignment> NoAssignments = new Dictionary<ContainerId, CategoryAssignment>();
-
     private static PluginWorld? current;
 
     private PluginWorld(IClock clock)
@@ -57,7 +57,7 @@ internal sealed class PluginWorld
                     LogPolicy.Write(BaseStoragePlugin.LogSink, LogCategory.Detail, RegistryMessages.Changed(RegistryKind.Station, false, Stations.Count));
                 }
             });
-        this.Smelters = new LoadedRegistry<ZNetView, Smelter>(static () => { }, static () => { });
+        this.FeedStations = new LoadedRegistry<ZNetView, FeedTarget>(static () => { }, static () => { });
         this.Snapshots = new GameSnapshotSource(Containers, Stations);
         this.Cache = new BaseCache(Snapshots, clock);
     }
@@ -72,7 +72,7 @@ internal sealed class PluginWorld
     internal LoadedRegistry<CraftingStation, CraftingStation> Stations { get; private set; } = null!;
 
     /// <summary>Gets the registry of loaded stations that can be fed, keyed by the station's network view.</summary>
-    internal LoadedRegistry<ZNetView, Smelter> Smelters { get; private set; } = null!;
+    internal LoadedRegistry<ZNetView, FeedTarget> FeedStations { get; private set; } = null!;
 
     /// <summary>Gets the snapshot adapter that fills the Core snapshots from the registries.</summary>
     internal GameSnapshotSource Snapshots { get; }
@@ -103,9 +103,9 @@ internal sealed class PluginWorld
     /// <param name="container">The container.</param>
     internal void OnContainerAwake(Container container)
     {
-        if (container != null && container.m_nview != null && container.m_nview.IsValid())
+        if (container != null && container.m_nview != null && container.m_nview.IsValid() && Containers.Add(container.m_nview, container))
         {
-            Containers.Add(container.m_nview, container);
+            ChestNames.Register(container);
         }
     }
 
@@ -114,16 +114,17 @@ internal sealed class PluginWorld
     internal void OnNetViewDestroy(ZNetView view)
     {
         Containers.Remove(view);
-        Smelters.Remove(view);
+        FeedStations.Remove(view);
     }
 
     /// <summary>Registers a station after its Awake. A station without a valid view (a placement ghost) is ignored.</summary>
-    /// <param name="smelter">The station.</param>
-    internal void OnSmelterAwake(Smelter smelter)
+    /// <param name="station">The station.</param>
+    internal void OnFeedStationAwake(UnityEngine.Component station)
     {
-        if (smelter != null && smelter.m_nview != null && smelter.m_nview.IsValid() && Smelters.Add(smelter.m_nview, smelter))
+        FeedTarget? target = FeedTargets.Of(station);
+        if (target != null && FeedStations.Add(target.View, target))
         {
-            StationFeeder.Register(smelter);
+            StationFeeder.Register(target);
         }
     }
 
@@ -145,7 +146,7 @@ internal sealed class PluginWorld
                         new BaseCacheOptions(settings.BaseCacheSeconds, settings.MaxBaseStations));
                     EligibilityResult eligibility = ContainerEligibility.Evaluate(
                         resolution.Containers,
-                        NoAssignments,
+                        ReadAssignments(resolution.Containers),
                         ContainerPurpose.CraftAvailability,
                         EligibilityOptions.FromSettings(settings));
                     LogPolicy.Write(BaseStoragePlugin.LogSink, LogCategory.Detail, RegistryMessages.BaseSummary(id, resolution, eligibility));
@@ -159,5 +160,44 @@ internal sealed class PluginWorld
     internal void OnStationDestroy(CraftingStation station)
     {
         Stations.Remove(station);
+    }
+
+    /// <summary>Reads the persisted category assignment of each snapshot's loaded chest (P8), so the base summary applies the real Keep marks.</summary>
+    /// <param name="snapshots">The member chests of a base.</param>
+    /// <returns>The assignment per chest id; chests without one are left out.</returns>
+    private Dictionary<ContainerId, CategoryAssignment> ReadAssignments(IReadOnlyList<ContainerSnapshot> snapshots)
+    {
+        var assignments = new Dictionary<ContainerId, CategoryAssignment>();
+        var loaded = new List<Container>();
+        Containers.CopyItemsTo(loaded);
+        var byId = new Dictionary<ContainerId, Container>(loaded.Count);
+        for (int i = 0; i < loaded.Count; i++)
+        {
+            Container container = loaded[i];
+            if (container == null || container.m_nview == null || !container.m_nview.IsValid())
+            {
+                continue;
+            }
+
+            ZDO zdo = container.m_nview.GetZDO();
+            if (zdo != null)
+            {
+                byId[new ContainerId(zdo.m_uid.UserID, zdo.m_uid.ID)] = container;
+            }
+        }
+
+        for (int i = 0; i < snapshots.Count; i++)
+        {
+            if (byId.TryGetValue(snapshots[i].Id, out Container? chest))
+            {
+                CategoryAssignment? assignment = ChestCategoryWriter.Read(chest);
+                if (assignment != null)
+                {
+                    assignments[snapshots[i].Id] = assignment;
+                }
+            }
+        }
+
+        return assignments;
     }
 }

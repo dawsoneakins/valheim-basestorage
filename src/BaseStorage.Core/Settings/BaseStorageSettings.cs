@@ -103,6 +103,12 @@ public sealed class BaseStorageSettings
     /// <summary>Gets the StationButtons setting.</summary>
     public bool StationButtons => GetBool(SettingKeys.StationButtons);
 
+    /// <summary>Gets the ChestLabels setting.</summary>
+    public bool ChestLabels => GetBool(SettingKeys.ChestLabels);
+
+    /// <summary>Gets the ChestLabelDistance setting.</summary>
+    public int ChestLabelDistance => GetInt(SettingKeys.ChestLabelDistance);
+
     /// <summary>Gets the ShowCategoryTooltip setting.</summary>
     public bool ShowCategoryTooltip => GetBool(SettingKeys.ShowCategoryTooltip);
 
@@ -120,6 +126,9 @@ public sealed class BaseStorageSettings
 
     /// <summary>Gets the AutoAssignMixedChests setting.</summary>
     public bool AutoAssignMixedChests => GetBool(SettingKeys.AutoAssignMixedChests);
+
+    /// <summary>Gets the RestockKey hotkey text. Empty means unbound.</summary>
+    public string RestockKey => GetHotkeyText(SettingKeys.RestockKey);
 
     private static SettingDefinition Require(string key, SettingKind kind)
     {

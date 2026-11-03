@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-/// <summary>The fixed catalog of the 19 section 7 settings, in table order. Immutable after static initialisation.</summary>
+/// <summary>The fixed catalog of the 21 section 7 settings, in table order. Immutable after static initialisation.</summary>
 public static class SettingsCatalog
 {
     private static readonly SettingDefinition[] Rows =
@@ -49,9 +49,15 @@ public static class SettingsCatalog
             "Let Organize give mixed chests a category that is short of space, and move stacks with no room of their own to the nearest related chest. Set to false for the 0.1.0 behaviour. Host-synced: in multiplayer the host's value is used."),
         new SettingDefinition(SettingSections.General, SettingKeys.ShowCategoryTooltip, SettingKind.Bool, "true", false,
             "Show each item's BaseStorage category on its tooltip."),
+        new SettingDefinition(SettingSections.Keys, SettingKeys.RestockKey, SettingKind.Hotkey, "", false,
+            "Hotkey that starts Restock for the base that contains the player. Unbound by default."),
+        new SettingDefinition(SettingSections.General, SettingKeys.ChestLabels, SettingKind.Bool, "true", false,
+            "Show chest names and categories as labels in the world, inside a base."),
+        new SettingDefinition(SettingSections.General, SettingKeys.ChestLabelDistance, SettingKind.Int, "6", false,
+            "How close, in metres, a chest must be for its label to show."),
     };
 
-    /// <summary>All 19 entries, in section 7 table order.</summary>
+    /// <summary>All 21 entries, in section 7 table order.</summary>
     public static IReadOnlyList<SettingDefinition> All { get; } = new ReadOnlyCollection<SettingDefinition>(Rows);
 
     /// <summary>The 9 entries whose host-synced flag is true, in table order.</summary>

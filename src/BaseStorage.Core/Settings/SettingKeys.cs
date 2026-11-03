@@ -62,4 +62,13 @@ public static class SettingKeys
 
     /// <summary>Let Organize give mixed chests below the threshold a category that is short of space.</summary>
     public const string AutoAssignMixedChests = "AutoAssignMixedChests";
+
+    /// <summary>Shows chest names and categories as labels in the world.</summary>
+    public const string ChestLabels = "ChestLabels";
+
+    /// <summary>How close, in metres, a chest must be for its label to show.</summary>
+    public const string ChestLabelDistance = "ChestLabelDistance";
+
+    /// <summary>Hotkey that starts Restock for the base that contains the player.</summary>
+    public const string RestockKey = "RestockKey";
 }

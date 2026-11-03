@@ -41,6 +41,7 @@ public sealed class ReleaseDocsConsistencyTests
     private static readonly string[] PlaytestStructuralHeadings =
     {
         "## Setup", "## Solo", "## Host plus one friend", "## Acceptance script (AC-2.1 to AC-6.3)",
+        "## Station feeder and Keep chests (S-QF-001, R4)",
     };
 
     private const string LayoutSample =

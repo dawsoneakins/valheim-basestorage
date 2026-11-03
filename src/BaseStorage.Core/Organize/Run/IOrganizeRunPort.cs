@@ -66,4 +66,18 @@ public interface IOrganizeRunPort
     /// <param name="plan">The Deposit plan about to run.</param>
     /// <returns>The layer.</returns>
     IContainerLayer CreateDepositLayer(DepositPlan plan);
+
+    /// <summary>Captures the local player's carried stacks with identity and marks, in the game's list order (P2). Null when the capture failed; the Plugin has logged the reason (P3).</summary>
+    /// <returns>The carried stacks, or null.</returns>
+    IReadOnlyList<BaseStorage.Core.Restock.CarriedStack>? CaptureCarried();
+
+    /// <summary>Re-reads the given chests with identity-filled stacks (P4). Chests that cannot be read are left out.</summary>
+    /// <param name="containers">The chests of the last GatherFacts.</param>
+    /// <returns>The re-read chests, in the same order.</returns>
+    IReadOnlyList<ContainerSnapshot> CaptureChests(IReadOnlyList<ContainerSnapshot> containers);
+
+    /// <summary>Creates the restock layer over the chests of the last GatherFacts and the slots of the last CaptureCarried (P5).</summary>
+    /// <param name="plan">The restock plan about to run.</param>
+    /// <returns>The layer.</returns>
+    BaseStorage.Core.Restock.Run.IRestockLayer CreateRestockLayer(BaseStorage.Core.Restock.RestockPlan plan);
 }

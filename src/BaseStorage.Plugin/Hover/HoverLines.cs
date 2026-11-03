@@ -5,6 +5,8 @@ using BaseStorage.Core.Bases.Resolution;
 using BaseStorage.Core.Persistence;
 using BaseStorage.Core.Settings;
 using BaseStorage.Core.Snapshots;
+using BaseStorage.Plugin.ChestCategories;
+using BaseStorage.Plugin.ChestNames;
 using BaseStorage.Plugin.World;
 
 /// <summary>
@@ -51,7 +53,9 @@ internal static class HoverLines
             encoded,
             new BaseCacheOptions(settings.BaseCacheSeconds, settings.MaxBaseStations));
         string? appended = HoverInspector.Append(text, line);
-        return appended == null ? text : appended;
+        string result = appended == null ? text : appended;
+        string name = ChestNames.Read(container);
+        return name.Length == 0 ? result : result + "\n" + name;
     }
 
     /// <summary>Appends the station line to the vanilla hover text of a crafting station. Returns the text unchanged when the station is not registered.</summary>

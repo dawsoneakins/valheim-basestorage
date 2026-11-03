@@ -29,7 +29,7 @@ public sealed class HotkeyDefaultsAuditTests
     public void TheHotkeySetComesFromTheCatalogAndContainsTheThreeKnownHotkeys()
     {
         string[] hotkeys = HotkeysFromCatalog();
-        string[] known = { SettingKeys.CycleCategoryKey, SettingKeys.OrganizeKey, SettingKeys.DepositKey };
+        string[] known = { SettingKeys.CycleCategoryKey, SettingKeys.OrganizeKey, SettingKeys.DepositKey, "RestockKey" }; // Edited by S-QR-002 (ADR-GWIN-176)
 
         Assert.NotEmpty(hotkeys);
         Assert.Empty(known.Except(hotkeys, StringComparer.Ordinal));

@@ -30,21 +30,22 @@ public sealed class SettingsCatalogTableTests
     [Fact]
     public void SectionAndKindCountsMatchSection7()
     {
-        Assert.Equal(20, SettingsCatalog.All.Count);
+        Assert.Equal(23, SettingsCatalog.All.Count); // Edited by S-QR-002 (ADR-GWIN-176)
 
         string[] sections = SettingsCatalog.All
             .GroupBy(d => d.Section, StringComparer.Ordinal)
             .OrderBy(g => g.Key, StringComparer.Ordinal)
             .Select(g => g.Key + "=" + g.Count().ToString(CultureInfo.InvariantCulture))
             .ToArray();
-        Assert.Equal(new[] { "Debug=1", "General=8", "Keys=3", "Network=1", "Organize=7" }, sections);
+        Assert.Equal(new[] { "Debug=1", "General=10", "Keys=4", "Network=1", "Organize=7" }, sections); // Edited by S-QR-002 (ADR-GWIN-176)
 
         string[] kinds = SettingsCatalog.All
             .GroupBy(d => d.Kind)
             .OrderBy(g => (int)g.Key)
             .Select(g => g.Key.ToString() + "=" + g.Count().ToString(CultureInfo.InvariantCulture))
             .ToArray();
-        Assert.Equal(new[] { "Bool=10", "Int=6", "ItemList=1", "Hotkey=3" }, kinds);
+        // Edited by S-QR-002 (ADR-GWIN-176)
+        Assert.Equal(new[] { "Bool=11", "Int=7", "ItemList=1", "Hotkey=4" }, kinds);
     }
 
     // GW-U-093 (AC-3): 19 distinct keys, equal to the SettingKeys constants and to the literal table.
@@ -52,8 +53,8 @@ public sealed class SettingsCatalogTableTests
     public void CatalogListsTheNineteenKeysOnceAndMatchesTheSettingKeysConstants()
     {
         string[] catalogKeys = SettingsCatalog.All.Select(d => d.Key).ToArray();
-        Assert.Equal(20, catalogKeys.Length);
-        Assert.Equal(20, catalogKeys.Distinct(StringComparer.Ordinal).Count());
+        Assert.Equal(23, catalogKeys.Length); // Edited by S-QR-002 (ADR-GWIN-176)
+        Assert.Equal(23, catalogKeys.Distinct(StringComparer.Ordinal).Count()); // Edited by S-QR-002 (ADR-GWIN-176)
 
         string[] constantValues = ConstantValues(typeof(SettingKeys));
         Assert.Equal(Sorted(constantValues), Sorted(catalogKeys));
@@ -83,13 +84,14 @@ public sealed class SettingsCatalogTableTests
         Assert.True(extra.Length == 0, "Keys in the catalog but not in section 7: " + string.Join(", ", extra));
     }
 
-    // GW-U-095 (AC-5): the hotkeys are exactly the three Keys-section entries, unbound and local-only.
+    // GW-U-095 (AC-5): the hotkeys are exactly the four Keys-section entries, unbound and local-only.
     [Fact]
     public void HotkeysAreExactlyTheThreeKeysSectionEntriesAndAllUnbound()
     {
         SettingDefinition[] hotkeys = SettingsCatalog.All.Where(d => d.Kind == SettingKind.Hotkey).ToArray();
 
-        Assert.Equal(new[] { "CycleCategoryKey", "OrganizeKey", "DepositKey" }, hotkeys.Select(d => d.Key));
+        // Edited by S-QR-002 (ADR-GWIN-176)
+        Assert.Equal(new[] { "CycleCategoryKey", "OrganizeKey", "DepositKey", "RestockKey" }, hotkeys.Select(d => d.Key));
         foreach (SettingDefinition hotkey in hotkeys)
         {
             Assert.Equal(SettingSections.Keys, hotkey.Section);
@@ -107,7 +109,7 @@ public sealed class SettingsCatalogTableTests
     [Fact]
     public void ExactlyThreeHotkeyEntriesAndNoHotkeyOutsideTheKeysSection()
     {
-        Assert.Equal(3, SettingsCatalog.All.Count(d => d.Kind == SettingKind.Hotkey));
+        Assert.Equal(4, SettingsCatalog.All.Count(d => d.Kind == SettingKind.Hotkey)); // Edited by S-QR-002 (ADR-GWIN-176)
         foreach (SettingDefinition definition in SettingsCatalog.All.Where(d => d.Section != SettingSections.Keys))
         {
             Assert.NotEqual(SettingKind.Hotkey, definition.Kind);
@@ -139,7 +141,7 @@ public sealed class SettingsCatalogTableTests
             Assert.Same(filtered[i], SettingsCatalog.HostSynced[i]);
         }
 
-        Assert.Equal(11, SettingsCatalog.All.Count(d => !d.HostSynced));
+        Assert.Equal(14, SettingsCatalog.All.Count(d => !d.HostSynced)); // Edited by S-QR-002 (ADR-GWIN-176)
     }
 
     private static string Describe(int index, string section, string key, SettingKind kind, string defaultText, bool hostSynced) =>

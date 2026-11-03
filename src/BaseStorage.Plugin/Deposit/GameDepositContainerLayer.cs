@@ -81,7 +81,7 @@ internal sealed class GameDepositContainerLayer : IContainerLayer
 
     /// <inheritdoc />
     ContainerSnapshot? IContainerLayer.GetContainer(ContainerId id) =>
-        IsInventory(id) ? PlayerInventoryCapture.Capture(player, id)?.Container : chests.GetContainer(id);
+        IsInventory(id) ? PlayerInventoryCapture.Capture(player, id, out _)?.Container : chests.GetContainer(id);
 
     /// <inheritdoc />
     void IContainerLayer.RequestReservation(ContainerId id)
@@ -171,7 +171,7 @@ internal sealed class GameDepositContainerLayer : IContainerLayer
             return chests.RemoveFromStack(id, stackIndex, expected, count);
         }
 
-        PlayerInventorySnapshot? live = PlayerInventoryCapture.Capture(player, id);
+        PlayerInventorySnapshot? live = PlayerInventoryCapture.Capture(player, id, out _);
         if (live == null)
         {
             return ContainerOperationResult.NotFound;

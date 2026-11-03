@@ -407,8 +407,8 @@ public sealed class PluginWorldSourceScanTests
         // Edited by S-E003-006 (ADR-GWIN-132): the build gate resolves the base containing the player in GameBuildGame (one call).
         // Edited by integration (S-E003-005 + S-E003-006): the union, 5 + 1 = 6 calls.
         // Edited by S-E004-012 (ADR-GWIN-136): plus the station panel's SA2 call (StationActionsPanel), 6 + 1 = 7 calls.
-        Assert.Equal(11, PluginSourceScan.CountMatches(sources, @"\.Resolve\("));
-        Assert.Equal(new[] { "src/BaseStorage.Plugin/BaseMenu/BaseMenuPanel.cs", "src/BaseStorage.Plugin/Building/GameBuildGame.cs", "src/BaseStorage.Plugin/Crafting/GameCraftGame.cs", "src/BaseStorage.Plugin/Feeding/StationFeeder.cs", "src/BaseStorage.Plugin/Requirements/GameRequirementDisplayWorld.cs", "src/BaseStorage.Plugin/Requirements/PluginRequirementDisplay.cs", "src/BaseStorage.Plugin/StationActions/StationActionsPanel.cs", "src/BaseStorage.Plugin/Tooltips/ItemCategoryLine.cs", PluginWorldFile }, PluginSourceScan.FilesMatching(sources, @"\.Resolve\("));
+        Assert.Equal(13, PluginSourceScan.CountMatches(sources, @"\.Resolve\("));
+        Assert.Equal(new[] { "src/BaseStorage.Plugin/BaseMenu/BaseMenuPanel.cs", "src/BaseStorage.Plugin/Building/GameBuildGame.cs", "src/BaseStorage.Plugin/ChestNames/ChestLabels.cs", "src/BaseStorage.Plugin/ChestSort/ChestSorter.cs", "src/BaseStorage.Plugin/Crafting/GameCraftGame.cs", "src/BaseStorage.Plugin/Feeding/StationFeeder.cs", "src/BaseStorage.Plugin/Requirements/GameRequirementDisplayWorld.cs", "src/BaseStorage.Plugin/Requirements/PluginRequirementDisplay.cs", "src/BaseStorage.Plugin/StationActions/StationActionsPanel.cs", "src/BaseStorage.Plugin/Tooltips/ItemCategoryLine.cs", PluginWorldFile }, PluginSourceScan.FilesMatching(sources, @"\.Resolve\("));
         Assert.Matches(@"LogPolicy\.IsEnabled\([^)]*LogCategory\.Detail\)[\s\S]*\.Resolve\(", Code(PluginWorldFile));
     }
 
