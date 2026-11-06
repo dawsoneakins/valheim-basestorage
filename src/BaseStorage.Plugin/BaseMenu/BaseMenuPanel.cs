@@ -17,6 +17,7 @@ using BaseStorage.Plugin.ChestCategories;
 using BaseStorage.Plugin.ChestNames;
 using BaseStorage.Plugin.Feeding;
 using BaseStorage.Plugin.Organize;
+using BaseStorage.Plugin.Favourites;
 using BaseStorage.Plugin.Patching;
 using BaseStorage.Plugin.Ui;
 using BaseStorage.Plugin.World;
@@ -48,6 +49,19 @@ internal static class BaseMenuPanel
     private const string OrganizeId = "menu.organize";
     private const string DepositId = "menu.deposit";
     private const string RestockId = "menu.restock";
+    private const string AllBasesId = "menu.all-bases";
+    private const string HeadingBaseId = "menu.heading.base";
+    private const string HeadingChestId = "menu.heading.chest";
+    private const string RowMoreId = "menu.row.more";
+    private const string RowFillId = "menu.row.fill";
+    private const string RowPreviewId = "menu.row.preview";
+    private const float PreviewSpace = 28f;
+    private const float PreviewMoreWidth = 40f;
+    private const float NamedPreviewStart = 130f;
+    private const float FillBarHeight = 3f;
+    private const float CloseWidth = 90f;
+    private const float CloseHeight = 32f;
+    private const string PutAwaySelectedId = "menu.put-away-selected";
     private const string CloseId = "menu.close";
     private const float MinWidth = 380f;
     internal const float MaxWidth = 560f;
@@ -79,10 +93,19 @@ internal static class BaseMenuPanel
     private const float RowIconSpace = 34f;
     private const float SearchHeight = 40f;
     private const float ButtonHeight = 40f;
-    private const int TakeIndex = 5;
-    private const float RowTint = 0.18f;
+    private const int TakeIndex = 6;
+    private const int CloseIndex = 10;
+
+    /// <summary>Base management acts on every base, so it sits in the top bar beside Close rather than in a group.</summary>
+    private const int ManagementIndex = 9;
+    private const int PutAwaySelectedIndex = 3;
+    private const int HighlightIndex = 4;
+    private const string CancelId = "menu.cancel";
+    private const float ManagementWidth = 170f;
+    private const float BarGap = 6f;
+    private const float HeaderHeight = 30f;
+    private const float HeaderMinFontSize = 12f;
     private const float FarEnough = 200f;
-    private const float ScrollSpeed = 120f;
     private const int MaxRows = 150;
     private static readonly TimeSpan ReloadInterval = TimeSpan.FromSeconds(1);
     private static readonly Color RestTint = new Color(1f, 1f, 1f, 0.35f);
@@ -91,8 +114,9 @@ internal static class BaseMenuPanel
     private static readonly Color SearchIconTint = new Color(1f, 0.85f, 0.45f, 0.85f);
     private static readonly Color SearchFocused = new Color(1f, 0.8f, 0.3f, 0.9f);
 
-    private static readonly float[] ButtonWidths = { 150f, 186f, 110f, 90f, 90f, 130f, 160f, 120f, 108f };
-    private static readonly Button?[] MenuButtons = new Button?[9];
+    private static readonly float[] ButtonWidths = { 150f, 186f, 110f, 210f, 120f, 90f, 130f, 160f, 108f, 110f, CloseWidth };
+    private static readonly Button?[] MenuButtons = new Button?[11];
+    private static readonly TMP_Text?[] Headings = new TMP_Text?[2];
     private static readonly List<RowView> RowViews = new List<RowView>();
     private static readonly Dictionary<ContainerId, Container> Loaded = new Dictionary<ContainerId, Container>();
     private static readonly List<Container> Scratch = new List<Container>();
@@ -118,6 +142,8 @@ internal static class BaseMenuPanel
     private static Button? takeButton;
     private static Button? placeButton;
     private static Button? highlightButton;
+    private static Button? cancelButton;
+    private static int selectionState = -1;
     private static Button? shareButton;
     private static Button? markButton;
     private static RectTransform? searchBoxRect;
@@ -250,6 +276,8 @@ internal static class BaseMenuPanel
         if (resumed)
         {
             SetMarking(false);
+            DepositSelection.Cancel();
+            RefreshSelection();
         }
 
         Container? current = gui.m_currentContainer;
@@ -425,8 +453,68 @@ internal static class BaseMenuPanel
         }
     }
 
+    /// <summary>Opens the menu again after a window that replaced it closes.</summary>
+    internal static void Reopen()
+    {
+        if (!open)
+        {
+            Toggle();
+        }
+    }
+
+    /// <summary>Shows select mode on the buttons: what the next press does, and a Cancel that takes Highlight's place while it lasts.</summary>
+    internal static void RefreshSelection()
+    {
+        Player? player = Player.m_localPlayer;
+        Button? button = MenuButtons[PutAwaySelectedIndex];
+        if (player == null || button == null)
+        {
+            return;
+        }
+
+        bool selecting = DepositSelection.SelectMode;
+        int state = selecting ? DepositSelection.MovableCount(player) : -1;
+        if (state != selectionState)
+        {
+            selectionState = state;
+            if (state < 0)
+            {
+                VanillaButtonFactory.SetLabel(button, StringKeys.MenuPutAwaySelected);
+            }
+            else if (state == 0)
+            {
+                VanillaButtonFactory.SetLabel(button, StringKeys.MenuSelectItems);
+            }
+            else if (state == 1)
+            {
+                VanillaButtonFactory.SetLabel(button, StringKeys.MenuPutAwayCountOne);
+            }
+            else
+            {
+                VanillaButtonFactory.SetLabel(button, StringKeys.MenuPutAwayCountOther, state);
+            }
+        }
+
+        if (cancelButton != null && cancelButton.gameObject.activeSelf != selecting)
+        {
+            cancelButton.gameObject.SetActive(selecting);
+        }
+
+        if (highlightButton != null && highlightButton.gameObject.activeSelf == selecting)
+        {
+            highlightButton.gameObject.SetActive(!selecting);
+        }
+    }
+
+    private static void OnCancelClick() => PatchSafety.Run(ClickKey, static () =>
+    {
+        DepositSelection.Cancel();
+        RefreshSelection();
+    });
+
     private static void Toggle()
     {
+        DepositSelection.Cancel();
         FeedPanel.Close();
         open = !open;
         SetMarking(false);
@@ -450,20 +538,9 @@ internal static class BaseMenuPanel
     private static void BuildPanel(InventoryGui gui)
     {
         panel = VanillaButtonFactory.CreateNode(gui.m_inventoryRoot, PanelId, new Vector2(MaxWidth, PanelHeight), Vector2.zero, typeof(RectTransform), typeof(Image));
-        Image background = panel.GetComponent<Image>();
-        Image? vanilla = gui.m_crafting.GetComponent<Image>();
-        if (vanilla != null && vanilla.sprite != null)
-        {
-            background.sprite = vanilla.sprite;
-            background.type = vanilla.type;
-            background.color = vanilla.color;
-        }
-        else
-        {
-            background.color = new Color(0.3f, 0.24f, 0.25f, 1f);
-        }
+        PanelStyle.Wood(panel.GetComponent<Image>(), gui);
 
-        header = Text(gui, panel.transform, HeaderId, Margin, -Margin, MaxWidth - (2 * Margin), 30f);
+        header = Text(gui, panel.transform, HeaderId, Margin, -Margin, MaxWidth - (3 * Margin) - CloseWidth, 30f);
         Transform parent = panel.transform;
         // Not cloned from Craft: a clone keeps the colours its template had at that moment as its normal look, and Craft is often greyed out.
         Button? organize = VanillaButtonFactory.Create(gui.m_stackAllButton, parent, OrganizeId, StringKeys.StationActionsOrganizeButton, OnOrganizeClick);
@@ -476,16 +553,26 @@ internal static class BaseMenuPanel
         highlightButton = VanillaButtonFactory.Create(gui.m_stackAllButton, parent, HighlightId, StringKeys.MenuHighlight, OnHighlightClick);
         shareButton = VanillaButtonFactory.Create(gui.m_stackAllButton, parent, ShareId, StringKeys.MenuShare, OnShareClick);
 
-        // The nine buttons in the order of contract restock-run-contracts.md 2.3; the layout reads their widths back from sizeDelta.
+        // Grouped by what they act on: the base, then the open chest. Close sits in the panel's top corner. Moving and naming live in the All bases window.
         MenuButtons[0] = organize;
         MenuButtons[1] = deposit;
         MenuButtons[2] = restock;
-        MenuButtons[3] = markButton;
-        MenuButtons[4] = close;
-        MenuButtons[5] = takeButton;
-        MenuButtons[6] = placeButton;
-        MenuButtons[7] = highlightButton;
+        MenuButtons[3] = VanillaButtonFactory.Create(gui.m_stackAllButton, parent, PutAwaySelectedId, StringKeys.MenuPutAwaySelected, OnPutAwaySelectedClick);
+        MenuButtons[4] = highlightButton;
+        MenuButtons[5] = markButton;
+        MenuButtons[6] = takeButton;
+        MenuButtons[7] = placeButton;
         MenuButtons[8] = shareButton;
+        MenuButtons[9] = VanillaButtonFactory.Create(gui.m_stackAllButton, parent, AllBasesId, StringKeys.MenuAllBases, OnAllBasesClick);
+        MenuButtons[CloseIndex] = close;
+        selectionState = -1;
+        cancelButton = VanillaButtonFactory.Create(gui.m_stackAllButton, parent, CancelId, StringKeys.MenuCancel, OnCancelClick);
+        if (cancelButton != null)
+        {
+            cancelButton.gameObject.SetActive(false);
+        }
+        Headings[0] = Heading(gui, HeadingBaseId, StringKeys.MenuHeadingBase);
+        Headings[1] = Heading(gui, HeadingChestId, StringKeys.MenuHeadingChest);
         for (int i = 0; i < MenuButtons.Length; i++)
         {
             Size(MenuButtons[i], ButtonWidths[i]);
@@ -494,6 +581,19 @@ internal static class BaseMenuPanel
         CreateSearch(gui);
         CreateList(gui);
         Fit(gui);
+    }
+
+    private static TMP_Text? Heading(InventoryGui gui, string id, string key)
+    {
+        TMP_Text? text = Text(gui, panel!.transform, id, 0f, 0f, MaxWidth, MenuButtonLayout.HeadingHeight);
+        if (text != null)
+        {
+            text.fontSize = 15f;
+            text.alpha = 0.75f;
+            text.text = StringTable.English.Get(key);
+        }
+
+        return text;
     }
 
     /// <summary>Gives a button its design width and height once; where it sits is the Core layout's decision on every Fit.</summary>
@@ -515,17 +615,17 @@ internal static class BaseMenuPanel
     }
 
     /// <summary>
-    /// Places the nine buttons, the search box and the list from <see cref="MenuButtonLayout"/>, using each button's measured width. Every
+    /// Places the buttons, the search box and the list from <see cref="MenuButtonLayout"/>, using each button's measured width. Every
     /// control is pinned at (X, -Top) from the panel's top-left corner, so the buttons wrap at a narrow panel and nothing overlaps.
     /// </summary>
     private static void ApplyLayout(float panelWidth)
     {
-        var specs = new MenuButtonSpec[MenuButtons.Length];
+        var specs = new MenuButtonSpec[ManagementIndex];
         for (int i = 0; i < specs.Length; i++)
         {
             Button? button = MenuButtons[i];
             float measured = button == null ? 0f : ((RectTransform)button.transform).sizeDelta.x;
-            specs[i] = new MenuButtonSpec(measured > 0f ? measured : ButtonWidths[i], i == TakeIndex);
+            specs[i] = new MenuButtonSpec(measured > 0f ? measured : ButtonWidths[i], i == 3, i == 0 || i == TakeIndex);
         }
 
         float searchHeight = searchBoxRect == null || searchBoxRect.sizeDelta.y <= 0f ? SearchHeight : searchBoxRect.sizeDelta.y;
@@ -538,6 +638,44 @@ internal static class BaseMenuPanel
                 MenuRect rect = layout.Buttons[i];
                 VanillaButtonFactory.Pin((RectTransform)button.transform, new Vector2(rect.Width, rect.Height), new Vector2(rect.X, -rect.Top));
             }
+        }
+
+        for (int i = 0; i < Headings.Length && i < layout.Headings.Count; i++)
+        {
+            TMP_Text? heading = Headings[i];
+            if (heading != null)
+            {
+                MenuRect rect = layout.Headings[i];
+                VanillaButtonFactory.Pin((RectTransform)heading.transform, new Vector2(rect.Width, rect.Height), new Vector2(rect.X, -rect.Top));
+            }
+        }
+
+        Button? closeButton = MenuButtons[CloseIndex];
+        if (closeButton != null)
+        {
+            VanillaButtonFactory.Pin((RectTransform)closeButton.transform, new Vector2(CloseWidth, CloseHeight), new Vector2(panelWidth - Margin - CloseWidth, -Margin));
+        }
+
+        if (cancelButton != null)
+        {
+            MenuRect slot = layout.Buttons[HighlightIndex];
+            VanillaButtonFactory.Pin((RectTransform)cancelButton.transform, new Vector2(slot.Width, slot.Height), new Vector2(slot.X, -slot.Top));
+        }
+
+        float managementX = panelWidth - Margin - CloseWidth - BarGap - ManagementWidth;
+        Button? management = MenuButtons[ManagementIndex];
+        if (management != null)
+        {
+            VanillaButtonFactory.Pin((RectTransform)management.transform, new Vector2(ManagementWidth, CloseHeight), new Vector2(managementX, -Margin));
+        }
+
+        if (header != null)
+        {
+            // The status line shrinks on a narrow panel instead of running under the top bar's buttons.
+            VanillaButtonFactory.Pin((RectTransform)header.transform, new Vector2(Math.Max(0f, managementX - Margin - BarGap), HeaderHeight), new Vector2(Margin, -Margin));
+            header.enableAutoSizing = true;
+            header.fontSizeMin = HeaderMinFontSize;
+            header.fontSizeMax = Math.Max(header.fontSizeMax, HeaderMinFontSize);
         }
 
         MenuRect search = layout.Search;
@@ -570,12 +708,30 @@ internal static class BaseMenuPanel
     internal static void FitBetween(InventoryGui gui, RectTransform rect, float height)
     {
         var parent = (RectTransform)rect.parent;
-        float left = LocalEdge(gui.m_container, parent, right: true) + PanelGap;
+        float left = RightOfPlayerInfo(gui, parent) + PanelGap;
         float right = LocalEdge(gui.m_crafting, parent, right: false) - PanelGap;
         float width = Mathf.Clamp(right - left, MinWidth, MaxWidth);
         rect.sizeDelta = new Vector2(width, height);
         Rect bounds = parent.rect;
         rect.anchoredPosition = new Vector2(left - bounds.xMin, -PanelGap);
+    }
+
+    /// <summary>The right edge of the chest window, the inventory and its weight and armor readouts, so the panel covers none of them.</summary>
+    private static float RightOfPlayerInfo(InventoryGui gui, RectTransform parent)
+    {
+        float edge = LocalEdge(gui.m_container, parent, right: true);
+        edge = Mathf.Max(edge, LocalEdge(gui.m_player, parent, right: true));
+        if (gui.m_weight != null)
+        {
+            edge = Mathf.Max(edge, LocalEdge(gui.m_weight.rectTransform, parent, right: true));
+        }
+
+        if (gui.m_armor != null)
+        {
+            edge = Mathf.Max(edge, LocalEdge(gui.m_armor.rectTransform, parent, right: true));
+        }
+
+        return edge;
     }
 
     private static float LocalEdge(RectTransform target, RectTransform parent, bool right)
@@ -594,7 +750,7 @@ internal static class BaseMenuPanel
         GameObject box = VanillaButtonFactory.CreateNode(panel!.transform, SearchId, new Vector2(width, SearchHeight), Vector2.zero, typeof(RectTransform), typeof(Image));
         searchBoxRect = (RectTransform)box.transform;
         box.SetActive(false);
-        box.GetComponent<Image>().color = new Color(0.07f, 0.05f, 0.05f, 0.9f);
+        box.GetComponent<Image>().color = PanelStyle.Field;
         searchOutline = box.AddComponent<Outline>();
         searchOutline.effectColor = SearchIdle;
         searchOutline.effectDistance = new Vector2(2f, -2f);
@@ -720,14 +876,14 @@ internal static class BaseMenuPanel
         GameObject view = VanillaButtonFactory.CreateNode(panel!.transform, ListId, new Vector2(width, RowHeight), Vector2.zero, typeof(RectTransform), typeof(RectMask2D), typeof(ScrollRect), typeof(Image));
         var viewRect = (RectTransform)view.transform;
         listViewRect = viewRect;
-        view.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.35f);
+        view.GetComponent<Image>().color = PanelStyle.Inset;
         listContent = (RectTransform)VanillaButtonFactory.CreateNode(view.transform, RowsId, new Vector2(width, 0f), Vector2.zero, typeof(RectTransform)).transform;
         ScrollRect scroll = view.GetComponent<ScrollRect>();
         listScroll = scroll;
         scroll.content = listContent;
         scroll.viewport = viewRect;
         scroll.horizontal = false;
-        scroll.scrollSensitivity = ScrollSpeed;
+        scroll.scrollSensitivity = PanelStyle.ScrollSpeed;
         scroll.movementType = ScrollRect.MovementType.Clamped;
         for (int i = 0; i < MaxRows; i++)
         {
@@ -912,6 +1068,7 @@ internal static class BaseMenuPanel
         SetEnabled(placeButton, current != null);
         SetEnabled(highlightButton, current != null || (query.Length > 0 && rows.Count > 0));
         SetEnabled(shareButton, current != null);
+        RefreshSelection();
         int openRow = -1;
         for (int i = 0; i < RowViews.Count; i++)
         {
@@ -1085,6 +1242,20 @@ internal static class BaseMenuPanel
 
     private static void OnDepositClick() => PatchSafety.Run(ClickKey, static () => Start(deposit: true));
 
+    private static void OnPutAwaySelectedClick() => PatchSafety.Run(ClickKey, static () =>
+    {
+        Player player = Player.m_localPlayer;
+        if (player != null)
+        {
+            Vector3 at = player.transform.position;
+            DepositSelection.OnButton(player, BaseStart.FromPosition(new WorldPosition(at.x, at.y, at.z)));
+            RefreshSelection();
+            lastLoad = TimeSpan.Zero;
+        }
+    });
+
+    private static void OnAllBasesClick() => PatchSafety.Run(ClickKey, BaseStorage.Plugin.BaseMove.BasesWindow.Open);
+
     private static void OnRestockClick() => PatchSafety.Run(ClickKey, static () => StartRestock());
 
     private static void StartRestock()
@@ -1139,12 +1310,21 @@ internal static class BaseMenuPanel
         private readonly TMP_Text? openHint;
         private readonly Image icon;
         private readonly float labelWidth;
+        private readonly List<Image> previews = new List<Image>();
+        private readonly InventoryGui gui;
+        private TMP_Text? more;
+        private Image? fillBar;
+        private ContainerSnapshot? previewChest;
+        private ChestPreview? preview;
+        private float labelX = 6f;
+        private float labelSpan;
         private bool lit;
-        private bool iconShown;
 
         internal RowView(InventoryGui gui, Transform parent, int index, float width)
         {
+            this.gui = gui;
             labelWidth = width - RuleWidth - 2f;
+            labelSpan = labelWidth - OpenHintWidth - 10f;
             root = VanillaButtonFactory.CreateNode(parent, RowId, new Vector2(labelWidth, RowHeight - 2f), new Vector2(0f, -index * RowHeight), typeof(RectTransform), typeof(Image), typeof(Button));
             background = root.GetComponent<Image>();
             click = root.GetComponent<Button>();
@@ -1193,7 +1373,7 @@ internal static class BaseMenuPanel
         private static GameObject Cell(Transform parent, string id, float width, float x, Action click)
         {
             GameObject cell = VanillaButtonFactory.CreateNode(parent, id, new Vector2(width, RowHeight - 2f), new Vector2(x, 0f), typeof(RectTransform), typeof(Image), typeof(Button));
-            cell.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.45f);
+            cell.GetComponent<Image>().color = PanelStyle.Inset;
             cell.GetComponent<Button>().onClick.AddListener(() => PatchSafety.Run(ClickKey, click));
             return cell;
         }
@@ -1229,7 +1409,7 @@ internal static class BaseMenuPanel
                 click.colors = colors;
             }
 
-            background.color = isOpen ? new Color(1f, 0.8f, 0.3f, 0.6f) : new Color(1f, 1f, 1f, RowTint);
+            background.color = isOpen ? new Color(1f, 0.8f, 0.3f, 0.6f) : PanelStyle.Inset;
             int distance = (int)Mathf.Sqrt(row.DistanceSquared);
             bool found = row.Hits.Count > 0;
             ShowIcon(found ? IconOf(row.Hits[0].Prefab) : null);
@@ -1238,9 +1418,19 @@ internal static class BaseMenuPanel
                 : found ? StringTable.English.Format(StringKeys.MenuDistance, distance) : StringTable.English.Get(StringKeys.MenuOpen));
 
             string state = row.AccessDenied ? StringTable.English.Get(StringKeys.MenuNoAccess) : row.InUse ? StringTable.English.Get(StringKeys.MenuInUse) : string.Empty;
-            SetText(label, found
-                ? (state.Length == 0 ? HitText(row) : HitText(row) + "  (" + state + ")")
-                : WithName(row, StringTable.English.Format(StringKeys.MenuRow, row.FillPercent, distance, state)));
+            ShowFill(row.FillPercent);
+            if (!found && state.Length == 0)
+            {
+                ShowPreview(row);
+            }
+            else
+            {
+                HidePreview(0);
+                SetText(label, found
+                    ? (state.Length == 0 ? HitText(row) : HitText(row) + "  (" + state + ")")
+                    : WithName(row, StringTable.English.Format(StringKeys.MenuRow, row.FillPercent, (int)Mathf.Sqrt(row.DistanceSquared), state)));
+            }
+
             SetText(rule, BaseSearch.Mark(row.RuleLabel, query, MatchOpen, MatchClose));
         }
 
@@ -1254,15 +1444,117 @@ internal static class BaseMenuPanel
                 icon.gameObject.SetActive(show);
             }
 
-            bool searching = query.Length > 0;
-            if (iconShown == searching || label == null)
+            float x = query.Length > 0 ? RowIconSpace : 6f;
+            PlaceLabel(x, labelWidth - OpenHintWidth - 4f - x);
+        }
+
+        private void PlaceLabel(float x, float span)
+        {
+            if (label != null && (x != labelX || span != labelSpan))
             {
-                return;
+                labelX = x;
+                labelSpan = span;
+                VanillaButtonFactory.Pin(label.rectTransform, new Vector2(span, RowHeight - 2f), new Vector2(x, 0f));
+            }
+        }
+
+        /// <summary>Shows what's in the chest: its name if it has one, then its most plentiful items, then how many other kinds there are.</summary>
+        private void ShowPreview(BaseMenuRow row)
+        {
+            bool named = row.Name.Length > 0;
+            bool empty = row.Chest.Contents.Count == 0;
+            float start = named ? NamedPreviewStart : 6f;
+            if (named || empty)
+            {
+                PlaceLabel(6f, named ? NamedPreviewStart - 10f : labelWidth - OpenHintWidth - 10f);
+                SetText(label, named ? BaseSearch.Mark(row.Name, query, MatchOpen, MatchClose) : StringTable.English.Get(StringKeys.MenuRowEmpty));
+            }
+            else
+            {
+                SetText(label, string.Empty);
             }
 
-            iconShown = searching;
-            float x = searching ? RowIconSpace : 6f;
-            VanillaButtonFactory.Pin(label.rectTransform, new Vector2(labelWidth - OpenHintWidth - 4f - x, RowHeight - 2f), new Vector2(x, 0f));
+            if (!ReferenceEquals(previewChest, row.Chest) || preview == null)
+            {
+                previewChest = row.Chest;
+                int fits = Mathf.Max(0, Mathf.FloorToInt((labelWidth - OpenHintWidth - 6f - start - PreviewMoreWidth) / PreviewSpace));
+                preview = ChestPreview.Of(row.Chest.Contents, fits);
+            }
+
+            for (int i = 0; i < preview.Prefabs.Count; i++)
+            {
+                if (i == previews.Count)
+                {
+                    previews.Add(CreatePreview());
+                }
+
+                Image image = previews[i];
+                image.sprite = IconOf(preview.Prefabs[i]);
+                image.enabled = image.sprite != null;
+                VanillaButtonFactory.Pin((RectTransform)image.transform, new Vector2(RowIconSize, RowIconSize), new Vector2(start + (i * PreviewSpace), -3f));
+                if (!image.gameObject.activeSelf)
+                {
+                    image.gameObject.SetActive(true);
+                }
+            }
+
+            HidePreview(preview.Prefabs.Count);
+            ShowMore(preview.Hidden, start + (preview.Prefabs.Count * PreviewSpace));
+        }
+
+        private Image CreatePreview()
+        {
+            Image image = VanillaButtonFactory.CreateNode(root.transform, RowPreviewId, new Vector2(RowIconSize, RowIconSize), Vector2.zero, typeof(RectTransform), typeof(Image)).GetComponent<Image>();
+            image.raycastTarget = false;
+            image.preserveAspect = true;
+            return image;
+        }
+
+        private void ShowMore(int hidden, float x)
+        {
+            if (hidden > 0 && more == null)
+            {
+                more = Text(gui, root.transform, RowMoreId, x, 0f, PreviewMoreWidth, RowHeight - 2f);
+            }
+
+            if (more != null)
+            {
+                more.gameObject.SetActive(hidden > 0);
+                if (hidden > 0)
+                {
+                    VanillaButtonFactory.Pin(more.rectTransform, new Vector2(PreviewMoreWidth, RowHeight - 2f), new Vector2(x, 0f));
+                    SetText(more, StringTable.English.Format(StringKeys.MenuRowMore, hidden));
+                }
+            }
+        }
+
+        private void HidePreview(int from)
+        {
+            for (int i = from; i < previews.Count; i++)
+            {
+                if (previews[i].gameObject.activeSelf)
+                {
+                    previews[i].gameObject.SetActive(false);
+                }
+            }
+
+            if (from == 0 && more != null)
+            {
+                more.gameObject.SetActive(false);
+            }
+        }
+
+        /// <summary>A thin bar along the row's bottom edge keeps how full the chest is visible at a glance.</summary>
+        private void ShowFill(int percent)
+        {
+            if (fillBar == null)
+            {
+                fillBar = VanillaButtonFactory.CreateNode(root.transform, RowFillId, Vector2.zero, Vector2.zero, typeof(RectTransform), typeof(Image)).GetComponent<Image>();
+                fillBar.raycastTarget = false;
+                fillBar.color = new Color(1f, 0.8f, 0.3f, 0.75f);
+            }
+
+            VanillaButtonFactory.Pin(fillBar.rectTransform, new Vector2(labelWidth * percent / 100f, FillBarHeight), new Vector2(0f, -(RowHeight - 2f - FillBarHeight)));
         }
     }
 }

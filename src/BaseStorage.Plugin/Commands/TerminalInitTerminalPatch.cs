@@ -5,7 +5,7 @@ using BaseStorage.Shared;
 using HarmonyLib;
 
 /// <summary>
-/// Postfix on Terminal.InitTerminal: registers the basestorage console command once per process (CC7). The body is one fail-closed call.
+/// Postfix on Terminal.InitTerminal: registers the dons-qol console command once per process (CC7). The body is one fail-closed call.
 /// </summary>
 [HarmonyPatch(typeof(Terminal), PatchTargetNames.Terminal.InitTerminal)]
 internal static class TerminalInitTerminalPatch

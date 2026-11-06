@@ -16,7 +16,7 @@ using BaseStorage.Core.Tests.Abstractions;
 public sealed class PeersSurfaceTests
 {
     private const string PeersNamespace = "BaseStorage.Core.Networking.Peers";
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const BindingFlags PublicDeclared = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
 
     // GW-U-1260 (contract 1): the exported types of the namespace are exactly the six contract names, and the parent namespace keeps its five.

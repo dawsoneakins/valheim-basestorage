@@ -89,12 +89,12 @@ public static class ReleaseFeatures
             ["**Craft and build from your chests.**", "CraftFromBase"],
             ["## Craft from base (AC-2.4, AC-3.1, AC-3.4)", "## Upgrade and multi-craft from base (AC-3.5)", "## Craft from base off (AC-3.6)"]),
         new("QF17", "Console command",
-            ["- Console command `basestorage organize`:"],
-            ["basestorage organize"],
+            ["- Console command `dons-qol organize`:"],
+            ["dons-qol organize"],
             ["## Organize console command (AC-2.4, AC-5.4)"]),
         new("QF18", "One message per action",
             ["- Crafting and building with materials from base chests now confirm with one short message"],
-            ["Every BaseStorage action ends with one short message"],
+            ["Every Don's QOL action ends with one short message"],
             ["## Feedback messages (AC-8.1, AC-7.3)"]),
     ];
 }

@@ -14,7 +14,7 @@ using BaseStorage.Core.Ui;
 /// </summary>
 public sealed class RequirementDisplaySurfaceTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const BindingFlags PublicDeclared = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
 
     // GW-U-1509 (3.1 R1-R4): RequirementDisplay is a public readonly struct with the contracted constructor, three get-only properties and the equality members.

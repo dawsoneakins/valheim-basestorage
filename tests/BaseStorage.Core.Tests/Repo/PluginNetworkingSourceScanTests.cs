@@ -110,7 +110,7 @@ public sealed class PluginNetworkingSourceScanTests
         Assert.Single(Regex.Matches(holder, @"\.Invoke\(VersionRpc\.VanillaErrorName, \(int\)ZNet\.ConnectionStatus\.ErrorVersion\)"));
         Assert.Contains("payload.Write(VersionHandshake.EncodePayloadBytes(ModVersion.Current));", holder, StringComparison.Ordinal);
         Assert.Contains("package.ReadByteArray()", holder, StringComparison.Ordinal);
-        Assert.Equal(new[] { "src/BaseStorage.Plugin/BaseMenu/ChestHighlight.cs", "src/BaseStorage.Plugin/ChestNames/ChestNames.cs", "src/BaseStorage.Plugin/Feeding/StationFeeder.cs", Holder }, PluginSourceScan.FilesMatching(sources, @"\.Register<"));
+        Assert.Equal(new[] { "src/BaseStorage.Plugin/BaseMenu/ChestHighlight.cs", "src/BaseStorage.Plugin/BaseMove/PluginBaseMove.cs", "src/BaseStorage.Plugin/ChestNames/ChestNames.cs", "src/BaseStorage.Plugin/Feeding/StationFeeder.cs", Holder }, PluginSourceScan.FilesMatching(sources, @"\.Register<"));
         Assert.Equal(new[] { Holder }, PluginSourceScan.FilesMatching(sources, @"VersionRpc\."));
         foreach (string file in FolderFiles(sources))
         {

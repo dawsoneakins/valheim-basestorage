@@ -117,12 +117,16 @@ public sealed class PluginSettingsSourceScanTests
 
         // The favourites click handler reads the Alt modifier (S-E004-014 contract T1, ADR-GWIN-051); it binds no key.
         const string favouriteClicksFile = "src/BaseStorage.Plugin/Favourites/FavouriteClicks.cs";
+        // The quick put away reads the Shift modifier; it binds no key either.
+        const string quickPutAwayFile = "src/BaseStorage.Plugin/Favourites/QuickPutAway.cs";
         Dictionary<string, string> outsideClicks = sources
-            .Where(pair => pair.Key != favouriteClicksFile)
+            .Where(pair => pair.Key != favouriteClicksFile && pair.Key != quickPutAwayFile)
             .ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
         Assert.Equal(0, PluginSourceScan.CountMatches(outsideClicks, @"\bKeyCode\.(?!None\b)\w+"));
         Assert.True(sources.ContainsKey(favouriteClicksFile), $"Scan did not read {favouriteClicksFile}.");
         Assert.Empty(Regex.Matches(sources[favouriteClicksFile], @"\bKeyCode\.(?!None\b|LeftAlt\b|RightAlt\b)\w+"));
+        Assert.True(sources.ContainsKey(quickPutAwayFile), $"Scan did not read {quickPutAwayFile}.");
+        Assert.Empty(Regex.Matches(sources[quickPutAwayFile], @"\bKeyCode\.(?!None\b|LeftShift\b|RightShift\b)\w+"));
         Assert.Equal(new[] { PluginSourceScan.SettingsFile }, PluginSourceScan.FilesMatching(sources, @"ConfigEntry<KeyboardShortcut>"));
     }
 

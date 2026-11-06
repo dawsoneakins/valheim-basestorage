@@ -11,7 +11,7 @@ using BaseStorage.Core.Tests.Abstractions;
 /// <summary>GW-U-2532 (S-QR-001 AC-6, R9, CS1591): every public member of the restock and identity namespaces is documented in BaseStorage.Core.xml.</summary>
 public sealed class RestockXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const string RestockNamespace = "BaseStorage.Core.Restock";
     private const string IdentitiesNamespace = "BaseStorage.Core.Snapshots.Identities";
 

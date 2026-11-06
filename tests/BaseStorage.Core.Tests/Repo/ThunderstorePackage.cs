@@ -19,7 +19,10 @@ public static class ThunderstorePackage
     public const string Changelog = "CHANGELOG.md";
     public const string SpecFile = "docs/SPEC.md";
     public const string VersionPlaceholder = "__VERSION__";
-    public const string PackageName = "BaseStorage";
+    public const string PackageName = "Dons-QOL";
+
+    /// <summary>The Thunderstore package name in manifest.json (letters, digits and underscores only); the zip and DLLs use Dons-QOL (hyphens are allowed there).</summary>
+    public const string ManifestName = "Dons_QOL";
     public const string Bs1004Prefix = "BS1004: PackageThunderstore wrote '";
     public const int DescriptionMaxLength = 250;
 
@@ -30,8 +33,8 @@ public static class ThunderstorePackage
         "README.md",
         "icon.png",
         "manifest.json",
-        "plugins/BaseStorage.Core.dll",
-        "plugins/BaseStorage.dll",
+        "plugins/Dons-QOL.Core.dll",
+        "plugins/Dons-QOL.dll",
     ];
 
     /// <summary>The maintained Valheim BepInEx pack on Thunderstore (ADR-GWIN-066); the patch number may be bumped.</summary>
@@ -41,7 +44,7 @@ public static class ThunderstorePackage
     public static string ExpectedVersion() =>
         RepoRoot.ValuesOf(ContractPaths.VersionProps, "Version").Single();
 
-    /// <summary>Zip file name for the version, e.g. BaseStorage-0.1.0.zip.</summary>
+    /// <summary>Zip file name for the version, e.g. Dons-QOL-0.1.0.zip.</summary>
     public static string ZipFileName(string version) => PackageName + "-" + version + ".zip";
 
     /// <summary>Resolves the template the way the target does: the placeholder becomes the version.</summary>
@@ -49,7 +52,7 @@ public static class ThunderstorePackage
         template.Replace(VersionPlaceholder, version, StringComparison.Ordinal);
 
     /// <summary>
-    /// Asserts a resolved manifest text: valid JSON, name BaseStorage, version_number equal to <paramref name="version"/>,
+    /// Asserts a resolved manifest text: valid JSON, name Dons_QOL, version_number equal to <paramref name="version"/>,
     /// a string website_url, a 1-250 character description and exactly one BepInExPack_Valheim dependency.
     /// </summary>
     public static void AssertManifest(string json, string version)
@@ -60,7 +63,7 @@ public static class ThunderstorePackage
         JsonElement root = document.RootElement;
         Assert.Equal(JsonValueKind.Object, root.ValueKind);
 
-        Assert.Equal(PackageName, root.GetProperty("name").GetString());
+        Assert.Equal(ManifestName, root.GetProperty("name").GetString());
         Assert.Equal(version, root.GetProperty("version_number").GetString());
         Assert.Equal(JsonValueKind.String, root.GetProperty("website_url").ValueKind);
 

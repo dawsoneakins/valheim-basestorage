@@ -41,7 +41,7 @@ public sealed class MixedChestDocsTests
         string[] lines = Lines(RepoRoot.ReadText(ChangelogFile));
 
         string[] body = Section(lines, UnreleasedHeading, LevelTwo).Where(line => line.Length > 0).ToArray();
-        Assert.Equal(2, body.Length);
+        Assert.Equal(11, body.Length); // Edited by the base move, Put away selected, the character menu and the compendium: an Added heading and four bullets follow.
         Assert.Equal(ChangedHeading, body[0]);
         Assert.StartsWith("- ", body[1], StringComparison.Ordinal);
         foreach (string literal in ChangelogBulletLiterals)

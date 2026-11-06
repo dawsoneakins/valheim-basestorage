@@ -139,6 +139,18 @@ public sealed class DepositRunTests
         AssertCompletedPutAway(h, before);
     }
 
+    // The Shift + right-click shortcut runs at once, because a popup on every click would defeat it, and leaves the preview on for the next run.
+    [Fact]
+    public void AQuickDepositSkipsThePreviewEvenWithItOn()
+    {
+        RunHarness h = RunHarness.Make(depositPreview: true);
+
+        Assert.Equal(OrganizeStartOutcome.Started, h.Coordinator.StartQuickDeposit(AtStation, new FavouriteSlots(new[] { new InventorySlot(0, 1) })));
+
+        Assert.Equal(OrganizeRunState.Running, h.Coordinator.State);
+        Assert.Empty(h.Port.Previews);
+    }
+
     // GW-U-1907 (row 8, AC-3): DepositPreview on shows the preview first, with the contracted body, and moves nothing.
     [Fact]
     public void WithThePreviewOnTheDepositShowsThePopupAndMovesNothing()

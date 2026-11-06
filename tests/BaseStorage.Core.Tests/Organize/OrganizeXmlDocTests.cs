@@ -11,7 +11,7 @@ using BaseStorage.Core.Tests.Abstractions;
 /// <summary>GW-U-574 (AC-15, R9, CS1591): every public member of the 8 Organize types is documented in BaseStorage.Core.xml.</summary>
 public sealed class OrganizeXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const string Namespace = "BaseStorage.Core.Organize";
 
     // GW-U-574

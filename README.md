@@ -2,13 +2,13 @@
 
 ![Don's QOL](package/icon.png)
 
-Don's QOL, formerly BaseStorage, is a BepInEx 5 mod for Valheim: chests near a crafting station form a base, crafting and building draw from every chest in that base, and one button organizes items into chests by category. The full specification, acceptance criteria and settings table live in [docs/SPEC.md](docs/SPEC.md); this file is for people building the mod. Code, DLLs, the install folder and the settings file keep the BaseStorage name, so updating keeps your settings and chest categories.
+Don's QOL, formerly BaseStorage, is a BepInEx 5 mod for Valheim: chests near a crafting station form a base, crafting and building draw from every chest in that base, and one button organizes items into chests by category. The full specification, acceptance criteria and settings table live in [docs/SPEC.md](docs/SPEC.md); this file is for people building the mod. Only the code, the settings file (`dawso.valheim.basestorage.cfg`), the categories file and the saved chest data keep the BaseStorage name, so updating keeps your settings and chest categories.
 
 ## Install
 
-On Windows, download `BaseStorage-Setup.bat` from the latest release (https://github.com/dawsoneakins/valheim-dons-qol/releases/latest) and double-click it. It finds Valheim, installs BepInEx and the mod, checks both downloads, and never touches your saves. Close Valheim first.
+On Windows, download `Dons-QOL-Setup.bat` from the latest release (https://github.com/dawsoneakins/valheim-dons-qol/releases/latest) and double-click it. It finds Valheim, installs BepInEx and the mod, checks both downloads, and never touches your saves. Close Valheim first.
 
-To update, download the latest `BaseStorage-Setup.bat` and run it the same way. It replaces the plugin and keeps your settings, your favourites and your saves. Everyone playing together needs the same version, so update as a group.
+To update, download the latest `Dons-QOL-Setup.bat` and run it the same way. It replaces the plugin and keeps your settings, your favourites and your saves. Everyone playing together needs the same version, so update as a group.
 
 ## Repository layout
 
@@ -96,7 +96,7 @@ After a game update:
 dotnet build BaseStorage.sln -c Release --nologo -p:DeployToGame=true
 ```
 
-The opt-in `DeployToGame` target copies `BaseStorage.dll` and `BaseStorage.Core.dll` to `<ValheimDir>\BepInEx\plugins\BaseStorage\`, and only when `<ValheimDir>\BepInEx` already exists (otherwise it logs `BS1002: DeployToGame skipped`). The gates never pass this property. Do not deploy while the game is running; BepInEx loads plugins at start. The manual checklist for what to test in game is [docs/PLAYTEST.md](docs/PLAYTEST.md).
+The opt-in `DeployToGame` target copies `Dons-QOL.dll` and `Dons-QOL.Core.dll` to `<ValheimDir>\BepInEx\plugins\Dons-QOL\`, and only when `<ValheimDir>\BepInEx` already exists (otherwise it logs `BS1002: DeployToGame skipped`). The gates never pass this property. Do not deploy while the game is running; BepInEx loads plugins at start. The manual checklist for what to test in game is [docs/PLAYTEST.md](docs/PLAYTEST.md).
 
 ## Thunderstore package
 
@@ -104,13 +104,13 @@ The opt-in `DeployToGame` target copies `BaseStorage.dll` and `BaseStorage.Core.
 dotnet build BaseStorage.sln -c Release --nologo -p:PackageThunderstore=true
 ```
 
-The opt-in `PackageThunderstore` target writes `dist/BaseStorage-<version>.zip` (`dist/` is gitignored; `-p:BaseStorageDistDir=<dir>` moves it) and logs `BS1004: PackageThunderstore wrote '<path>'`. The zip holds exactly six entries: `manifest.json` (version from `Version.props`, dependency on `denikson-BepInExPack_Valheim`), `icon.png`, `README.md` (the player README from `package/`), `CHANGELOG.md`, `plugins/BaseStorage.dll` and `plugins/BaseStorage.Core.dll`. Friends install it by importing the zip into r2modman. Plain builds and the gates never produce it.
+The opt-in `PackageThunderstore` target writes `dist/Dons-QOL-<version>.zip` (`dist/` is gitignored; `-p:BaseStorageDistDir=<dir>` moves it) and logs `BS1004: PackageThunderstore wrote '<path>'`. The zip holds exactly six entries: `manifest.json` (version from `Version.props`, dependency on `denikson-BepInExPack_Valheim`), `icon.png`, `README.md` (the player README from `package/`), `CHANGELOG.md`, `plugins/Dons-QOL.dll` and `plugins/Dons-QOL.Core.dll`. Friends install it by importing the zip into r2modman. Plain builds and the gates never produce it.
 
 ## Reading the BepInEx log
 
 BepInEx writes `<ValheimDir>\BepInEx\LogOutput.log`, overwritten on every game start. The mod's lines are tagged `[Info   :BaseStorage]`, `[Warning:BaseStorage]` or `[Debug  :BaseStorage]`. At Info it writes only:
 
-- `BaseStorage <version> loaded` once at start (the load check in `docs/PLAYTEST.md`; a `failed to apply` or `failed to load` line names a patch that did not apply);
+- `Dons-QOL <version> loaded` once at start (the load check in `docs/PLAYTEST.md`; a `failed to apply` or `failed to load` line names a patch that did not apply);
 - `Wrote default category file '...\BepInEx\config\BaseStorage.categories.txt' with <n> item(s)` when the categories file is created;
 - config sync lines in multiplayer and one summary line per Organize or Deposit.
 

@@ -34,7 +34,7 @@ public sealed class PeerVersionMessagesTests
 
         Assert.Equal("Version handshake: peer 1 accepted, host 0.1.0, client 0.1.0", PeerVersionMessages.Format(accepted));
         Assert.Equal("Version handshake: peer 2 refused, versions differ, host 0.1.0, client 0.2.0", PeerVersionMessages.Format(mismatch));
-        Assert.Equal("Version handshake: peer 3 refused, no BaseStorage payload, host 0.1.0", PeerVersionMessages.Format(missing));
+        Assert.Equal("Version handshake: peer 3 refused, no Dons-QOL payload, host 0.1.0", PeerVersionMessages.Format(missing));
         Assert.Equal("Version handshake: peer 2 disconnected after refusal", PeerVersionMessages.Format(disconnect));
         Assert.Equal("Version handshake: peer 1 is the host and versions differ, leaving, host 0.1.0, client 0.2.0", PeerVersionMessages.Format(leave));
         Assert.Null(PeerVersionMessages.Format(ignored));

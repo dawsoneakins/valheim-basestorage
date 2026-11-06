@@ -38,7 +38,7 @@ public sealed class PersistenceKeysTests
         object all = PersistenceContract.Static(KeysType, "All")!;
         Assert.IsType<ReadOnlyCollection<string>>(all);
 
-        string[] expected = ["basestorage.cat", "basestorage.lock", "basestorage.fav", "basestorage.feed", "basestorage.name", "basestorage.favitems"];
+        string[] expected = ["basestorage.cat", "basestorage.lock", "basestorage.fav", "basestorage.feed", "basestorage.name", "basestorage.favitems", "basestorage.base", "basestorage.seen"];
         Assert.Equal(expected, AllKeys());
         Assert.Equal(AllKeys(), AllKeys());
 
@@ -49,7 +49,7 @@ public sealed class PersistenceKeysTests
 
         FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.Static);
         Assert.Equal(
-            new[] { "ChestCategory", "ChestName", "FavouriteItems", "Favourites", "OrganizeLock", "StationFeed" },
+            new[] { "BaseName", "ChestCategory", "ChestName", "CompendiumSightings", "FavouriteItems", "Favourites", "OrganizeLock", "StationFeed" },
             fields.Select(f => f.Name).OrderBy(n => n, StringComparer.Ordinal).ToArray());
         Assert.All(fields, f => Assert.True(f.IsLiteral, $"{f.Name} must be a const."));
 

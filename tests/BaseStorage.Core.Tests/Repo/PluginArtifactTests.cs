@@ -10,7 +10,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
 
 /// <summary>
-/// GW-I-010 (AC-1, ADR-GWIN-013): the built BaseStorage.dll carries the [BepInPlugin] identity and the version constant.
+/// GW-I-010 (AC-1, ADR-GWIN-013): the built Dons-QOL.dll carries the [BepInPlugin] identity and the version constant.
 /// The dll is read with System.Reflection.Metadata and never loaded, so BepInEx and Unity are not needed.
 /// A missing dll fails this test; it never skips.
 /// </summary>
@@ -20,7 +20,7 @@ public sealed class PluginArtifactTests
 {
     private const string PluginTypeName = "BaseStorage.Plugin.BaseStoragePlugin";
     private const string PluginGuid = "dawso.valheim.basestorage";
-    private const string AssemblyName = "BaseStorage";
+    private const string AssemblyName = "Dons-QOL";
     private const string PluginName = "Don's QOL";
     private const string BindingTypeName = "BaseStorage.Plugin.Settings.BepInExSettingsSource";
 

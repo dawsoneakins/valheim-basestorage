@@ -14,13 +14,13 @@ public sealed class ConsoleCommandParseTests
     [Fact]
     public void TheAcceptingArgumentListsParseToOrganize()
     {
-        Assert.Equal(ConsoleCommandRequest.Organize, ConsoleCommandText.Parse(new[] { "basestorage", "organize" }));
-        Assert.Equal(ConsoleCommandRequest.Organize, ConsoleCommandText.Parse(new[] { "basestorage", "ORGANIZE" }));
+        Assert.Equal(ConsoleCommandRequest.Organize, ConsoleCommandText.Parse(new[] { "dons-qol", "organize" }));
+        Assert.Equal(ConsoleCommandRequest.Organize, ConsoleCommandText.Parse(new[] { "dons-qol", "ORGANIZE" }));
         Assert.Equal(ConsoleCommandRequest.Organize, ConsoleCommandText.Parse(new[] { "BaseStorage", "Organize" }));
-        Assert.Equal(ConsoleCommandRequest.Organize, ConsoleCommandText.Parse(new[] { "basestorage", string.Empty, "organize" }));
-        Assert.Equal(ConsoleCommandRequest.Organize, ConsoleCommandText.Parse(new[] { "basestorage", " organize " }));
-        Assert.Equal(ConsoleCommandRequest.Organize, ConsoleCommandText.Parse(new[] { "basestorage", "organize", string.Empty }));
-        Assert.Equal(ConsoleCommandRequest.Organize, ConsoleCommandText.Parse(new string?[] { "basestorage", null, "organize" }));
+        Assert.Equal(ConsoleCommandRequest.Organize, ConsoleCommandText.Parse(new[] { "dons-qol", string.Empty, "organize" }));
+        Assert.Equal(ConsoleCommandRequest.Organize, ConsoleCommandText.Parse(new[] { "dons-qol", " organize " }));
+        Assert.Equal(ConsoleCommandRequest.Organize, ConsoleCommandText.Parse(new[] { "dons-qol", "organize", string.Empty }));
+        Assert.Equal(ConsoleCommandRequest.Organize, ConsoleCommandText.Parse(new string?[] { "dons-qol", null, "organize" }));
     }
 
     // GW-U-2300 (P14): the comparison ignores the current culture (ui-strings U2), so tr-TR does not change the result.
@@ -32,7 +32,7 @@ public sealed class ConsoleCommandParseTests
         {
             CultureInfo.CurrentCulture = new CultureInfo("tr-TR");
 
-            Assert.Equal(ConsoleCommandRequest.Organize, ConsoleCommandText.Parse(new[] { "basestorage", "ORGANIZE" }));
+            Assert.Equal(ConsoleCommandRequest.Organize, ConsoleCommandText.Parse(new[] { "dons-qol", "ORGANIZE" }));
         }
         finally
         {
@@ -44,10 +44,10 @@ public sealed class ConsoleCommandParseTests
     [Fact]
     public void AnyOtherArgumentListParsesToUsageWithoutThrowing()
     {
-        Assert.Equal(ConsoleCommandRequest.Usage, ConsoleCommandText.Parse(new[] { "basestorage" }));
-        Assert.Equal(ConsoleCommandRequest.Usage, ConsoleCommandText.Parse(new[] { "basestorage", "sort" }));
-        Assert.Equal(ConsoleCommandRequest.Usage, ConsoleCommandText.Parse(new[] { "basestorage", "organize", "now" }));
-        Assert.Equal(ConsoleCommandRequest.Usage, ConsoleCommandText.Parse(new[] { "basestorage", "organise" }));
+        Assert.Equal(ConsoleCommandRequest.Usage, ConsoleCommandText.Parse(new[] { "dons-qol" }));
+        Assert.Equal(ConsoleCommandRequest.Usage, ConsoleCommandText.Parse(new[] { "dons-qol", "sort" }));
+        Assert.Equal(ConsoleCommandRequest.Usage, ConsoleCommandText.Parse(new[] { "dons-qol", "organize", "now" }));
+        Assert.Equal(ConsoleCommandRequest.Usage, ConsoleCommandText.Parse(new[] { "dons-qol", "organise" }));
         Assert.Equal(ConsoleCommandRequest.Usage, ConsoleCommandText.Parse(Array.Empty<string?>()));
         Assert.Equal(ConsoleCommandRequest.Usage, ConsoleCommandText.Parse(null));
     }

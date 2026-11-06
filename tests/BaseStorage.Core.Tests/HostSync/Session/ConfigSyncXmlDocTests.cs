@@ -11,7 +11,7 @@ using BaseStorage.Core.Tests.Abstractions;
 /// <summary>AC-8 (R9, ADR-GWIN-121): every public type and member of BaseStorage.Core.HostSync.Session has its summary, params and returns in BaseStorage.Core.xml.</summary>
 public sealed class ConfigSyncXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const string SessionNamespace = "BaseStorage.Core.HostSync.Session";
 
     // GW-U-1401: XmlDocMembers.TargetsFor over the eight Session types (plus the ConfigSyncRpc constant) finds a summary on each, a param for each parameter, and a returns on each non-void member.

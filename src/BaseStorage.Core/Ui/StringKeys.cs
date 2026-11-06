@@ -389,4 +389,505 @@ public static class StringKeys
 
     /// <summary>The notice when the player's inventory could not be read for a Restock.</summary>
     public const string MessageRestockCaptureFailed = "message.restock.capture-failed";
+
+    /// <summary>The topic of the text input that names a base.</summary>
+    public const string MoveNameTopic = "move.name.topic";
+
+    /// <summary>The line after a base was named; the argument is the name.</summary>
+    public const string MoveNamed = "move.named";
+
+    /// <summary>The line after a base's name was cleared.</summary>
+    public const string MoveNameCleared = "move.name.cleared";
+
+    /// <summary>The preview header; the argument is the destination's name.</summary>
+    public const string MovePreviewHeader = "move.preview.header";
+
+    /// <summary>The preview line with the stacks that move; the argument is the count.</summary>
+    public const string MovePreviewMoved = "move.preview.moved";
+
+    /// <summary>The preview line with the stacks portal rules keep; the arguments are the count and the item names.</summary>
+    public const string MovePreviewStayed = "move.preview.stayed";
+
+    /// <summary>The preview line with the stacks that have no room; the argument is the count.</summary>
+    public const string MovePreviewNoRoom = "move.preview.no-room";
+
+    /// <summary>The preview line with the chests that take no part; the argument is the count.</summary>
+    public const string MovePreviewSkipped = "move.preview.skipped";
+
+    /// <summary>The final line's head; the arguments are the count and the destination's name.</summary>
+    public const string MoveDoneMoved = "move.done.moved";
+
+    /// <summary>The final line's part for stacks portal rules kept; the arguments are the count and the item names.</summary>
+    public const string MoveDoneStayed = "move.done.stayed";
+
+    /// <summary>The final line's part for stacks with no room; the argument is the count.</summary>
+    public const string MoveDoneNoRoom = "move.done.no-room";
+
+    /// <summary>The final line's part for skipped chests; the argument is the count.</summary>
+    public const string MoveDoneSkipped = "move.done.skipped";
+
+    /// <summary>The line when there is nothing to move; the argument is the destination's name.</summary>
+    public const string MoveNothing = "move.nothing";
+
+    /// <summary>The warning when the host's write has not arrived, so the chests stay held.</summary>
+    public const string MoveStillWaiting = "move.still-waiting";
+
+    /// <summary>The refusal when another move is running.</summary>
+    public const string MoveRefusedBusy = "move.refused.busy";
+
+    /// <summary>The refusal when a base cannot be found.</summary>
+    public const string MoveRefusedNoSuchBase = "move.refused.no-such-base";
+
+    /// <summary>The refusal naming a player at one of the bases; the argument is the name.</summary>
+    public const string MoveRefusedPlayerAtBase = "move.refused.player-at-base";
+
+    /// <summary>The refusal when the destination is this same base.</summary>
+    public const string MoveRefusedSameBase = "move.refused.same-base";
+
+    /// <summary>The refusal when the chests changed after the preview.</summary>
+    public const string MoveRefusedChanged = "move.refused.changed";
+
+    /// <summary>The refusal when a chest could not be held or did not catch up.</summary>
+    public const string MoveRefusedTimedOut = "move.refused.timed-out";
+
+    /// <summary>The refusal when the move failed before anything was written.</summary>
+    public const string MoveRefusedFailed = "move.refused.failed";
+
+    /// <summary>A line a move has already composed; the argument is the line.</summary>
+    public const string MoveLine = "move.line";
+
+    /// <summary>The label of the button that puts away only the selected items.</summary>
+    public const string MenuPutAwaySelected = "menu.put-away-selected";
+
+    /// <summary>The line after selecting an item; the argument is its name.</summary>
+    public const string MessageItemSelected = "message.item.selected";
+
+    /// <summary>The line after deselecting an item; the argument is its name.</summary>
+    public const string MessageItemDeselected = "message.item.deselected";
+
+    /// <summary>The line when Put away selected has nothing to move.</summary>
+    public const string MessageNothingSelected = "message.nothing-selected";
+
+    /// <summary>The line when select mode turns on.</summary>
+    public const string MessageSelectMode = "message.select-mode";
+
+    /// <summary>The text with the key menu.select-items.</summary>
+    public const string MenuSelectItems = "menu.select-items";
+
+    /// <summary>The text with the key menu.put-away-count.one.</summary>
+    public const string MenuPutAwayCountOne = "menu.put-away-count.one";
+
+    /// <summary>The text with the key menu.put-away-count.other.</summary>
+    public const string MenuPutAwayCountOther = "menu.put-away-count.other";
+
+    /// <summary>The text with the key menu.cancel.</summary>
+    public const string MenuCancel = "menu.cancel";
+
+    /// <summary>The text with the key message.quick-put-away.equipped.</summary>
+    public const string MessageQuickPutAwayEquipped = "message.quick-put-away.equipped";
+
+    /// <summary>The helmet slot's label.</summary>
+    public const string CharacterSlotHelmet = "character.slot.helmet";
+
+    /// <summary>The chest slot's label.</summary>
+    public const string CharacterSlotChest = "character.slot.chest";
+
+    /// <summary>The legs slot's label.</summary>
+    public const string CharacterSlotLegs = "character.slot.legs";
+
+    /// <summary>The cape slot's label.</summary>
+    public const string CharacterSlotCape = "character.slot.cape";
+
+    /// <summary>The utility slot's label.</summary>
+    public const string CharacterSlotUtility = "character.slot.utility";
+
+    /// <summary>The trinket slot's label.</summary>
+    public const string CharacterSlotTrinket = "character.slot.trinket";
+
+    /// <summary>The weapon slot's label.</summary>
+    public const string CharacterSlotWeapon = "character.slot.weapon";
+
+    /// <summary>The shield slot's label.</summary>
+    public const string CharacterSlotShield = "character.slot.shield";
+
+    /// <summary>The ammo slot's label.</summary>
+    public const string CharacterSlotAmmo = "character.slot.ammo";
+
+    /// <summary>The line when worn gear has no grid space to return to.</summary>
+    public const string MessageWornNoRoom = "message.worn.no-room";
+
+    /// <summary>The line when held gear is clicked on the wrong slot.</summary>
+    public const string MessageWornWrongSlot = "message.worn.wrong-slot";
+
+    /// <summary>The compendium text with the key compendium.button.</summary>
+    public const string CompendiumButton = "compendium.button";
+
+    /// <summary>The compendium text with the key compendium.tab.items.</summary>
+    public const string CompendiumTabItems = "compendium.tab.items";
+
+    /// <summary>The compendium text with the key compendium.tab.creatures.</summary>
+    public const string CompendiumTabCreatures = "compendium.tab.creatures";
+
+    /// <summary>The compendium text with the key compendium.tab.biomes.</summary>
+    public const string CompendiumTabBiomes = "compendium.tab.biomes";
+
+    /// <summary>The compendium text with the key compendium.tab.pieces.</summary>
+    public const string CompendiumTabPieces = "compendium.tab.pieces";
+
+    /// <summary>The compendium text with the key compendium.search.</summary>
+    public const string CompendiumSearch = "compendium.search";
+
+    /// <summary>The compendium text with the key compendium.back.</summary>
+    public const string CompendiumBack = "compendium.back";
+
+    /// <summary>The compendium text with the key compendium.close.</summary>
+    public const string CompendiumClose = "compendium.close";
+
+    /// <summary>The compendium text with the key compendium.row.</summary>
+    public const string CompendiumRow = "compendium.row";
+
+    /// <summary>The compendium text with the key compendium.empty.</summary>
+    public const string CompendiumEmpty = "compendium.empty";
+
+    /// <summary>The compendium text with the key compendium.pick.</summary>
+    public const string CompendiumPick = "compendium.pick";
+
+    /// <summary>The compendium text with the key compendium.failed.</summary>
+    public const string CompendiumFailed = "compendium.failed";
+
+    /// <summary>The compendium text with the key compendium.section.stats.</summary>
+    public const string CompendiumSectionStats = "compendium.section.stats";
+
+    /// <summary>The compendium text with the key compendium.section.crafting.</summary>
+    public const string CompendiumSectionCrafting = "compendium.section.crafting";
+
+    /// <summary>The compendium text with the key compendium.section.used-in.</summary>
+    public const string CompendiumSectionUsedIn = "compendium.section.used-in";
+
+    /// <summary>The compendium text with the key compendium.section.dropped-by.</summary>
+    public const string CompendiumSectionDroppedBy = "compendium.section.dropped-by";
+
+    /// <summary>The compendium text with the key compendium.section.gathered.</summary>
+    public const string CompendiumSectionGathered = "compendium.section.gathered";
+
+    /// <summary>The compendium text with the key compendium.section.drops.</summary>
+    public const string CompendiumSectionDrops = "compendium.section.drops";
+
+    /// <summary>The compendium text with the key compendium.section.appears.</summary>
+    public const string CompendiumSectionAppears = "compendium.section.appears";
+
+    /// <summary>The compendium text with the key compendium.section.damage.</summary>
+    public const string CompendiumSectionDamage = "compendium.section.damage";
+
+    /// <summary>The compendium text with the key compendium.section.creatures.</summary>
+    public const string CompendiumSectionCreatures = "compendium.section.creatures";
+
+    /// <summary>The compendium text with the key compendium.section.resources.</summary>
+    public const string CompendiumSectionResources = "compendium.section.resources";
+
+    /// <summary>The compendium text with the key compendium.section.cost.</summary>
+    public const string CompendiumSectionCost = "compendium.section.cost";
+
+    /// <summary>The compendium text with the key compendium.stat.weight.</summary>
+    public const string CompendiumStatWeight = "compendium.stat.weight";
+
+    /// <summary>The compendium text with the key compendium.stat.stack.</summary>
+    public const string CompendiumStatStack = "compendium.stat.stack";
+
+    /// <summary>The compendium text with the key compendium.stat.quality.</summary>
+    public const string CompendiumStatQuality = "compendium.stat.quality";
+
+    /// <summary>The compendium text with the key compendium.stat.value.</summary>
+    public const string CompendiumStatValue = "compendium.stat.value";
+
+    /// <summary>The compendium text with the key compendium.stat.no-portal.</summary>
+    public const string CompendiumStatNoPortal = "compendium.stat.no-portal";
+
+    /// <summary>The compendium text with the key compendium.stat.durability.</summary>
+    public const string CompendiumStatDurability = "compendium.stat.durability";
+
+    /// <summary>The compendium text with the key compendium.stat.armor.</summary>
+    public const string CompendiumStatArmor = "compendium.stat.armor";
+
+    /// <summary>The compendium text with the key compendium.stat.armor-levels.</summary>
+    public const string CompendiumStatArmorLevels = "compendium.stat.armor-levels";
+
+    /// <summary>The compendium text with the key compendium.stat.block.</summary>
+    public const string CompendiumStatBlock = "compendium.stat.block";
+
+    /// <summary>The compendium text with the key compendium.stat.movement.</summary>
+    public const string CompendiumStatMovement = "compendium.stat.movement";
+
+    /// <summary>The compendium text with the key compendium.stat.damage.</summary>
+    public const string CompendiumStatDamage = "compendium.stat.damage";
+
+    /// <summary>The compendium text with the key compendium.stat.food-health.</summary>
+    public const string CompendiumStatFoodHealth = "compendium.stat.food-health";
+
+    /// <summary>The compendium text with the key compendium.stat.food-stamina.</summary>
+    public const string CompendiumStatFoodStamina = "compendium.stat.food-stamina";
+
+    /// <summary>The compendium text with the key compendium.stat.food-eitr.</summary>
+    public const string CompendiumStatFoodEitr = "compendium.stat.food-eitr";
+
+    /// <summary>The compendium text with the key compendium.stat.food-regen.</summary>
+    public const string CompendiumStatFoodRegen = "compendium.stat.food-regen";
+
+    /// <summary>The compendium text with the key compendium.stat.food-time.</summary>
+    public const string CompendiumStatFoodTime = "compendium.stat.food-time";
+
+    /// <summary>The compendium text with the key compendium.stat.set.</summary>
+    public const string CompendiumStatSet = "compendium.stat.set";
+
+    /// <summary>The compendium text with the key compendium.stat.boss.</summary>
+    public const string CompendiumStatBoss = "compendium.stat.boss";
+
+    /// <summary>The compendium text with the key compendium.stat.health.</summary>
+    public const string CompendiumStatHealth = "compendium.stat.health";
+
+    /// <summary>The compendium text with the key compendium.stat.strongest.</summary>
+    public const string CompendiumStatStrongest = "compendium.stat.strongest";
+
+    /// <summary>The compendium text with the key compendium.stat.comfort.</summary>
+    public const string CompendiumStatComfort = "compendium.stat.comfort";
+
+    /// <summary>The compendium text with the key compendium.stat.station.</summary>
+    public const string CompendiumStatStation = "compendium.stat.station";
+
+    /// <summary>The compendium text with the key compendium.recipe.by-hand.</summary>
+    public const string CompendiumRecipeByHand = "compendium.recipe.by-hand";
+
+    /// <summary>The compendium text with the key compendium.recipe.station.</summary>
+    public const string CompendiumRecipeStation = "compendium.recipe.station";
+
+    /// <summary>The compendium text with the key compendium.recipe.station-level.</summary>
+    public const string CompendiumRecipeStationLevel = "compendium.recipe.station-level";
+
+    /// <summary>The compendium text with the key compendium.ingredient.</summary>
+    public const string CompendiumIngredient = "compendium.ingredient";
+
+    /// <summary>The compendium text with the key compendium.ingredient-levels.</summary>
+    public const string CompendiumIngredientLevels = "compendium.ingredient-levels";
+
+    /// <summary>The compendium text with the key compendium.drop.</summary>
+    public const string CompendiumDrop = "compendium.drop";
+
+    /// <summary>The compendium text with the key compendium.gathered.</summary>
+    public const string CompendiumGathered = "compendium.gathered";
+
+    /// <summary>The compendium text with the key compendium.response.</summary>
+    public const string CompendiumResponse = "compendium.response";
+
+    /// <summary>The compendium text with the key compendium.time.any.</summary>
+    public const string CompendiumTimeAny = "compendium.time.any";
+
+    /// <summary>The compendium text with the key compendium.time.day.</summary>
+    public const string CompendiumTimeDay = "compendium.time.day";
+
+    /// <summary>The compendium text with the key compendium.time.night.</summary>
+    public const string CompendiumTimeNight = "compendium.time.night";
+
+    /// <summary>The compendium text with the key compendium.category.weapon.</summary>
+    public const string CompendiumCategoryWeapon = "compendium.category.weapon";
+
+    /// <summary>The compendium text with the key compendium.category.armor.</summary>
+    public const string CompendiumCategoryArmor = "compendium.category.armor";
+
+    /// <summary>The compendium text with the key compendium.category.shield.</summary>
+    public const string CompendiumCategoryShield = "compendium.category.shield";
+
+    /// <summary>The compendium text with the key compendium.category.tool.</summary>
+    public const string CompendiumCategoryTool = "compendium.category.tool";
+
+    /// <summary>The compendium text with the key compendium.category.ammo.</summary>
+    public const string CompendiumCategoryAmmo = "compendium.category.ammo";
+
+    /// <summary>The compendium text with the key compendium.category.food.</summary>
+    public const string CompendiumCategoryFood = "compendium.category.food";
+
+    /// <summary>The compendium text with the key compendium.category.potion.</summary>
+    public const string CompendiumCategoryPotion = "compendium.category.potion";
+
+    /// <summary>The compendium text with the key compendium.category.trophy.</summary>
+    public const string CompendiumCategoryTrophy = "compendium.category.trophy";
+
+    /// <summary>The compendium text with the key compendium.category.material.</summary>
+    public const string CompendiumCategoryMaterial = "compendium.category.material";
+
+    /// <summary>The compendium text with the key compendium.category.misc.</summary>
+    public const string CompendiumCategoryMisc = "compendium.category.misc";
+
+    /// <summary>The compendium text with the key compendium.damage.true.</summary>
+    public const string CompendiumDamageTrue = "compendium.damage.true";
+
+    /// <summary>The compendium text with the key compendium.damage.blunt.</summary>
+    public const string CompendiumDamageBlunt = "compendium.damage.blunt";
+
+    /// <summary>The compendium text with the key compendium.damage.slash.</summary>
+    public const string CompendiumDamageSlash = "compendium.damage.slash";
+
+    /// <summary>The compendium text with the key compendium.damage.pierce.</summary>
+    public const string CompendiumDamagePierce = "compendium.damage.pierce";
+
+    /// <summary>The compendium text with the key compendium.damage.chop.</summary>
+    public const string CompendiumDamageChop = "compendium.damage.chop";
+
+    /// <summary>The compendium text with the key compendium.damage.pickaxe.</summary>
+    public const string CompendiumDamagePickaxe = "compendium.damage.pickaxe";
+
+    /// <summary>The compendium text with the key compendium.damage.fire.</summary>
+    public const string CompendiumDamageFire = "compendium.damage.fire";
+
+    /// <summary>The compendium text with the key compendium.damage.frost.</summary>
+    public const string CompendiumDamageFrost = "compendium.damage.frost";
+
+    /// <summary>The compendium text with the key compendium.damage.lightning.</summary>
+    public const string CompendiumDamageLightning = "compendium.damage.lightning";
+
+    /// <summary>The compendium text with the key compendium.damage.poison.</summary>
+    public const string CompendiumDamagePoison = "compendium.damage.poison";
+
+    /// <summary>The compendium text with the key compendium.damage.spirit.</summary>
+    public const string CompendiumDamageSpirit = "compendium.damage.spirit";
+
+    /// <summary>The compendium text with the key compendium.response.very-weak.</summary>
+    public const string CompendiumResponseVeryWeak = "compendium.response.very-weak";
+
+    /// <summary>The compendium text with the key compendium.response.weak.</summary>
+    public const string CompendiumResponseWeak = "compendium.response.weak";
+
+    /// <summary>The compendium text with the key compendium.response.slightly-weak.</summary>
+    public const string CompendiumResponseSlightlyWeak = "compendium.response.slightly-weak";
+
+    /// <summary>The compendium text with the key compendium.response.slightly-resistant.</summary>
+    public const string CompendiumResponseSlightlyResistant = "compendium.response.slightly-resistant";
+
+    /// <summary>The compendium text with the key compendium.response.resistant.</summary>
+    public const string CompendiumResponseResistant = "compendium.response.resistant";
+
+    /// <summary>The compendium text with the key compendium.response.very-resistant.</summary>
+    public const string CompendiumResponseVeryResistant = "compendium.response.very-resistant";
+
+    /// <summary>The compendium text with the key compendium.response.immune.</summary>
+    public const string CompendiumResponseImmune = "compendium.response.immune";
+
+    /// <summary>The compendium text with the key compendium.response.normal.</summary>
+    public const string CompendiumResponseNormal = "compendium.response.normal";
+
+    /// <summary>The compendium text with the key compendium.biome.meadows.</summary>
+    public const string CompendiumBiomeMeadows = "compendium.biome.meadows";
+
+    /// <summary>The compendium text with the key compendium.biome.black-forest.</summary>
+    public const string CompendiumBiomeBlackForest = "compendium.biome.black-forest";
+
+    /// <summary>The compendium text with the key compendium.biome.swamp.</summary>
+    public const string CompendiumBiomeSwamp = "compendium.biome.swamp";
+
+    /// <summary>The compendium text with the key compendium.biome.mountain.</summary>
+    public const string CompendiumBiomeMountain = "compendium.biome.mountain";
+
+    /// <summary>The compendium text with the key compendium.biome.plains.</summary>
+    public const string CompendiumBiomePlains = "compendium.biome.plains";
+
+    /// <summary>The compendium text with the key compendium.biome.mistlands.</summary>
+    public const string CompendiumBiomeMistlands = "compendium.biome.mistlands";
+
+    /// <summary>The compendium text with the key compendium.biome.ashlands.</summary>
+    public const string CompendiumBiomeAshlands = "compendium.biome.ashlands";
+
+    /// <summary>The compendium text with the key compendium.biome.deep-north.</summary>
+    public const string CompendiumBiomeDeepNorth = "compendium.biome.deep-north";
+
+    /// <summary>The compendium text with the key compendium.biome.ocean.</summary>
+    public const string CompendiumBiomeOcean = "compendium.biome.ocean";
+
+    /// <summary>The compendium text with the key compendium.blurb.meadows.</summary>
+    public const string CompendiumBlurbMeadows = "compendium.blurb.meadows";
+
+    /// <summary>The compendium text with the key compendium.blurb.black-forest.</summary>
+    public const string CompendiumBlurbBlackForest = "compendium.blurb.black-forest";
+
+    /// <summary>The compendium text with the key compendium.blurb.swamp.</summary>
+    public const string CompendiumBlurbSwamp = "compendium.blurb.swamp";
+
+    /// <summary>The compendium text with the key compendium.blurb.mountain.</summary>
+    public const string CompendiumBlurbMountain = "compendium.blurb.mountain";
+
+    /// <summary>The compendium text with the key compendium.blurb.plains.</summary>
+    public const string CompendiumBlurbPlains = "compendium.blurb.plains";
+
+    /// <summary>The compendium text with the key compendium.blurb.mistlands.</summary>
+    public const string CompendiumBlurbMistlands = "compendium.blurb.mistlands";
+
+    /// <summary>The compendium text with the key compendium.blurb.ashlands.</summary>
+    public const string CompendiumBlurbAshlands = "compendium.blurb.ashlands";
+
+    /// <summary>The compendium text with the key compendium.blurb.deep-north.</summary>
+    public const string CompendiumBlurbDeepNorth = "compendium.blurb.deep-north";
+
+    /// <summary>The compendium text with the key compendium.blurb.ocean.</summary>
+    public const string CompendiumBlurbOcean = "compendium.blurb.ocean";
+
+    /// <summary>What an undiscovered item reads as.</summary>
+    public const string CompendiumUndiscoveredItem = "compendium.undiscovered.item";
+
+    /// <summary>What an undiscovered station reads as.</summary>
+    public const string CompendiumUndiscoveredStation = "compendium.undiscovered.station";
+
+    /// <summary>The text with the key menu.all-bases.</summary>
+    public const string MenuAllBases = "menu.all-bases";
+
+    /// <summary>The text with the key menu.heading.base.</summary>
+    public const string MenuHeadingBase = "menu.heading.base";
+
+    /// <summary>The text with the key menu.heading.chest.</summary>
+    public const string MenuHeadingChest = "menu.heading.chest";
+
+    /// <summary>The text with the key menu.row.empty.</summary>
+    public const string MenuRowEmpty = "menu.row.empty";
+
+    /// <summary>The text with the key menu.row.more.</summary>
+    public const string MenuRowMore = "menu.row.more";
+
+    /// <summary>The text with the key bases.refresh.</summary>
+    public const string BasesRefresh = "bases.refresh";
+
+    /// <summary>The text with the key bases.rename.</summary>
+    public const string BasesRename = "bases.rename";
+
+    /// <summary>The text with the key bases.from.</summary>
+    public const string BasesFrom = "bases.from";
+
+    /// <summary>The text with the key bases.to.</summary>
+    public const string BasesTo = "bases.to";
+
+    /// <summary>The text with the key bases.loading.</summary>
+    public const string BasesLoading = "bases.loading";
+
+    /// <summary>The text with the key bases.none.</summary>
+    public const string BasesNone = "bases.none";
+
+    /// <summary>The text with the key bases.pick-source.</summary>
+    public const string BasesPickSource = "bases.pick-source";
+
+    /// <summary>The text with the key bases.moving-from.</summary>
+    public const string BasesMovingFrom = "bases.moving-from";
+
+    /// <summary>The text with the key bases.fallback-name.</summary>
+    public const string BasesFallbackName = "bases.fallback-name";
+
+    /// <summary>The text with the key bases.unknown-biome.</summary>
+    public const string BasesUnknownBiome = "bases.unknown-biome";
+
+    /// <summary>The text with the key bases.here.</summary>
+    public const string BasesHere = "bases.here";
+
+    /// <summary>The text with the key bases.distance.</summary>
+    public const string BasesDistance = "bases.distance";
+
+    /// <summary>The text with the key bases.info.</summary>
+    public const string BasesInfo = "bases.info";
+
+    /// <summary>The text with the key bases.rename-denied.</summary>
+    public const string BasesRenameDenied = "bases.rename-denied";
 }

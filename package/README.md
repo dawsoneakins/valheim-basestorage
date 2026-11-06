@@ -1,11 +1,11 @@
 # Don's QOL
 
-Formerly BaseStorage. Files, folders and the settings file keep the old name, so updating keeps your settings and chest categories.
+Formerly BaseStorage. Only the settings file (`dawso.valheim.basestorage.cfg`), the categories file and the saved chest data keep the old name, so updating keeps your settings and chest categories.
 
 Craft and build from your base chests, give chests categories, and organize the base or put away your inventory from any workbench.
 
 
-Want the easy route? Get the installer zip, extract it, and double-click `Install BaseStorage.bat`. It finds Valheim, sets up BepInEx and installs the mod. It never touches your saves.
+Want the easy route? Get the installer zip, extract it, and double-click `Install Dons-QOL.bat`. It finds Valheim, sets up BepInEx and installs the mod. It never touches your saves.
 
 ## What it does
 
@@ -15,14 +15,18 @@ Want the easy route? Get the installer zip, extract it, and double-click `Instal
 - **Put away inventory.** A second station button moves your inventory into the base chests by their categories.
 - **See your base.** Hover a chest to see `[In base: <N> stations]` or `[Not in a base]`, plus its category or `[Keep]`; hover a station to see `[Base: <N> chests]`.
 
-Every BaseStorage action ends with one short message in the top-left corner.
+Every Don's QOL action ends with one short message in the top-left corner.
+
+The inventory also gets a character menu below it, with a live 3D view of your character. Worn gear moves into real slots, which frees its inventory spaces, and weapon, shield and ammo slots show what is equipped. It hides while a chest is open. Right-click gear, use its hotbar key or click it onto its slot to put it on, and click the slot to take it off.
+
+The **Compendium** button in the character menu opens a spoiler-free, searchable wiki that fills in as you play: stats, recipes, what things are used in, drops, resistances, where things spawn and grow, and links between all of it. A page appears once you've discovered that item, creature, biome or building piece, and pages name nothing you haven't found. It reads the game's own data, so it stays correct after game updates and includes other mods' additions.
 
 ## Installation
 
 **Host**
 
 1. Install BepInExPack_Valheim.
-2. Install BaseStorage with r2modman or the Thunderstore Mod Manager (import `BaseStorage-<version>.zip` as a local mod), or copy `BaseStorage.dll` and `BaseStorage.Core.dll` into `BepInEx/plugins/BaseStorage/`.
+2. Install Don's QOL with r2modman or the Thunderstore Mod Manager (import `Dons-QOL-<version>.zip` as a local mod), or copy `Dons-QOL.dll` and `Dons-QOL.Core.dll` into `BepInEx/plugins/Dons-QOL/`.
 3. Start the game once. This creates `BepInEx/config/dawso.valheim.basestorage.cfg` and `BepInEx/config/BaseStorage.categories.txt`.
 
 **Friends**
@@ -31,7 +35,7 @@ Every BaseStorage action ends with one short message in the top-left corner.
 2. When you join, the host's host-synced settings and category file are used for the session. Your own `.cfg` file is not overwritten.
 3. Single-player works with no host.
 
-Everyone in a multiplayer game needs the same BaseStorage version. With `RequireSameVersion` on (default `true`, host-synced), a player whose version differs from the host's is refused with `Don's QOL version mismatch: host X, you Y`.
+Everyone in a multiplayer game needs the same Don's QOL version. With `RequireSameVersion` on (default `true`, host-synced), a player whose version differs from the host's is refused with `Don's QOL version mismatch: host X, you Y`.
 
 ## Configuration
 
@@ -48,7 +52,7 @@ Host-synced settings take the host's value in multiplayer; the others are local 
 | `KeepChestsCraftable` | `[General]` | `true` | yes | Allow crafting to use materials from chests marked Keep. |
 | `MaxBaseStations` | `[General]` | `64` | yes | Maximum number of crafting stations joined into one base. |
 | `BaseCacheSeconds` | `[General]` | `2` | no | Seconds a resolved base is reused before it is resolved again. |
-| `RequireSameVersion` | `[General]` | `true` | yes | Refuse players whose BaseStorage version differs from the host's. |
+| `RequireSameVersion` | `[General]` | `true` | yes | Refuse players whose Don's QOL version differs from the host's. |
 | `AutoAssignThresholdPct` | `[Organize]` | `50` | yes | Percent of a chest's stacks that must share a category before Organize assigns that category. |
 | `AutoAssignMixedChests` | `[Organize]` | `true` | yes | Let Organize give mixed chests below the threshold a category that is short of space. Set to false to keep them as unassigned sources, as in 0.1.0. |
 | `OrganizeSkipPreview` | `[Organize]` | `false` | no | Start Organize without showing the preview first. |
@@ -58,7 +62,7 @@ Host-synced settings take the host's value in multiplayer; the others are local 
 | `OrganizeLockSeconds` | `[Organize]` | `30` | yes | Seconds before an abandoned Organize lock on a base expires. |
 | `ReserveTimeoutMs` | `[Network]` | `1500` | yes | Milliseconds to wait for a chest reservation before giving up. |
 | `StationButtons` | `[General]` | `true` | no | Show the Organize base and Put away inventory buttons on crafting station panels. |
-| `ShowCategoryTooltip` | `[General]` | `true` | no | Show each item's BaseStorage category on its tooltip. |
+| `ShowCategoryTooltip` | `[General]` | `true` | no | Show each item's Don's QOL category on its tooltip. |
 | `CycleCategoryKey` | `[Keys]` | unbound | no | Hotkey that cycles the category of the chest you are looking at. |
 | `OrganizeKey` | `[Keys]` | unbound | no | Hotkey that starts Organize base for the base that contains the player. |
 | `DepositKey` | `[Keys]` | unbound | no | Hotkey that starts Put away inventory at the nearest crafting station. |
@@ -69,7 +73,7 @@ Host-synced settings take the host's value in multiplayer; the others are local 
 
 ## Categories file
 
-The categories live in `BepInEx/config/BaseStorage.categories.txt`. BaseStorage writes it on first run and never overwrites it, so your edits are kept. Delete it to get the defaults back. In multiplayer the host's file is used.
+The categories live in `BepInEx/config/BaseStorage.categories.txt`. Don's QOL writes it on first run and never overwrites it, so your edits are kept. Delete it to get the defaults back. In multiplayer the host's file is used.
 
 The format is one line per category, `Category Name: PrefabA, PrefabB, ...`. Lines starting with `#` and blank lines are ignored. A prefab belongs to the first category that lists it; later duplicates are ignored and logged. `Auto` and `Keep` are reserved and cannot be category names. The order of the file is the order the Category button cycles through. Items not listed fall back by type: food to Cooked Food, trophies to Trophies, weapons, armour, tools and shields to Gear, ammo to Ammo, everything else to Misc.
 
@@ -103,9 +107,21 @@ Shift + use also opens the feed panel on fires, torches, fermenters and cooking 
 
 With a gamepad, press the right stick in the inventory to open the base menu, or to take the focus on an open chest's buttons. The stick or D-pad moves the gold highlight, A selects and B closes.
 
+**Shift + right-click** an inventory stack to send it straight to the base's chests by category.
+
+**Put away selected** sits in the base menu. Press it, then click inventory items to select them; a selected item shows a blue marker, and clicking again deselects it. Press the button again to move only those stacks into the base chests by category, even from the hotbar or the `DepositNeverItems` list. Equipped items never move. The selection lasts until it is used or the game closes.
+
+**Base management** opens from the base menu, wherever you stand. It lists every base in the world, nearest first, with its biome, chests, fullness and distance. A base is any workbench or other station with a chest nearby, found automatically. An unnamed base shows a name like `Meadows Base 1` until you press **Rename**; a ward you aren't on stops a rename.
+
+Press **From** on the base to move items out of, which starts as the base you're in, and **To** on another. Read the preview and choose Yes. Items go to the destination's chests by category, and the move ends with one line such as `Moved 214 stacks to Swamp Keep; 12 stayed (portal rules): CopperOre, TinOre; 3 had no room`. Whatever does not fit stays where it is.
+
+The world's portal setting decides what moves. With default rules, anything that cannot go through a portal stays in its chest. With the `TeleportAll` world modifier on, everything moves except the few items the game never lets through a portal.
+
+Keep chests, chests you have no access to and chests holding an item the game does not know are left alone. A move is refused while a player other than you and the host is at either base. Close any chest you have open at the base before moving.
+
 ## Console command
 
-Start Valheim with the `-console` launch option, press F5 and type `basestorage organize` to organize the base you stand in. It uses the same preview (closing the console shows it), the same one-Organize-per-base lock and the same summary as the Organize base button. Outside a base it prints `Not in a base`. While another player organizes the base it prints `Organize in progress by <name>`. `basestorage` alone prints `Usage: basestorage organize`. This is the in-game console, not a game console.
+Start Valheim with the `-console` launch option, press F5 and type `dons-qol organize` to organize the base you stand in. It uses the same preview (closing the console shows it), the same one-Organize-per-base lock and the same summary as the Organize base button. Outside a base it prints `Not in a base`. While another player organizes the base it prints `Organize in progress by <name>`. `dons-qol` alone prints `Usage: dons-qol organize`. This is the in-game console, not a game console.
 
 ## Known limits
 
@@ -114,9 +130,11 @@ Start Valheim with the `-console` launch option, press F5 and type `basestorage 
 - Stations are only filled: finished food and mead are not collected, so food left on a cooking station can burn.
 - Carts and ships are not used as storage (excluded by default, `ExcludeVehicles`).
 - There is no dedicated sorting table piece.
+- Base management needs a pointer. A far base's range leaves out station extensions, so its outermost chests can be left out of a move.
 - Compatibility with other storage or inventory mods is not guaranteed.
+- Take worn gear off before uninstalling. The game keeps it worn and saved without the mod, but it has no slot to show it or take it off from until the mod is back. Taking gear off and turning the character view need a pointer. Armor or a utility item leaves the hotbar when equipped.
 - The gamepad control is new and has not been tried on every layout. The category dropdown needs a pointer, so a gamepad cycles categories instead, and the hotkeys stay keyboard only.
 
 ## Uninstall
 
-Remove the mod in the mod manager, or delete `BepInEx/plugins/BaseStorage/`. You can also delete `BepInEx/config/dawso.valheim.basestorage.cfg` and `BepInEx/config/BaseStorage.categories.txt`. Items stay in your chests. The data BaseStorage stores on chests and stations, and your favourites in the player profile, is ignored by vanilla, so worlds and characters still load. In a group, everyone removes it together, or everyone stays on the same version.
+Remove the mod in the mod manager, or delete `BepInEx/plugins/Dons-QOL/`. You can also delete `BepInEx/config/dawso.valheim.basestorage.cfg` and `BepInEx/config/BaseStorage.categories.txt`. Items stay in your chests. The data BaseStorage stores on chests and stations, and your favourites in the player profile, is ignored by vanilla, so worlds and characters still load. In a group, everyone removes it together, or everyone stays on the same version.

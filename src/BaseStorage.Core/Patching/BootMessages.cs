@@ -11,7 +11,7 @@ public static class BootMessages
     public static string Loaded(string version)
     {
         CheckVersion(version);
-        return "BaseStorage " + version + " loaded";
+        return "Dons-QOL " + version + " loaded";
     }
 
     /// <summary>Builds the Debug line for a patch that applied.</summary>
@@ -58,7 +58,7 @@ public static class BootMessages
             throw new ArgumentNullException(nameof(error));
         }
 
-        return "BaseStorage " + version + " failed to load: " + SingleLineText.DescribeWithInner(error);
+        return "Dons-QOL " + version + " failed to load: " + SingleLineText.DescribeWithInner(error);
     }
 
     private static void CheckVersion(string version)

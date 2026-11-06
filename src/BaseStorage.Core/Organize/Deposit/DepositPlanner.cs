@@ -148,6 +148,11 @@ public static class DepositPlanner
             throw new ArgumentNullException(nameof(exclusions));
         }
 
+        if (exclusions.Selection is not null)
+        {
+            return SelectedExclusionOf(stack, exclusions.Selection);
+        }
+
         var result = DepositExclusion.None;
         if (stack.Slot.Y == HotbarRow)
         {
@@ -178,6 +183,23 @@ public static class DepositPlanner
     }
 
     /// <summary>The reasons per stack: the per-stack rules, then the same-item rule over the stacks excluded by them.</summary>
+    /// <summary>A stack the player picked moves unless it is worn or broken; anything else stays.</summary>
+    private static DepositExclusion SelectedExclusionOf(PlayerInventoryStack stack, FavouriteSlots selection)
+    {
+        var result = selection.Contains(stack.Slot) ? DepositExclusion.None : DepositExclusion.NotSelected;
+        if (stack.IsEquipped)
+        {
+            result |= DepositExclusion.Equipped;
+        }
+
+        if (stack.Stack.Count > stack.Stack.MaxStack)
+        {
+            result |= DepositExclusion.InvalidStack;
+        }
+
+        return result;
+    }
+
     private static DepositExclusion[] Exclude(PlayerInventorySnapshot player, DepositExclusions exclusions, IReadOnlyDictionary<string, ItemKind> itemKinds)
     {
         var stacks = player.Stacks;
@@ -192,6 +214,12 @@ public static class DepositPlanner
             {
                 excludedKeys.Add(new ItemKey(stack.PrefabName, stack.Quality, stack.MaxStack));
             }
+        }
+
+        // Picking one of two identical stacks means that one: removal goes by stack position, so the other stays put.
+        if (exclusions.Selection is not null)
+        {
+            return reasons;
         }
 
         for (var i = 0; i < reasons.Length; i++)

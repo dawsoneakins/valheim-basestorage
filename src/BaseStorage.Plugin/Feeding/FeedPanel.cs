@@ -270,18 +270,7 @@ internal static class FeedPanel
     private static void Build(InventoryGui gui)
     {
         panel = VanillaButtonFactory.CreateNode(gui.m_inventoryRoot, PanelId, new Vector2(BaseMenuPanel.MaxWidth, PanelHeight), Vector2.zero, typeof(RectTransform), typeof(Image));
-        Image background = panel.GetComponent<Image>();
-        Image? vanilla = gui.m_crafting.GetComponent<Image>();
-        if (vanilla != null && vanilla.sprite != null)
-        {
-            background.sprite = vanilla.sprite;
-            background.type = vanilla.type;
-            background.color = vanilla.color;
-        }
-        else
-        {
-            background.color = new Color(0.3f, 0.24f, 0.25f, 1f);
-        }
+        PanelStyle.Wood(panel.GetComponent<Image>(), gui);
 
         Transform parent = panel.transform;
         title = Label(gui.m_craftingStationName, parent, TitleId, Margin, -Margin, 380f, 30f, 22f);
@@ -457,7 +446,7 @@ internal static class FeedPanel
         {
             float width = BaseMenuPanel.MaxWidth - (2 * Margin);
             root = VanillaButtonFactory.CreateNode(parent, RowId + "." + index, new Vector2(width, RowHeight - 4f), new Vector2(Margin, RowsTop - (index * RowHeight)), typeof(RectTransform), typeof(Image));
-            root.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.3f);
+            root.GetComponent<Image>().color = PanelStyle.Inset;
             Transform row = root.transform;
             icon = VanillaButtonFactory.CreateNode(row, IconId, new Vector2(IconSize, IconSize), new Vector2(3f, -2f), typeof(RectTransform), typeof(Image)).GetComponent<Image>();
             icon.preserveAspect = true;

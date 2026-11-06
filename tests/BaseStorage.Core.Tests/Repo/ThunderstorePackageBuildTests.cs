@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 
 /// <summary>
-/// AC-7.1 (S-E007-001): the PackageThunderstore target, run against temp folders, writes dist/BaseStorage-version.zip
+/// AC-7.1 (S-E007-001): the PackageThunderstore target, run against temp folders, writes dist/Dons-QOL-version.zip
 /// with exactly the contracted entries, is off by default, and a real Release build with the property produces the zip (ADR-GWIN-069).
 /// </summary>
 [Trait("Category", "Repo")]
@@ -41,8 +41,8 @@ public sealed class ThunderstorePackageBuildTests
         Assert.Equal(File.ReadAllBytes(RepoRoot.Combine(ThunderstorePackage.Readme)), ReadEntryBytes(zip, "README.md"));
         Assert.Equal(File.ReadAllBytes(RepoRoot.Combine(ThunderstorePackage.Changelog)), ReadEntryBytes(zip, "CHANGELOG.md"));
         Assert.Equal(File.ReadAllBytes(RepoRoot.Combine(ThunderstorePackage.Icon)), ReadEntryBytes(zip, "icon.png"));
-        Assert.Equal("fake plugin", ReadEntry(zip, "plugins/BaseStorage.dll"));
-        Assert.Equal("fake core", ReadEntry(zip, "plugins/BaseStorage.Core.dll"));
+        Assert.Equal("fake plugin", ReadEntry(zip, "plugins/Dons-QOL.dll"));
+        Assert.Equal("fake core", ReadEntry(zip, "plugins/Dons-QOL.Core.dll"));
     }
 
     // GW-I-851
@@ -103,7 +103,7 @@ public sealed class ThunderstorePackageBuildTests
         using ZipArchive zip = ZipFile.OpenRead(zipPath);
         Assert.Equal(ThunderstorePackage.ZipEntries, FileEntries(zip));
         ThunderstorePackage.AssertManifest(ReadEntry(zip, "manifest.json"), version);
-        foreach (string dll in new[] { "plugins/BaseStorage.dll", "plugins/BaseStorage.Core.dll" })
+        foreach (string dll in new[] { "plugins/Dons-QOL.dll", "plugins/Dons-QOL.Core.dll" })
         {
             byte[] bytes = ReadEntryBytes(zip, dll);
             Assert.True(bytes.Length > 1024, dll + " is too small to be a PE file.");
@@ -140,8 +140,8 @@ public sealed class ThunderstorePackageBuildTests
 
     private static void WriteFakeOutputs(TempFolder outputFolder)
     {
-        File.WriteAllText(outputFolder.Combine("BaseStorage.dll"), "fake plugin");
-        File.WriteAllText(outputFolder.Combine("BaseStorage.Core.dll"), "fake core");
+        File.WriteAllText(outputFolder.Combine("Dons-QOL.dll"), "fake plugin");
+        File.WriteAllText(outputFolder.Combine("Dons-QOL.Core.dll"), "fake core");
     }
 
     private static string[] Listing(string root) =>

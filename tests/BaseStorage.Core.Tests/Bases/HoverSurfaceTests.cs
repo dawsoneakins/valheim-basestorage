@@ -15,7 +15,7 @@ using BaseStorage.Core.Tests.Abstractions;
 public sealed class HoverSurfaceTests
 {
     private const string InspectionNamespace = "BaseStorage.Core.Bases.Inspection";
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const BindingFlags PublicDeclared = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
 
     // GW-U-546 (AC-4): the one exported type, its sealing and constructor, its methods and their static-ness, its parameter types,

@@ -12,7 +12,7 @@ public sealed class CoreAssemblyMarkerTests
 
         Assert.True(marker.IsPublic);
         Assert.True(marker.IsAbstract && marker.IsSealed, "A static class compiles to an abstract sealed type.");
-        Assert.Equal("BaseStorage.Core", marker.Assembly.GetName().Name ?? string.Empty);
+        Assert.Equal("Dons-QOL.Core", marker.Assembly.GetName().Name ?? string.Empty);
     }
 
     // GW-U-018
@@ -21,6 +21,6 @@ public sealed class CoreAssemblyMarkerTests
     {
         Version? version = typeof(BaseStorage.Core.CoreAssemblyMarker).Assembly.GetName().Version;
 
-        Assert.Equal(new Version(0, 4, 3, 0), version);
+        Assert.Equal(new Version(0, 5, 0, 0), version);
     }
 }

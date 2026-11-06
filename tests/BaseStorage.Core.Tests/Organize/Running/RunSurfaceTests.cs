@@ -71,7 +71,7 @@ public sealed class RunSurfaceTests
         // Edited by S-E004-015 (ADR-GWIN-143): plus StartDeposit (deposit-button contract 2.2).
         // Edited by S-E010-002 (organize-console-command 3): plus RefusedBy.
         // Edited by S-QR-002 (ADR-GWIN-176)
-        Assert.Equal(new[] { "Cancel", "Confirm", "Plan", "RefusedBy", "Start", "StartDeposit", "StartRestock", "State", "Tick" }, coordinator);
+        Assert.Equal(new[] { "Cancel", "Confirm", "Plan", "RefusedBy", "Start", "StartDeposit", "StartDepositSelected", "StartQuickDeposit", "StartRestock", "State", "Tick" }, coordinator);
         Assert.Equal(6, typeof(OrganizeRunCoordinator).GetConstructors().Single().GetParameters().Length);
 
         string[] port = typeof(IOrganizeRunPort).GetMembers()
@@ -87,7 +87,7 @@ public sealed class RunSurfaceTests
     [Fact]
     public void EveryTypeMemberAndEnumMemberOfTheNamespaceIsDocumented()
     {
-        string path = Path.Combine(AppContext.BaseDirectory, "BaseStorage.Core.xml");
+        string path = Path.Combine(AppContext.BaseDirectory, "Dons-QOL.Core.xml");
         Assert.True(File.Exists(path), "BaseStorage.Core.xml is missing from " + AppContext.BaseDirectory + ".");
         Dictionary<string, XElement> members = XDocument.Load(path).Descendants("member")
             .Where(m => m.Attribute("name") is not null)

@@ -19,7 +19,7 @@ internal static class FavouriteClicks
     /// <returns>True to run the vanilla handler, false to skip it.</returns>
     internal static bool RunVanilla(InventoryGrid grid, UIInputHandler clickHandler)
     {
-        if (!BaseMenuPanel.MarkMode && !ZInput.GetKey(KeyCode.LeftAlt, true) && !ZInput.GetKey(KeyCode.RightAlt, true))
+        if (!DepositSelection.SelectMode && !BaseMenuPanel.MarkMode && !ZInput.GetKey(KeyCode.LeftAlt, true) && !ZInput.GetKey(KeyCode.RightAlt, true))
         {
             return true;
         }
@@ -49,11 +49,21 @@ internal static class FavouriteClicks
             return true;
         }
 
-        FavouriteToggleOutcome outcome = favourites.Toggle(item.m_shared.m_name);
-        string name = Localization.instance != null
-            ? Localization.instance.Localize(item.m_shared.m_name)
-            : item.m_shared.m_name;
-        Notices.Show(NoticePlacement.TopLeft, ProfileFavourites.MessageKeyFor(outcome), name);
+        // While select mode is on, a click belongs to Put away selected, not to favourites.
+        if (DepositSelection.SelectMode)
+        {
+            DepositSelection.ToggleWithNotice(item);
+            BaseMenuPanel.RefreshSelection();
+        }
+        else
+        {
+            FavouriteToggleOutcome outcome = favourites.Toggle(item.m_shared.m_name);
+            string name = Localization.instance != null
+                ? Localization.instance.Localize(item.m_shared.m_name)
+                : item.m_shared.m_name;
+            Notices.Show(NoticePlacement.TopLeft, ProfileFavourites.MessageKeyFor(outcome), name);
+        }
+
         return false;
     }
 }

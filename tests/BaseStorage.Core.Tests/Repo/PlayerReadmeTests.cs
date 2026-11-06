@@ -126,7 +126,7 @@ public sealed class PlayerReadmeTests
         Assert.True(host >= 0, "package/README.md ## Installation must have a **Host** lead-in.");
         Assert.True(friends > host, "package/README.md ## Installation must have a **Friends** lead-in after **Host**.");
 
-        string[] terms = ["BepInExPack_Valheim", "BepInEx/plugins", "same BaseStorage version", "`RequireSameVersion`"];
+        string[] terms = ["BepInExPack_Valheim", "BepInEx/plugins", "same Don's QOL version", "`RequireSameVersion`"];
         string[] missing = terms.Where(term => !section.Contains(term, StringComparison.Ordinal)).ToArray();
 
         Assert.True(missing.Length == 0, $"package/README.md ## Installation must contain: {string.Join(", ", missing)}");

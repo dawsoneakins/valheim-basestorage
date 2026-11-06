@@ -13,7 +13,7 @@ using BaseStorage.Core.Snapshots;
 public sealed class BasesSurfaceTests
 {
     private const string BasesNamespace = "BaseStorage.Core.Bases";
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const BindingFlags PublicDeclared = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
 
     // GW-U-123 (AC-1)

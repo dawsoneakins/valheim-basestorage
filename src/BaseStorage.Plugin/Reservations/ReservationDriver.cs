@@ -91,7 +91,14 @@ internal sealed class ReservationDriver<TChest>
     /// <param name="chest">The chest.</param>
     /// <param name="operation">The operation label.</param>
     /// <returns>The route taken, or null when a non-terminal reservation already exists.</returns>
-    internal ReservationRoute? Begin(TChest chest, string operation)
+    internal ReservationRoute? Begin(TChest chest, string operation) => Begin(chest, operation, null);
+
+    /// <summary>Begins a reservation of a chest for an operation, with its own timeout when one is given.</summary>
+    /// <param name="chest">The chest.</param>
+    /// <param name="operation">The operation label.</param>
+    /// <param name="timeoutMs">The timeout in milliseconds, or null for the usual reservation timeout.</param>
+    /// <returns>The route taken, or null when a non-terminal reservation already exists.</returns>
+    internal ReservationRoute? Begin(TChest chest, string operation, int? timeoutMs)
     {
         if (chest is null)
         {
@@ -121,7 +128,9 @@ internal sealed class ReservationDriver<TChest>
 
         ChestObservation observation = game.Observe(chest);
         ReservationRoute route = ChestAccessRules.Route(observation);
-        Reservation<string> reservation = reservations.Begin(id, operation)!;
+        Reservation<string> reservation = timeoutMs.HasValue
+            ? reservations.BeginWithTimeout(id, operation, timeoutMs.Value)!
+            : reservations.Begin(id, operation)!;
         var entry = new Entry(chest, route, reservation);
         entries[id] = entry;
 

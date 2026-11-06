@@ -10,7 +10,7 @@ using BaseStorage.Core.StationPanel;
 /// <summary>AC-4 (R9, ADR-GWIN-041): every public type and member of BaseStorage.Core.StationPanel is documented in BaseStorage.Core.xml.</summary>
 public sealed class StationPanelXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const string StationPanelNamespace = "BaseStorage.Core.StationPanel";
 
     // GW-U-548 (AC-4, R9): XmlDocMembers.TargetsFor over the seven types finds a summary on each, a param for each parameter, and a returns on each

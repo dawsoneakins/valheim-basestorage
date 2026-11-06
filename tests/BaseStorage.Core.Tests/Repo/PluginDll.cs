@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 
 /// <summary>
-/// Locates the built Plugin dll (src/BaseStorage.Plugin/bin/&lt;cfg&gt;/net462/BaseStorage.dll) and builds the Plugin through
+/// Locates the built Plugin dll (src/BaseStorage.Plugin/bin/&lt;cfg&gt;/net462/Dons-QOL.dll) and builds the Plugin through
 /// DotnetProcess when it is missing (ADR-GWIN-013 amendment). Extracted from GW-I-010 and shared with GW-I-120.
 /// Not a test class.
 /// </summary>
@@ -16,7 +16,7 @@ public static class PluginDll
     /// <returns>The full path of the existing Plugin dll.</returns>
     public static string EnsureBuilt(string configurationName)
     {
-        string relative = Path.Combine(PluginSourceScan.PluginFolder, "bin", configurationName, "net462", "BaseStorage.dll");
+        string relative = Path.Combine(PluginSourceScan.PluginFolder, "bin", configurationName, "net462", "Dons-QOL.dll");
         string path = RepoRoot.Combine(relative);
         if (!File.Exists(path))
         {

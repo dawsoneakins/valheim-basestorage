@@ -95,10 +95,10 @@ public sealed class PatchTargetNamesStationActionsTests
         TargetEntry[] entries = TargetList.Classify(typeof(PatchTargetNames)).ToArray();
 
         // Edited by S-E010-002 (organize-console-command 6.2): 404, by kind 52, 43, 47, 102, 80 and 80.
-        Assert.Equal(458, entries.Length); // Edited by S-QR-002 (ADR-GWIN-176): plus the eleven restock rows, 430.
+        Assert.Equal(472, entries.Length); // Edited by S-QR-002 (ADR-GWIN-176): plus the eleven restock rows, 430.
         Assert.Equal(57, entries.Count(e => e.Kind == TargetKind.TypeEntry));
-        Assert.Equal(61, entries.Count(e => e.Kind == TargetKind.MethodOverloads));
-        Assert.Equal(66, entries.Count(e => e.Kind == TargetKind.OverloadCompanion)); // Edited by S-QR-002 (ADR-GWIN-176): plus AddItemParametersItemPosition.
+        Assert.Equal(68, entries.Count(e => e.Kind == TargetKind.MethodOverloads));
+        Assert.Equal(73, entries.Count(e => e.Kind == TargetKind.OverloadCompanion)); // Edited by S-QR-002 (ADR-GWIN-176): plus AddItemParametersItemPosition.
         Assert.Equal(104, entries.Count(e => e.Kind == TargetKind.MethodNameOnly));
         Assert.Equal(85, entries.Count(e => e.Kind == TargetKind.FieldEntry)); // Edited by S-QR-002 (ADR-GWIN-176): plus five ItemData fields.
         Assert.Equal(85, entries.Count(e => e.Kind == TargetKind.FieldTypeCompanion)); // Edited by S-QR-002 (ADR-GWIN-176): plus five ItemData types.
@@ -111,7 +111,7 @@ public sealed class PatchTargetNamesStationActionsTests
         var harmony = TargetList.HarmonyPatchedEntries(typeof(PatchTargetNames));
 
         // Edited by S-E010-002 (organize-console-command 6.2): plus TerminalInitTerminal, twenty-four.
-        Assert.Equal(42, harmony.Count);
+        Assert.Equal(49, harmony.Count);
         Assert.Contains(new HarmonyEntry("InventoryGuiUpdateRecipe", "InventoryGui.UpdateRecipe(Player,System.Single)"), harmony);
     }
 

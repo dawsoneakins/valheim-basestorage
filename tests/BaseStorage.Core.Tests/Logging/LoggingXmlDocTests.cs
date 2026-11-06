@@ -15,7 +15,7 @@ using BaseStorage.Core.Tests.Snapshots;
 /// </summary>
 public sealed class LoggingXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
 
     // GW-U-213
     [Fact]

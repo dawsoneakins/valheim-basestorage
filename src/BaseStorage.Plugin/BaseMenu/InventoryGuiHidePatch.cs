@@ -12,5 +12,5 @@ internal static class InventoryGuiHidePatch
     internal const string PatchKey = "BaseStorage.Plugin.BaseMenu.InventoryGuiHidePatch.Prefix";
 
     private static bool Prefix() =>
-        PatchSafety.RunPrefix(PatchKey, static () => !BaseMenuPanel.TypingBlocksClose);
+        PatchSafety.RunPrefix(PatchKey, static () => !BaseMenuPanel.TypingBlocksClose && !Compendium.CompendiumWindow.TypingBlocksClose);
 }

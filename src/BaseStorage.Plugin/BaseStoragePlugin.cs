@@ -16,6 +16,7 @@ using BaseStorage.Plugin.ChestSort;
 using BaseStorage.Plugin.Building;
 using BaseStorage.Plugin.Crafting;
 using BaseStorage.Plugin.BaseMenu;
+using BaseStorage.Plugin.BaseMove;
 using BaseStorage.Plugin.Feeding;
 using BaseStorage.Plugin.Boot;
 using BaseStorage.Plugin.HostSync;
@@ -60,6 +61,10 @@ public sealed class BaseStoragePlugin : BaseUnityPlugin
         ChestCategoryWriter.Tick();
         CategoryHotkey.Tick();
         OrganizeRunner.Tick();
+        PluginBaseMove.Tick();
+        CharacterMenu.CharacterPanel.Tick();
+        Compendium.CompendiumWindow.Tick();
+        BaseMove.BasesWindow.Tick();
         StationFeeder.Tick();
         if (firstRunCategoryFile != null && firstRunCategoryFile.Tick())
         {
@@ -101,6 +106,7 @@ public sealed class BaseStoragePlugin : BaseUnityPlugin
         FeedPanel.Initialize(new GameClock());
         ChestSorter.Initialize(reservations);
         ChestLabels.Initialize(world, new GameClock(), Settings);
+        PluginBaseMove.Initialize(world, reservations, new GameClock(), Settings, sink);
         Harmony instance = new Harmony(PluginGuid);
         harmony = instance;
         Type[] patchClasses = PatchDiscovery.FindPatchClasses(typeof(BaseStoragePlugin).Assembly);

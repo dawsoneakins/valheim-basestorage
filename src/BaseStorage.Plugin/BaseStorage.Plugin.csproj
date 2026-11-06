@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net462</TargetFramework>
-    <AssemblyName>BaseStorage</AssemblyName>
+    <AssemblyName>Dons-QOL</AssemblyName>
     <RootNamespace>BaseStorage.Plugin</RootNamespace>
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
     <!-- Valheim assemblies reference netstandard 2.1 while net462 resolves 2.0; benign for Mono (MSB3277 only). Scoped to this project; see ADR-GWIN-005. -->
@@ -39,6 +39,10 @@
       <Private>false</Private>
     </Reference>
     <EmbeddedResource Include="BaseMenu\basestorage-icon.png" LogicalName="BaseStorage.icon.png" />
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>$(ValheimDir)\valheim_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="UnityEngine.UIModule">
       <HintPath>$(ValheimDir)\valheim_Data\Managed\UnityEngine.UIModule.dll</HintPath>
       <Private>false</Private>
@@ -85,30 +89,30 @@
   <Target Name="DeployToGame" AfterTargets="Build" Condition="'$(DeployToGame)' == 'true'">
     <PropertyGroup>
       <BaseStorageGuardDir>$(ValheimDir)\BepInEx</BaseStorageGuardDir>
-      <BaseStorageDeployDir>$(ValheimDir)\BepInEx\plugins\BaseStorage\</BaseStorageDeployDir>
+      <BaseStorageDeployDir>$(ValheimDir)\BepInEx\plugins\Dons-QOL\</BaseStorageDeployDir>
     </PropertyGroup>
     <ItemGroup>
-      <BaseStorageDeployFile Include="$(TargetPath);$(TargetDir)BaseStorage.Core.dll" />
+      <BaseStorageDeployFile Include="$(TargetPath);$(TargetDir)Dons-QOL.Core.dll" />
     </ItemGroup>
     <Message Importance="high" Condition="!Exists('$(BaseStorageGuardDir)')" Text="BS1002: DeployToGame skipped: '$(BaseStorageGuardDir)' does not exist." />
     <Copy Condition="Exists('$(BaseStorageGuardDir)')" SourceFiles="@(BaseStorageDeployFile)" DestinationFolder="$(BaseStorageDeployDir)" SkipUnchangedFiles="true" />
     <Message Importance="high" Condition="Exists('$(BaseStorageGuardDir)')" Text="BS1003: DeployToGame copied @(BaseStorageDeployFile->Count()) file(s) to '$(BaseStorageDeployDir)'." />
   </Target>
 
-  <!-- Opt-in Thunderstore package: dotnet build -c Release -p:PackageThunderstore=true writes dist/BaseStorage-$(Version).zip (spec AC-7.1, ADR-GWIN-065..068). Pure MSBuild; writes only under obj/ and the dist folder, never under the game folder. -->
+  <!-- Opt-in Thunderstore package: dotnet build -c Release -p:PackageThunderstore=true writes dist/Dons-QOL-$(Version).zip (spec AC-7.1, ADR-GWIN-065..068). Pure MSBuild; writes only under obj/ and the dist folder, never under the game folder. -->
   <Target Name="PackageThunderstore" AfterTargets="Build" Condition="'$(PackageThunderstore)' == 'true'">
     <PropertyGroup>
       <BaseStorageRepoDir>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '..', '..'))</BaseStorageRepoDir>
       <BaseStoragePackageDir>$(BaseStorageRepoDir)package\</BaseStoragePackageDir>
       <BaseStorageDistDir Condition="'$(BaseStorageDistDir)' == ''">$(BaseStorageRepoDir)dist\</BaseStorageDistDir>
       <BaseStorageStageDir>$(IntermediateOutputPath)thunderstore\</BaseStorageStageDir>
-      <BaseStorageZipPath>$(BaseStorageDistDir)BaseStorage-$(Version).zip</BaseStorageZipPath>
+      <BaseStorageZipPath>$(BaseStorageDistDir)Dons-QOL-$(Version).zip</BaseStorageZipPath>
       <!-- The manifest template's __VERSION__ placeholder becomes the Version.props version; the text is escaped so WriteLinesToFile writes it as one item. -->
       <BaseStorageManifestText>$([MSBuild]::Escape($([System.IO.File]::ReadAllText('$(BaseStoragePackageDir)manifest.json').Replace('__VERSION__', '$(Version)').TrimEnd())))</BaseStorageManifestText>
     </PropertyGroup>
     <ItemGroup>
       <BaseStoragePackageRoot Include="$(BaseStoragePackageDir)icon.png;$(BaseStoragePackageDir)README.md;$(BaseStorageRepoDir)CHANGELOG.md" />
-      <BaseStoragePackagePlugin Include="$(TargetPath);$(TargetDir)BaseStorage.Core.dll" />
+      <BaseStoragePackagePlugin Include="$(TargetPath);$(TargetDir)Dons-QOL.Core.dll" />
     </ItemGroup>
     <RemoveDir Directories="$(BaseStorageStageDir)" />
     <MakeDir Directories="$(BaseStorageStageDir);$(BaseStorageStageDir)plugins;$(BaseStorageDistDir)" />
@@ -116,7 +120,7 @@
     <Copy SourceFiles="@(BaseStoragePackagePlugin)" DestinationFolder="$(BaseStorageStageDir)plugins\" />
     <WriteLinesToFile File="$(BaseStorageStageDir)manifest.json" Lines="$(BaseStorageManifestText)" Overwrite="true" />
     <Delete Files="$(BaseStorageZipPath)" />
-    <ZipDirectory SourceDirectory="$(BaseStorageStageDir)" DestinationFile="$(BaseStorageDistDir)BaseStorage-$(Version).zip" Overwrite="true" />
+    <ZipDirectory SourceDirectory="$(BaseStorageStageDir)" DestinationFile="$(BaseStorageDistDir)Dons-QOL-$(Version).zip" Overwrite="true" />
     <Message Importance="high" Text="BS1004: PackageThunderstore wrote '$(BaseStorageZipPath)'." />
   </Target>
 

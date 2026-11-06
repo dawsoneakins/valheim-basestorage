@@ -102,6 +102,45 @@ internal static class VanillaButtonFactory
         return node;
     }
 
+    /// <summary>Creates a plain node for something that isn't UI, such as a camera.</summary>
+    /// <param name="parent">The parent, or null for the scene root.</param>
+    /// <param name="id">The node's id.</param>
+    /// <returns>The node.</returns>
+    public static GameObject CreateWorldNode(Transform? parent, string id)
+    {
+        var node = new GameObject(NamePrefix + id);
+        if (parent != null)
+        {
+            node.transform.SetParent(parent, false);
+        }
+
+        return node;
+    }
+
+    /// <summary>Copies a UI prefab under a parent.</summary>
+    /// <param name="prefab">The prefab.</param>
+    /// <param name="parent">The parent.</param>
+    /// <returns>The copy.</returns>
+    public static GameObject CopyElement(GameObject prefab, Transform parent) => UnityEngine.Object.Instantiate(prefab, parent);
+
+    /// <summary>Copies a prefab without waking it, so its components can be changed before their Awake runs.</summary>
+    /// <param name="prefab">The prefab, inactive for this one call.</param>
+    /// <param name="parent">The parent.</param>
+    /// <returns>The inactive copy.</returns>
+    public static GameObject CopyAsleep(GameObject prefab, Transform parent)
+    {
+        bool wasActive = prefab.activeSelf;
+        prefab.SetActive(false);
+        try
+        {
+            return UnityEngine.Object.Instantiate(prefab, parent.position, Quaternion.identity, parent);
+        }
+        finally
+        {
+            prefab.SetActive(wasActive);
+        }
+    }
+
     /// <summary>Anchors a rect to its parent's top-left corner.</summary>
     /// <param name="rect">The rect.</param>
     /// <param name="size">The size in canvas units.</param>

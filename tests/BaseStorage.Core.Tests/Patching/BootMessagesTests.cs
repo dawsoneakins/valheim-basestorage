@@ -14,8 +14,8 @@ public sealed class BootMessagesTests
     [Fact]
     public void LoadedFormatsTheVersionVerbatim()
     {
-        Assert.Equal("BaseStorage 0.1.0 loaded", BootMessages.Loaded("0.1.0"));
-        Assert.Equal("BaseStorage 1.12.3 loaded", BootMessages.Loaded("1.12.3"));
+        Assert.Equal("Dons-QOL 0.1.0 loaded", BootMessages.Loaded("0.1.0"));
+        Assert.Equal("Dons-QOL 1.12.3 loaded", BootMessages.Loaded("1.12.3"));
     }
 
     // GW-U-077
@@ -53,8 +53,8 @@ public sealed class BootMessagesTests
             CultureInfo.CurrentCulture = culture;
             CultureInfo.CurrentUICulture = culture;
 
-            Assert.Equal("BaseStorage 0.1.0 loaded", BootMessages.Loaded("0.1.0"));
-            Assert.Equal("BaseStorage 1.12.3 loaded", BootMessages.Loaded("1.12.3"));
+            Assert.Equal("Dons-QOL 0.1.0 loaded", BootMessages.Loaded("0.1.0"));
+            Assert.Equal("Dons-QOL 1.12.3 loaded", BootMessages.Loaded("1.12.3"));
             Assert.Equal(
                 "Patch 'BaseStorage.Plugin.Patches.ContainerHoverPatch' applied",
                 BootMessages.PatchApplied("BaseStorage.Plugin.Patches.ContainerHoverPatch"));
@@ -120,7 +120,7 @@ public sealed class BootMessagesTests
     public void LoadFailedFormatsVersionTypeAndMessage()
     {
         Assert.Equal(
-            "BaseStorage 0.1.0 failed to load: System.TypeLoadException: Could not load type 'HarmonyLib.Harmony'",
+            "Dons-QOL 0.1.0 failed to load: System.TypeLoadException: Could not load type 'HarmonyLib.Harmony'",
             BootMessages.LoadFailed("0.1.0", new TypeLoadException("Could not load type 'HarmonyLib.Harmony'")));
     }
 
@@ -131,7 +131,7 @@ public sealed class BootMessagesTests
         var error = new InvalidOperationException("outer", new TypeLoadException("inner"));
 
         Assert.Equal(
-            "BaseStorage 0.1.0 failed to load: System.InvalidOperationException: outer ---> System.TypeLoadException: inner",
+            "Dons-QOL 0.1.0 failed to load: System.InvalidOperationException: outer ---> System.TypeLoadException: inner",
             BootMessages.LoadFailed("0.1.0", error));
     }
 

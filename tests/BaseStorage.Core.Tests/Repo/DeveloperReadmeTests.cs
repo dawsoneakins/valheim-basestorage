@@ -39,7 +39,7 @@ public sealed class DeveloperReadmeTests
 
     private static readonly string[] ZipEntries =
     {
-        "manifest.json", "icon.png", "README.md", "CHANGELOG.md", "plugins/BaseStorage.dll", "plugins/BaseStorage.Core.dll",
+        "manifest.json", "icon.png", "README.md", "CHANGELOG.md", "plugins/Dons-QOL.dll", "plugins/Dons-QOL.Core.dll",
     };
 
     // GW-U-970 (AC-7.4): the file exists at the repo root, is titled BaseStorage, links the spec, and uses LF line endings.
@@ -133,7 +133,7 @@ public sealed class DeveloperReadmeTests
         string section = Section("## Deploy to the game");
 
         Assert.Contains("dotnet build BaseStorage.sln -c Release --nologo -p:DeployToGame=true", section, StringComparison.Ordinal);
-        Assert.Contains(@"BepInEx\plugins\BaseStorage\", section, StringComparison.Ordinal);
+        Assert.Contains(@"BepInEx\plugins\Dons-QOL\", section, StringComparison.Ordinal);
         Assert.Contains("already exists", section, StringComparison.Ordinal);
         Assert.Contains("BS1002", section, StringComparison.Ordinal);
         Assert.Contains("gates never pass", section, StringComparison.Ordinal);
@@ -146,7 +146,7 @@ public sealed class DeveloperReadmeTests
         string section = Section("## Thunderstore package");
 
         Assert.Contains("dotnet build BaseStorage.sln -c Release --nologo -p:PackageThunderstore=true", section, StringComparison.Ordinal);
-        Assert.Contains("dist/BaseStorage-<version>.zip", section, StringComparison.Ordinal);
+        Assert.Contains("dist/Dons-QOL-<version>.zip", section, StringComparison.Ordinal);
         Assert.Contains("BS1004", section, StringComparison.Ordinal);
         foreach (string entry in ZipEntries)
         {
@@ -179,7 +179,7 @@ public sealed class DeveloperReadmeTests
 
         Assert.Contains("LogOutput.log", section, StringComparison.Ordinal);
         Assert.Contains("[Info   :BaseStorage]", section, StringComparison.Ordinal);
-        Assert.Contains("BaseStorage <version> loaded", section, StringComparison.Ordinal);
+        Assert.Contains("Dons-QOL <version> loaded", section, StringComparison.Ordinal);
         Assert.Contains("DebugLogging", section, StringComparison.Ordinal);
         Assert.Contains("LogLevels", section, StringComparison.Ordinal);
         Assert.Contains("Debug logging", section, StringComparison.Ordinal);

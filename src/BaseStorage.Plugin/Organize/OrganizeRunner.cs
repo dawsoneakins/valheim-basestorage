@@ -4,6 +4,7 @@ using System;
 using BaseStorage.Core.Abstractions;
 using BaseStorage.Core.Bases.Resolution;
 using BaseStorage.Core.Organize.Run;
+using BaseStorage.Core.Persistence;
 using BaseStorage.Core.Settings;
 using BaseStorage.Core.Snapshots;
 using BaseStorage.Plugin.BaseMenu;
@@ -96,6 +97,26 @@ internal static class OrganizeRunner
     {
         OrganizeRunCoordinator? coordinator = Current;
         return coordinator == null ? OrganizeStartOutcome.NoPlayer : coordinator.Start(start);
+    }
+
+    /// <summary>Starts a Put away selected for the base containing a start (the base menu button).</summary>
+    /// <param name="start">A station or position start.</param>
+    /// <param name="selection">The selected slots.</param>
+    /// <returns>The outcome; NoPlayer when the plugin did not boot.</returns>
+    internal static OrganizeStartOutcome StartDepositSelectedAt(BaseStart start, FavouriteSlots selection)
+    {
+        OrganizeRunCoordinator? coordinator = Current;
+        return coordinator == null ? OrganizeStartOutcome.NoPlayer : coordinator.StartDepositSelected(start, selection);
+    }
+
+    /// <summary>Starts a Deposit of the given slots with no preview, for the shortcut that sends one stack on a click.</summary>
+    /// <param name="start">The base's start.</param>
+    /// <param name="selection">The slots to move.</param>
+    /// <returns>The outcome; NoPlayer when the plugin did not boot.</returns>
+    internal static OrganizeStartOutcome StartQuickDepositAt(BaseStart start, FavouriteSlots selection)
+    {
+        OrganizeRunCoordinator? coordinator = Current;
+        return coordinator == null ? OrganizeStartOutcome.NoPlayer : coordinator.StartQuickDeposit(start, selection);
     }
 
     /// <summary>Starts a Deposit for the base containing a start (the station panel entry point of S-E004-015).</summary>

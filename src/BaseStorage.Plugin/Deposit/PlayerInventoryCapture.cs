@@ -2,6 +2,7 @@ namespace BaseStorage.Plugin.Deposit;
 
 using System;
 using System.Collections.Generic;
+using BaseStorage.Core.CharacterMenu;
 using BaseStorage.Core.Categories;
 using BaseStorage.Core.Organize.Deposit;
 using BaseStorage.Core.Persistence;
@@ -78,7 +79,7 @@ internal static class PlayerInventoryCapture
             var seen = new HashSet<InventorySlot>();
             for (int i = 0; i < items.Count; i++)
             {
-                if (!TryMap(items[i], width, height, out ItemStackSnapshot? snapshot, out InventorySlot slot, out string failure))
+                if (!TryMap(items[i], width, WornSlots.HeightWithWornRow(height), out ItemStackSnapshot? snapshot, out InventorySlot slot, out string failure))
                 {
                     reason = "stack " + i + " " + failure;
                     return null;
@@ -93,7 +94,7 @@ internal static class PlayerInventoryCapture
                 stacks.Add(new PlayerInventoryStack(slot, snapshot!, Traits(player, items[i])));
             }
 
-            return new PlayerInventorySnapshot(id, width, height, stacks);
+            return new PlayerInventorySnapshot(id, width, WornSlots.HeightWithWornRow(height), stacks);
         }
         catch (Exception ex)
         {
@@ -147,7 +148,7 @@ internal static class PlayerInventoryCapture
             for (int i = 0; i < items.Count; i++)
             {
                 ItemDrop.ItemData item = items[i];
-                if (!TryMap(item, width, height, out ItemStackSnapshot? snapshot, out InventorySlot slot, out string failure))
+                if (!TryMap(item, width, WornSlots.HeightWithWornRow(height), out ItemStackSnapshot? snapshot, out InventorySlot slot, out string failure))
                 {
                     reason = "stack " + i + " " + failure;
                     return null;

@@ -45,7 +45,7 @@ public sealed class PatchTargetNamesCategoryButtonTests
         // Edited by S-E004-012 (ADR-GWIN-136): plus the 15 station-actions rows, 385.
         // Edited by S-E004-015 (ADR-GWIN-143): plus the seven Deposit rows, 392.
         // Edited by S-E010-002 (organize-console-command 6.2): plus the twelve console rows, 404.
-        Assert.Equal(458, entries.Count); // Edited by S-QR-002 (ADR-GWIN-176): plus the eleven restock rows, 430.
+        Assert.Equal(472, entries.Count); // Edited by S-QR-002 (ADR-GWIN-176): plus the eleven restock rows, 430.
         Assert.Equal(TargetKind.MethodOverloads, entries.Single(e => e.Owner == "InventoryGui" && e.Const == "UpdateContainer").Kind);
         Assert.Equal(TargetKind.OverloadCompanion, entries.Single(e => e.Owner == "InventoryGui" && e.Const == "UpdateContainerParametersPlayer").Kind);
         Assert.Equal(TargetKind.FieldEntry, entries.Single(e => e.Owner == "InventoryGui" && e.Const == "FieldTakeAllButton").Kind);

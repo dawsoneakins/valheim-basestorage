@@ -66,7 +66,7 @@ public sealed class ConsoleCommandSurfaceTests
     [Fact]
     public void EveryPublicMemberOfTheNewTypesIsDocumented()
     {
-        string path = Path.Combine(AppContext.BaseDirectory, "BaseStorage.Core.xml");
+        string path = Path.Combine(AppContext.BaseDirectory, "Dons-QOL.Core.xml");
         Assert.True(File.Exists(path), "BaseStorage.Core.xml is missing from " + AppContext.BaseDirectory + ".");
         Dictionary<string, XElement> members = XDocument.Load(path).Descendants("member")
             .Where(m => m.Attribute("name") is not null)

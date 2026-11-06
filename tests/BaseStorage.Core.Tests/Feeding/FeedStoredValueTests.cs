@@ -70,7 +70,7 @@ public sealed class FeedStoredValueTests
 
         Assert.Equal("basestorage.feed", PersistenceKeys.StationFeed);
         Assert.Equal(
-            new[] { "basestorage.cat", "basestorage.lock", "basestorage.fav", "basestorage.feed", "basestorage.name", "basestorage.favitems" },
+            new[] { "basestorage.cat", "basestorage.lock", "basestorage.fav", "basestorage.feed", "basestorage.name", "basestorage.favitems", "basestorage.base", "basestorage.seen" },
             PersistenceKeys.All);
     }
 

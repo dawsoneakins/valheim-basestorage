@@ -29,4 +29,7 @@ public enum DepositExclusion
 
     /// <summary>The stack's count is above its max stack: unclear contents, kept back for safety.</summary>
     InvalidStack = 32,
+
+    /// <summary>Put away selected is running and this stack is not one of the selected ones.</summary>
+    NotSelected = 64,
 }

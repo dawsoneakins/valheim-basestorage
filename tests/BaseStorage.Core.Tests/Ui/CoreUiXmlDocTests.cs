@@ -14,7 +14,7 @@ using BaseStorage.Core.Tests.Snapshots;
 /// </summary>
 public sealed class CoreUiXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const BindingFlags DeclaredPublic = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
 
     // GW-U-060

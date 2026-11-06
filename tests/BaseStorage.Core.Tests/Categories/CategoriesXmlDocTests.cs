@@ -12,7 +12,7 @@ using BaseStorage.Core.Tests.Snapshots;
 /// <summary>AC-1 (R9): every public member of BaseStorage.Core.Categories is documented in BaseStorage.Core.xml (ADR-GWIN-019).</summary>
 public sealed class CategoriesXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
 
     // GW-U-159
     [Fact]

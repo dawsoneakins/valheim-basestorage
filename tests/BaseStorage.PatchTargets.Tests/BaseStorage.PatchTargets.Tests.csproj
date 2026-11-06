@@ -17,7 +17,7 @@
   <ItemGroup>
     <AssemblyMetadata Include="BaseStorage.ValheimDir" Value="$(ValheimDir)" />
     <AssemblyMetadata Include="BaseStorage.Configuration" Value="$(Configuration)" />
-    <AssemblyMetadata Include="BaseStorage.PluginAssemblyPath" Value="$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)..\..\src\BaseStorage.Plugin\bin\$(Configuration)\net462\BaseStorage.dll'))" />
+    <AssemblyMetadata Include="BaseStorage.PluginAssemblyPath" Value="$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)..\..\src\BaseStorage.Plugin\bin\$(Configuration)\net462\Dons-QOL.dll'))" />
   </ItemGroup>
 
   <ItemGroup>

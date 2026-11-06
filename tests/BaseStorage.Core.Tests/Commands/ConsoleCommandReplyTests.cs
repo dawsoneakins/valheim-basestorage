@@ -69,7 +69,7 @@ public sealed class ConsoleCommandReplyTests
     [Fact]
     public void TheConsoleLinesAreTheHudNoticeTexts()
     {
-        Assert.Equal("Usage: basestorage organize", ConsoleCommandText.Usage());
+        Assert.Equal("Usage: dons-qol organize", ConsoleCommandText.Usage());
         Assert.Equal("Usage: " + ConsoleCommandText.CommandName + " " + ConsoleCommandText.OrganizeVerb, ConsoleCommandText.Usage());
         Assert.Equal(ConsoleCommandText.CommandName, ConsoleCommandText.CommandName.ToLowerInvariant());
         Assert.DoesNotMatch(@"\s", ConsoleCommandText.CommandName);
@@ -92,7 +92,7 @@ public sealed class ConsoleCommandReplyTests
             CultureInfo.CurrentCulture = chosen;
             CultureInfo.CurrentUICulture = chosen;
 
-            Assert.Equal("Usage: basestorage organize", ConsoleCommandText.Usage());
+            Assert.Equal("Usage: dons-qol organize", ConsoleCommandText.Usage());
             Assert.Equal("organize - start an Organize for the base you are in", ConsoleCommandText.Description());
         }
         finally

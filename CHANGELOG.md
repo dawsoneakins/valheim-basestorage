@@ -6,6 +6,17 @@
 
 - New setting `AutoAssignMixedChests` under `[Organize]` (default `true`, host-synced): after the threshold step, Organize gives each mixed chest below the threshold a category that is short of space. Set it to `false` to keep them as unassigned sources, as in 0.1.0. Put away inventory is unchanged.
 
+### Added
+
+- Compendium: press **Compendium** in the character menu for a spoiler-free, searchable, cross-linked wiki that fills in as you discover items, creatures, biomes and building pieces. It reads the game's own data, so other mods' additions are included.
+- Character menu: a panel below the inventory with a live 3D view of your character. Helmet, chest, legs, cape, utility and trinket move into real slots and free their inventory spaces; weapon, shield and ammo slots show what is equipped. The panel hides while a chest is open.
+- Quick put away: Shift + right-click an inventory stack to send it straight to the base's chests by category, with no preview.
+- Put away selected: press **Put away selected** in the base menu, click inventory items to select them, and press it again to move only those into the base's chests by category. The button shows what its next press does and how many stacks are picked, **Cancel** clears the selection, and closing the menu or inventory cancels too. A selected stack moves even from the hotbar or the never list, and equipped items never move.
+- Every panel the mod builds now uses the game's wood, with darker recesses for lists and fields. Favourite stars moved to the top-left of the slot so they no longer cover the stack count.
+- Base menu: buttons are grouped by what they act on, and each chest's row shows icons of its most plentiful items with a thin fill bar.
+- Base management: a window listing every base in the world, wherever you stand, with biome, chests, fullness and distance. Unnamed bases get a name automatically, and you can rename any of them.
+- Move items between any two bases from **Base management**, wherever you stand: press **From** on one and **To** on another, read the preview and confirm. Items move into the destination's chests by category. Items the world's portal rule blocks stay where they are, and the preview and summary name them.
+
 ## [0.1.0] - 2026-10-29
 
 ### Added
@@ -28,7 +39,7 @@
 - Host-synced settings: in multiplayer the host's synced settings and category file apply for the session; the friend's own files are untouched, and single-player is unaffected.
 - Settings and logging: 18 settings in 5 sections of `dawso.valheim.basestorage.cfg`, hotkeys unbound by default, one Info line when the settings load, and Debug detail behind `DebugLogging`.
 - Crafting from base chests: at a crafting station inside a base, crafting an item, upgrading an item and crafting several at once (hold Left Shift) count the materials in the base chests as well as the inventory, and take them all at once before the item is made, the inventory first and then the nearest chests. An upgrade needs the amounts for the quality it upgrades to, and crafting several at once needs the per-craft amounts times the number crafted. If a chest cannot be reserved or its contents changed, nothing is taken, the item is not made or upgraded, and `Materials moved, try again` is shown. With `CraftFromBase` off, crafting stays vanilla.
-- Console command `basestorage organize`: in the in-game console (start Valheim with `-console`, press F5) it starts an Organize for the base you stand in, with the same preview, lock and summary as the Organize base button; outside a base it prints `Not in a base`, and while another player organizes the base it prints `Organize in progress by <name>`.
+- Console command `dons-qol organize`: in the in-game console (start Valheim with `-console`, press F5) it starts an Organize for the base you stand in, with the same preview, lock and summary as the Organize base button; outside a base it prints `Not in a base`, and while another player organizes the base it prints `Organize in progress by <name>`.
 ### Developer
 
 - Opt-in Thunderstore package: `dotnet build -c Release -p:PackageThunderstore=true` writes `dist/BaseStorage-<version>.zip` (manifest.json, icon.png, README.md, CHANGELOG.md, plugins/BaseStorage.dll and plugins/BaseStorage.Core.dll). Plain builds and the gates never produce it.

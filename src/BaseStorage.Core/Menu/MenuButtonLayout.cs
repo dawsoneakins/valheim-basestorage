@@ -17,6 +17,9 @@ public static class MenuButtonLayout
     /// <summary>The height of every button.</summary>
     public const float ButtonHeight = 40f;
 
+    /// <summary>The height of a group's heading.</summary>
+    public const float HeadingHeight = 20f;
+
     /// <summary>The gap between rows.</summary>
     public const float RowGap = 4f;
 
@@ -70,22 +73,32 @@ public static class MenuButtonLayout
         }
 
         float limit = panelWidth - Margin;
+        float inner = Math.Max(0f, panelWidth - (2f * Margin));
         float x = Margin;
+        float top = FirstRowTop;
         int row = 0;
         bool rowEmpty = true;
         bool fits = true;
         var rects = new MenuRect[buttons.Count];
+        var headings = new List<MenuRect>();
         for (int i = 0; i < buttons.Count; i++)
         {
             MenuButtonSpec spec = buttons[i];
-            if (!rowEmpty && (spec.StartsRow || x + spec.Width > limit))
+            if (!rowEmpty && (spec.StartsRow || spec.HasHeading || x + spec.Width > limit))
             {
                 row++;
+                top += ButtonHeight + RowGap;
                 x = Margin;
                 rowEmpty = true;
             }
 
-            var rect = new MenuRect(x, FirstRowTop + (row * (ButtonHeight + RowGap)), spec.Width, ButtonHeight);
+            if (spec.HasHeading)
+            {
+                headings.Add(new MenuRect(Margin, top, inner, HeadingHeight));
+                top += HeadingHeight;
+            }
+
+            var rect = new MenuRect(x, top, spec.Width, ButtonHeight);
             rects[i] = rect;
             if (rect.Right > limit)
             {
@@ -97,12 +110,11 @@ public static class MenuButtonLayout
         }
 
         int rows = buttons.Count == 0 ? 0 : row + 1;
-        float searchTop = FirstRowTop + (rows * (ButtonHeight + RowGap)) - RowGap + SearchGap;
-        float inner = Math.Max(0f, panelWidth - (2f * Margin));
+        float searchTop = buttons.Count == 0 ? FirstRowTop - RowGap + SearchGap : top + ButtonHeight + SearchGap;
         var search = new MenuRect(Margin, searchTop, inner, searchHeight);
         float listTop = search.Bottom + ListGap;
         var list = new MenuRect(Margin, listTop, inner, Math.Max(0f, panelHeight - Margin - listTop));
-        return new MenuLayout(rects, search, list, rows, fits && list.Height > 0f);
+        return new MenuLayout(rects, search, list, rows, fits && list.Height > 0f, headings.ToArray());
     }
 
     private static bool IsFinite(float value) => !float.IsNaN(value) && !float.IsInfinity(value);

@@ -8,11 +8,11 @@ Confirms BepInEx loads the plugin. `<version>` is the `Version` value in `Versio
 
 1. Install BepInExPack_Valheim into the game folder.
 2. Run `dotnet build BaseStorage.sln -c Release -p:DeployToGame=true`.
-3. Check that `BaseStorage.dll` and `BaseStorage.Core.dll` are in `<ValheimDir>\BepInEx\plugins\BaseStorage\`.
+3. Check that `Dons-QOL.dll` and `Dons-QOL.Core.dll` are in `<ValheimDir>\BepInEx\plugins\Dons-QOL\`.
 4. Start Valheim and wait for the main menu.
-5. Open `<ValheimDir>\BepInEx\LogOutput.log` and search for `BaseStorage <version> loaded`.
+5. Open `<ValheimDir>\BepInEx\LogOutput.log` and search for `Dons-QOL <version> loaded`.
 
-Expected: exactly one line whose message is `BaseStorage <version> loaded`, for example `[Info   :BaseStorage] BaseStorage 0.1.0 loaded`.
+Expected: exactly one line whose message is `Dons-QOL <version> loaded`, for example `[Info   :BaseStorage] Dons-QOL 0.1.0 loaded`.
 No `BaseStorage` line contains
 `failed to apply` or `failed to load`. If one does, record the patch name it gives.
 
@@ -27,7 +27,7 @@ Under `[Keys]`, `CycleCategoryKey`, `OrganizeKey` and `DepositKey` are all empty
 
 ## Debug logging
 
-BaseStorage writes one Info line at load (`BaseStorage <version> loaded`) and, per Organize or Deposit, one summary line. Everything else (per-move lines, patch applied lines, stack traces, UI fallback notes) is Debug and is off by default.
+BaseStorage writes one Info line at load (`Dons-QOL <version> loaded`) and, per Organize or Deposit, one summary line. Everything else (per-move lines, patch applied lines, stack traces, UI fallback notes) is Debug and is off by default.
 
 1. In `BepInEx/config/BepInEx.cfg`, add `Debug` to `LogLevels` under `[Logging.Disk]` (and `[Logging.Console]` for the console). BepInEx filters Debug out by default, so the mod's Debug lines never reach `LogOutput.log` otherwise.
 2. Open the in-game ConfigurationManager (F1), find the `[Debug]` section and set `DebugLogging` to true. The change applies without restarting the game.
@@ -49,7 +49,7 @@ BaseStorage writes `BepInEx\config\BaseStorage.categories.txt` once per game sta
 
 Mod favourites are per character. They are stored under the `basestorage.fav` key of the character's custom data and are saved with the character by the game's normal save; the mod never forces a save. A favourite slot shows a small gold star (the design-system id `inventory.slot.favourite-marker`) in the slot's bottom-right corner, on top of the item icon.
 
-1. Load a character, press Tab to open the inventory, hold **Alt** and left-click an occupied slot (for example Wood). Expected: a star appears in the slot's bottom-right corner, the top-left message reads `Favourite: <item name>` (for example `Favourite: Wood`), and the item stays in the slot (it is not picked up).
+1. Load a character, press Tab to open the inventory, hold **Alt** and left-click an occupied slot (for example Wood). Expected: a star appears in the slot's top-left corner (beside the number on the hotbar), the top-left message reads `Favourite: <item name>` (for example `Favourite: Wood`), and the item stays in the slot (it is not picked up).
 2. Hold Alt and left-click the same slot again. Expected: the marker disappears, the message reads `No longer favourite: <item name>`, and the item stays in the slot.
 3. Left-click a slot without Alt: vanilla pickup. Shift+click: vanilla split dialog. Ctrl+click: vanilla quick move. Expected: no marker change and no message in all three cases.
 4. Hold Alt and left-click an empty slot. Expected: nothing happens: no marker, no message, and no `BaseStorage` error in `<ValheimDir>\BepInEx\LogOutput.log`.
@@ -57,7 +57,7 @@ Mod favourites are per character. They are stored under the `basestorage.fav` ke
 6. Pick an item up onto the cursor, hold Alt and left-click another inventory slot. Expected: the item is placed or swapped as in vanilla, and no favourite marker changes.
 7. Mark three slots, one of them holding a stack count above 1 (for example Stone x 25). Check that the marker covers neither the item icon nor the stack count, at 1280x720 with UI scale 0.8 and at the highest available resolution (3840x2160 if possible) with UI scale 1.2. Note which corner vanilla uses for the equipped and queued indicators; if it is the top-left corner, record it as a design-system follow-up. Optional, with UnityExplorer: each marked slot element has exactly one child named `BaseStorage.inventory.slot.favourite-marker`.
 8. With two slots marked, log out to the main menu (the character is saved), then load the same character again. Expected: the same two slots show the marker.
-9. With a slot marked, log out and close the game. Remove `BaseStorage.dll` and `BaseStorage.Core.dll` from `<ValheimDir>\BepInEx\plugins\BaseStorage\`, start the game and load the same character. Expected: the character loads with no error in `LogOutput.log`, the inventory is intact and no marker is shown. The leftover `basestorage.fav` entry is ignored by vanilla.
+9. With a slot marked, log out and close the game. Remove `Dons-QOL.dll` and `Dons-QOL.Core.dll` from `<ValheimDir>\BepInEx\plugins\Dons-QOL\`, start the game and load the same character. Expected: the character loads with no error in `LogOutput.log`, the inventory is intact and no marker is shown. The leftover `basestorage.fav` entry is ignored by vanilla.
 10. Reinstall the mod and load the character. Expected: the slot marked before the uninstall shows the marker again.
 
 ## Acceptance script (AC-2.1 to AC-6.3)
@@ -466,7 +466,7 @@ Expected: the first chest shows `[Wood]` and the second shows no category. The a
 
 Expected: the hover line has no category in brackets.
 
-5. Set the first chest to Wood again, quit the game, remove `BaseStorage.dll` and `BaseStorage.Core.dll` from `<ValheimDir>\BepInEx\plugins\BaseStorage\`, start the game, load the world and open the chest.
+5. Set the first chest to Wood again, quit the game, remove `Dons-QOL.dll` and `Dons-QOL.Core.dll` from `<ValheimDir>\BepInEx\plugins\Dons-QOL\`, start the game, load the world and open the chest.
 
 Expected: the chest opens as in vanilla, its items are intact, and the log has no error. Reinstall the mod and load the world: the chest shows `[Wood]` again, because vanilla ignores the leftover key.
 
@@ -796,11 +796,11 @@ Expected: the friend joins normally. The host log gains `Version handshake: peer
 
 2. The friend installs a build with a different version (for example a package built with `-p:Version=0.9.9`) and joins.
 
-Expected: the friend does not enter the world and sees the vanilla "Incompatible version" error with one extra line, `BaseStorage version mismatch: host <hostVersion>, you <friendVersion>`. The host log gains `Version handshake: peer <id> refused, versions differ, host <hostVersion>, client <friendVersion>`.
+Expected: the friend does not enter the world and sees the vanilla "Incompatible version" error with one extra line, `Don's QOL version mismatch: host <hostVersion>, you <friendVersion>`. The host log gains `Version handshake: peer <id> refused, versions differ, host <hostVersion>, client <friendVersion>`.
 
-3. The friend deletes `BepInEx\plugins\BaseStorage`, keeps BepInEx, and joins.
+3. The friend deletes `BepInEx\plugins\Dons-QOL`, keeps BepInEx, and joins.
 
-Expected: the friend does not enter the world and sees the vanilla "Incompatible version" error about 5 seconds after connecting. The host log gains `Version handshake: peer <id> refused, no BaseStorage payload, host <hostVersion>`.
+Expected: the friend does not enter the world and sees the vanilla "Incompatible version" error about 5 seconds after connecting. The host log gains `Version handshake: peer <id> refused, no Dons-QOL payload, host <hostVersion>`.
 
 4. The host sets `RequireSameVersion = false` in the ConfigurationManager (F1), and the friend without the mod joins again. Set the value back to `true` afterwards.
 
@@ -1106,7 +1106,7 @@ Expected: the Category label advances to the next value and `Chest category: <va
 
 ## Organize console command (AC-2.4, AC-5.4)
 
-Checks the in-game console command. Start Valheim with the `-console` launch option and open the console with F5. The command is `basestorage organize`. It organizes the base you stand in, with the same preview, lock and summary as the Organize base button. It uses the base and the misplaced Wood, Stone and Flint of `## Organize (AC-2.4, AC-4.7, AC-4.8, AC-5.4)`. `<YourName>`, `<HostName>` and `<FriendName>` are the character names.
+Checks the in-game console command. Start Valheim with the `-console` launch option and open the console with F5. The command is `dons-qol organize`. It organizes the base you stand in, with the same preview, lock and summary as the Organize base button. It uses the base and the misplaced Wood, Stone and Flint of `## Organize (AC-2.4, AC-4.7, AC-4.8, AC-5.4)`. `<YourName>`, `<HostName>` and `<FriendName>` are the character names.
 
 ### Solo
 
@@ -1116,13 +1116,13 @@ Expected: the list contains `basestorage` with `organize - start an Organize for
 
 2. Type `basestorage` alone, then `basestorage sort`.
 
-Expected: each prints `Usage: basestorage organize` in the console, and nothing else happens.
+Expected: each prints `Usage: dons-qol organize` in the console, and nothing else happens.
 
-3. Stand outside a base (more than 30 m from any crafting station) and type `basestorage organize`.
+3. Stand outside a base (more than 30 m from any crafting station) and type `dons-qol organize`.
 
 Expected: the console prints `Not in a base`, the centre of the screen shows `Not in a base`, no popup opens and nothing moves.
 
-4. Stand in the base next to the workbench and type `basestorage organize`, then press F5 to close the console.
+4. Stand in the base next to the workbench and type `dons-qol organize`, then press F5 to close the console.
 
 Expected: the console prints `Organize preview open, close the console to confirm`. After F5 closes the console, the vanilla popup titled `Organize base` is open.
 
@@ -1152,7 +1152,7 @@ Expected: it behaves as step 4.
 
 ### Host plus one friend
 
-1. The host clicks Organize base on the workbench and leaves the preview open. The friend, inside the same base, runs `basestorage organize`. The host then clicks no.
+1. The host clicks Organize base on the workbench and leaves the preview open. The friend, inside the same base, runs `dons-qol organize`. The host then clicks no.
 
 Expected: the friend's console and the centre of the screen show `Organize in progress by <HostName>`, no popup opens for the friend and nothing moves.
 
@@ -1471,7 +1471,7 @@ The owner refusing after the host's local checks passed (the Deny race) and owne
 
 ## Version handshake (AC-6.1, AC-6.3)
 
-On every new connection both sides register the `BaseStorage_Version` RPC and send their mod version once. The host checks each joining client: a client with a different version, or without the mod (no payload within 5 seconds), is refused through the vanilla connection-error path (the vanilla `Error` RPC with the incompatible-version code, then a disconnect 1 second later), so the friend sees the vanilla "Incompatible version" screen. A friend who has the mod also checks the host's version and leaves on their own with the same error. The host's `RequireSameVersion` setting (`[General]`, default `true`) turns the refusal off; with `false` everyone is accepted. Every outcome writes one `[Info   :BaseStorage]` line to `<ValheimDir>\BepInEx\LogOutput.log` that starts with `Version handshake: peer <id>`. The mod version is the `Version.props` value shown in the load line (`BaseStorage <version> loaded`).
+On every new connection both sides register the `BaseStorage_Version` RPC and send their mod version once. The host checks each joining client: a client with a different version, or without the mod (no payload within 5 seconds), is refused through the vanilla connection-error path (the vanilla `Error` RPC with the incompatible-version code, then a disconnect 1 second later), so the friend sees the vanilla "Incompatible version" screen. A friend who has the mod also checks the host's version and leaves on their own with the same error. The host's `RequireSameVersion` setting (`[General]`, default `true`) turns the refusal off; with `false` everyone is accepted. Every outcome writes one `[Info   :BaseStorage]` line to `<ValheimDir>\BepInEx\LogOutput.log` that starts with `Version handshake: peer <id>`. The mod version is the `Version.props` value shown in the load line (`Dons-QOL <version> loaded`).
 
 ### Solo
 
@@ -1485,7 +1485,7 @@ Expected: no `BaseStorage` line contains `failed and was skipped`, and no `Versi
 
 ### Host plus one friend
 
-The host starts the world with "Start server" and `RequireSameVersion = true`, and reads the host `LogOutput.log`. The friend installs the same BaseStorage build (the same `BaseStorage <version> loaded` line in both logs) unless a step says otherwise. `<id>` is a small number that counts the connections of the session.
+The host starts the world with "Start server" and `RequireSameVersion = true`, and reads the host `LogOutput.log`. The friend installs the same BaseStorage build (the same `Dons-QOL <version> loaded` line in both logs) unless a step says otherwise. `<id>` is a small number that counts the connections of the session.
 
 1. Matched: the friend joins the host's world with the same version.
 
@@ -1493,11 +1493,11 @@ Expected: the friend joins normally and plays. The host log gains `Version hands
 
 2. Mismatched: the friend installs a build with a different version (for example a package built with `-p:Version=0.9.9`) and joins.
 
-Expected: the friend does not enter the world. The friend sees the vanilla "Incompatible version" connection error, with one extra line below it reading `BaseStorage version mismatch: host <hostVersion>, you <friendVersion>`. The host sees the same `BaseStorage version mismatch: host <hostVersion>, you <friendVersion>` text as a centre notice, and the host log gains `Version handshake: peer <id> refused, versions differ, host <hostVersion>, client <friendVersion>` followed about 1 second later by `Version handshake: peer <id> disconnected after refusal`. The friend log gains `Version handshake: peer <id> is the host and versions differ, leaving, host <hostVersion>, client <friendVersion>`.
+Expected: the friend does not enter the world. The friend sees the vanilla "Incompatible version" connection error, with one extra line below it reading `Don's QOL version mismatch: host <hostVersion>, you <friendVersion>`. The host sees the same `Don's QOL version mismatch: host <hostVersion>, you <friendVersion>` text as a centre notice, and the host log gains `Version handshake: peer <id> refused, versions differ, host <hostVersion>, client <friendVersion>` followed about 1 second later by `Version handshake: peer <id> disconnected after refusal`. The friend log gains `Version handshake: peer <id> is the host and versions differ, leaving, host <hostVersion>, client <friendVersion>`.
 
-3. Missing: the friend removes BaseStorage (delete `BepInEx\plugins\BaseStorage`), keeps BepInEx, and joins.
+3. Missing: the friend removes BaseStorage (delete `BepInEx\plugins\Dons-QOL`), keeps BepInEx, and joins.
 
-Expected: the friend does not enter the world and sees the vanilla "Incompatible version" connection error about 5 seconds after connecting (there is no BaseStorage line on the friend's screen, because the friend has no mod). The host sees the centre notice `BaseStorage version mismatch: host <hostVersion>, joining player has no BaseStorage`, and the host log gains `Version handshake: peer <id> refused, no BaseStorage payload, host <hostVersion>` and, about 1 second later, `Version handshake: peer <id> disconnected after refusal`.
+Expected: the friend does not enter the world and sees the vanilla "Incompatible version" connection error about 5 seconds after connecting (there is no BaseStorage line on the friend's screen, because the friend has no mod). The host sees the centre notice `Don's QOL version mismatch: host <hostVersion>, joining player has no Don's QOL`, and the host log gains `Version handshake: peer <id> refused, no Dons-QOL payload, host <hostVersion>` and, about 1 second later, `Version handshake: peer <id> disconnected after refusal`.
 
 4. Lenient host: the host sets `RequireSameVersion = false` in the ConfigurationManager (F1), and the friend without the mod joins again.
 

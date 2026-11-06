@@ -61,6 +61,6 @@ public sealed class PatchTargetsProjectTests
         Assert.Contains("$(Configuration)", RepoRoot.Attr(configuration, "Value"));
 
         XElement plugin = Assert.Single(items, i => RepoRoot.Attr(i, "Include") == "BaseStorage.PluginAssemblyPath");
-        Assert.Contains(@"src\BaseStorage.Plugin\bin\$(Configuration)\net462\BaseStorage.dll", RepoRoot.Attr(plugin, "Value"));
+        Assert.Contains(@"src\BaseStorage.Plugin\bin\$(Configuration)\net462\Dons-QOL.dll", RepoRoot.Attr(plugin, "Value"));
     }
 }

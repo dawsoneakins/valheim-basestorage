@@ -11,7 +11,7 @@ using BaseStorage.Core.Tests.Abstractions;
 /// <summary>AC-1 (contract R9): every public member of BaseStorage.Core.Categories.Defaults is documented in BaseStorage.Core.xml.</summary>
 public sealed class DefaultsXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
 
     // GW-U-459
     [Fact]

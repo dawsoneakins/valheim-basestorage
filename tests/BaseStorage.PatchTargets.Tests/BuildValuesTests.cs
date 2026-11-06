@@ -42,7 +42,7 @@ public sealed class BuildValuesTests
         Assert.True(Path.IsPathRooted(path));
         Assert.DoesNotContain(@"\..\", path);
         Assert.DoesNotContain(@"\.\", path);
-        Assert.EndsWith(@"\src\BaseStorage.Plugin\bin\" + BuildValues.Configuration + @"\net462\BaseStorage.dll", path, StringComparison.Ordinal);
+        Assert.EndsWith(@"\src\BaseStorage.Plugin\bin\" + BuildValues.Configuration + @"\net462\Dons-QOL.dll", path, StringComparison.Ordinal);
     }
 
     // GW-U-104

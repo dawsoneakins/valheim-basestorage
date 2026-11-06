@@ -3,7 +3,7 @@ namespace BaseStorage.Core.Logging;
 /// <summary>The closed set of message kinds written at Info or Debug. Warning and Error have no category.</summary>
 public enum LogCategory
 {
-    /// <summary>The single "BaseStorage version loaded" line at boot. Written at Info.</summary>
+    /// <summary>The single "BaseStorage version loaded" line at boot, and the one line naming the panels' wood. Written at Info.</summary>
     Load = 0,
 
     /// <summary>Messages about syncing host-synced settings. Written at Info.</summary>

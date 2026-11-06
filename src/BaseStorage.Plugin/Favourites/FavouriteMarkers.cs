@@ -14,6 +14,8 @@ internal static class FavouriteMarkers
 {
     private const string MarkerName = "BaseStorage.inventory.slot.favourite-marker";
     private const float MarkerSize = 22f;
+    private const float HotbarNumberWidth = 18f;
+    private const float SelectedAlpha = 0.45f;
     private const float BrandPrimaryR = 1f;
     private const float BrandPrimaryG = 0.6470588f;
     private const float BrandPrimaryB = 0f;
@@ -69,7 +71,8 @@ internal static class FavouriteMarkers
                 }
 
                 ItemDrop.ItemData? item = inventory.GetItemAt(x, y);
-                bool want = item != null && current.Contains(item.m_shared.m_name);
+                bool selected = item != null && DepositSelection.Contains(item);
+                bool want = selected || (item != null && current.Contains(item.m_shared.m_name));
                 int index = (y * width) + x;
                 Image? marker = markers[index];
                 if (marker == null)
@@ -79,7 +82,7 @@ internal static class FavouriteMarkers
                         continue;
                     }
 
-                    marker = FindOrCreate(element);
+                    marker = FindOrCreate(element, y == 0);
                     markers[index] = marker;
                     if (marker == null)
                     {
@@ -87,6 +90,7 @@ internal static class FavouriteMarkers
                     }
                 }
 
+                Look(marker, selected, y == 0);
                 GameObject markerObject = marker.gameObject;
                 if (markerObject.activeSelf != want)
                 {
@@ -108,8 +112,11 @@ internal static class FavouriteMarkers
         }
     }
 
-    /// <summary>Finds the element's marker under the icon's parent, or clones the element's own queued image into one (FM2 to FM5).</summary>
-    private static Image? FindOrCreate(InventoryElement element)
+    /// <summary>
+    /// Finds the element's marker under the icon's parent, or clones the element's own queued image into one (FM2 to FM5). It sits top-left, clear of
+    /// the stack count along the bottom and the quality top-right; on the hotbar it moves along to clear the slot's number.
+    /// </summary>
+    private static Image? FindOrCreate(InventoryElement element, bool hotbar)
     {
         if (element.m_icon == null || element.m_queued == null)
         {
@@ -133,19 +140,49 @@ internal static class FavouriteMarkers
         clone.enabled = true; // Vanilla keeps the queued image off unless an equip is queued, and the clone copies that.
         clone.sprite = FavouriteStar.Sprite;
         clone.type = Image.Type.Simple;
-        clone.preserveAspect = true;
-        clone.color = new Color(BrandPrimaryR, BrandPrimaryG, BrandPrimaryB, 1f);
         clone.raycastTarget = false;
-
-        RectTransform rect = clone.rectTransform;
-        rect.anchorMin = new Vector2(1f, 0f);
-        rect.anchorMax = new Vector2(1f, 0f);
-        rect.pivot = new Vector2(1f, 0f);
-        rect.anchoredPosition = Vector2.zero;
-        rect.sizeDelta = new Vector2(MarkerSize, MarkerSize);
-        rect.localScale = Vector3.one;
+        clone.rectTransform.localScale = Vector3.one;
+        ShowStar(clone, hotbar);
 
         clone.transform.SetAsLastSibling(); // On top: item icons fill the slot and would hide a marker behind them.
         return clone;
+    }
+
+    /// <summary>A selected slot is washed with blue across its whole area, so it can't be missed; a favourite shows its star. It changes only on a switch, as this runs every frame.</summary>
+    private static void Look(Image marker, bool selected, bool hotbar)
+    {
+        if (selected == (marker.sprite == null))
+        {
+            return;
+        }
+
+        if (selected)
+        {
+            marker.sprite = null;
+            marker.color = new Color(DepositSelection.MarkerR, DepositSelection.MarkerG, DepositSelection.MarkerB, SelectedAlpha);
+            RectTransform rect = marker.rectTransform;
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = Vector2.zero;
+            rect.sizeDelta = Vector2.zero;
+        }
+        else
+        {
+            ShowStar(marker, hotbar);
+        }
+    }
+
+    private static void ShowStar(Image marker, bool hotbar)
+    {
+        marker.sprite = FavouriteStar.Sprite;
+        marker.preserveAspect = true;
+        marker.color = new Color(BrandPrimaryR, BrandPrimaryG, BrandPrimaryB, 1f);
+        RectTransform rect = marker.rectTransform;
+        rect.anchorMin = new Vector2(0f, 1f);
+        rect.anchorMax = new Vector2(0f, 1f);
+        rect.pivot = new Vector2(0f, 1f);
+        rect.anchoredPosition = new Vector2(hotbar ? HotbarNumberWidth : 0f, 0f);
+        rect.sizeDelta = new Vector2(MarkerSize, MarkerSize);
     }
 }

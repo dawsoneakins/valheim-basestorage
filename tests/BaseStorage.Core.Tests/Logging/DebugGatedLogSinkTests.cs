@@ -20,7 +20,7 @@ public sealed class DebugGatedLogSinkTests
     {
         foreach (bool flag in new[] { false, true })
         {
-            yield return new object[] { Cat.Load, LogSeverity.Info, "BaseStorage 0.1.0 loaded", flag };
+            yield return new object[] { Cat.Load, LogSeverity.Info, "Dons-QOL 0.1.0 loaded", flag };
             yield return new object[] { Cat.ConfigSync, LogSeverity.Info, "Config synced from host: 6 host-synced settings applied", flag };
             yield return new object[] { Cat.OrganizeSummary, LogSeverity.Info, "Organize: moved 412 items in 37 stacks across 9 chests", flag };
             yield return new object[] { Cat.DepositSummary, LogSeverity.Info, "Deposit: stored 128 items in 4 chests, 2 favourite stacks kept", flag };
@@ -127,8 +127,8 @@ public sealed class DebugGatedLogSinkTests
         Assert.Empty(inner.Entries);
 
         int callsBeforeInfo = accessor.Calls;
-        gate.Log(LogSeverity.Info, "BaseStorage 0.1.0 loaded");
-        Assert.Equal(new[] { (LogSeverity.Info, "BaseStorage 0.1.0 loaded") }, inner.Entries);
+        gate.Log(LogSeverity.Info, "Dons-QOL 0.1.0 loaded");
+        Assert.Equal(new[] { (LogSeverity.Info, "Dons-QOL 0.1.0 loaded") }, inner.Entries);
         Assert.Equal(callsBeforeInfo, accessor.Calls);
     }
 

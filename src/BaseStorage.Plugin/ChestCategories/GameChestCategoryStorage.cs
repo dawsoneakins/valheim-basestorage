@@ -50,8 +50,21 @@ internal sealed class GameChestCategoryStorage : IChestCategoryStorage<Container
             return false;
         }
 
-        zdo.Set(PersistenceKeys.ChestCategory, value);
+        WriteRecord(zdo, value);
         return true;
+    }
+
+    /// <summary>Reads the stored value from a chest's record, which a base move needs for a chest nobody has loaded.</summary>
+    /// <param name="zdo">The chest's record.</param>
+    /// <returns>The stored value, or empty.</returns>
+    internal static string ReadRecord(ZDO zdo) => zdo.GetString(PersistenceKeys.ChestCategory, string.Empty);
+
+    /// <summary>Writes the stored value to a chest's record: the one place this key is written.</summary>
+    /// <param name="zdo">The chest's record.</param>
+    /// <param name="value">The stored value.</param>
+    internal static void WriteRecord(ZDO zdo, string value)
+    {
+        zdo.Set(PersistenceKeys.ChestCategory, value);
     }
 
     private static ZDO? Data(Container chest)

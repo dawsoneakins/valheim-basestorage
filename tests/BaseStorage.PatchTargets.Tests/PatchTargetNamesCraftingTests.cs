@@ -141,7 +141,7 @@ public sealed class PatchTargetNamesCraftingTests
         Assert.True(holder is not null, "PatchTargetNames has no nested class HarmonyPatched.");
 
         // Edited by S-E010-002 (organize-console-command 6.2): plus TerminalInitTerminal, twenty-four.
-        Assert.Equal(42, holder!.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.DeclaredOnly).Length);
+        Assert.Equal(49, holder!.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.DeclaredOnly).Length);
     }
 
     // GW-U-1151 (AC-3): the piece overload's parameter text is unchanged.

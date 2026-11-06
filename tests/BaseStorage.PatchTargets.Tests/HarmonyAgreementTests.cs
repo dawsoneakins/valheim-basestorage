@@ -35,7 +35,7 @@ public sealed class HarmonyAgreementTests
         using FileStream stream = File.OpenRead(plugin);
         using PEReader pe = new(stream);
         MetadataReader metadata = pe.GetMetadataReader();
-        Assert.Equal("BaseStorage", metadata.GetString(metadata.GetAssemblyDefinition().Name));
+        Assert.Equal("Dons-QOL", metadata.GetString(metadata.GetAssemblyDefinition().Name));
 
         string[] typeNames = metadata.TypeDefinitions
             .Select(handle => metadata.GetTypeDefinition(handle))
@@ -66,9 +66,16 @@ public sealed class HarmonyAgreementTests
             "Fireplace.GetHoverText()",
             "Fireplace.Interact(Humanoid,System.Boolean,System.Boolean)",
             "Hud.SetupPieceInfo(Piece)",
+            "Humanoid.DropInvalidItems()",
+            "Humanoid.EquipItem(ItemDrop+ItemData,System.Boolean)",
             "Humanoid.IsItemEquiped(ItemDrop+ItemData)",
+            "Humanoid.UnequipItem(ItemDrop+ItemData,System.Boolean)",
+            "Inventory.GetEmptySlots()",
+            "Inventory.HaveEmptySlot()",
+            "Inventory.MoveInventoryToGrave(Inventory)",
             "Inventory.StackAll(Inventory,System.Boolean)",
             "InventoryGrid.OnLeftDown(UIInputHandler)",
+            "InventoryGrid.OnRightDown(UIInputHandler)",
             "InventoryGrid.UpdateGamepad()",
             "InventoryGrid.UpdateGui(Player,ItemDrop+ItemData)",
             "InventoryGui.DoCrafting(Player)",
@@ -105,12 +112,19 @@ public sealed class HarmonyAgreementTests
                 // Edited by integration (S-E004-004): plus the Category button patch class.
                 "BaseStorage.Plugin.CategoryButton.InventoryGuiUpdateContainerPatch",
                 // Edited by S-E010-002 (organize-console-command 6.2): the console registration postfix class, in ordinal order.
+                "BaseStorage.Plugin.CharacterMenu.HumanoidDropInvalidItemsPatch",
+                "BaseStorage.Plugin.CharacterMenu.HumanoidEquipItemPatch",
+                "BaseStorage.Plugin.CharacterMenu.HumanoidUnequipItemPatch",
+                "BaseStorage.Plugin.CharacterMenu.InventoryGetEmptySlotsPatch",
+                "BaseStorage.Plugin.CharacterMenu.InventoryHaveEmptySlotPatch",
+                "BaseStorage.Plugin.CharacterMenu.InventoryMoveInventoryToGravePatch",
                 "BaseStorage.Plugin.Commands.TerminalInitTerminalPatch",
                 "BaseStorage.Plugin.Crafting.InventoryGuiDoCraftingPatch",
                 "BaseStorage.Plugin.Crafting.PlayerConsumeResourcesPatch",
                 "BaseStorage.Plugin.Crafting.PlayerHaveRequirementItemsPatch",
                 "BaseStorage.Plugin.Favourites.HumanoidIsItemEquipedPatch",
                 "BaseStorage.Plugin.Favourites.InventoryGridOnLeftDownPatch",
+                "BaseStorage.Plugin.Favourites.InventoryGridOnRightDownPatch",
                 "BaseStorage.Plugin.Favourites.InventoryGridUpdateGuiPatch",
                 "BaseStorage.Plugin.Favourites.InventoryStackAllPatch",
                 "BaseStorage.Plugin.Feeding.CookingStationAwakePatch",

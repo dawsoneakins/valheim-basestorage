@@ -571,6 +571,24 @@ internal static class PatchTargetNames
         /// <summary>The StackAll method.</summary>
         public const string StackAll = "StackAll";
 
+        /// <summary>The GetEmptySlots method.</summary>
+        public const string GetEmptySlots = "GetEmptySlots";
+
+        /// <summary>Parameter type full names of the GetEmptySlots() overload.</summary>
+        public const string GetEmptySlotsParametersNone = "";
+
+        /// <summary>The HaveEmptySlot method.</summary>
+        public const string HaveEmptySlot = "HaveEmptySlot";
+
+        /// <summary>Parameter type full names of the HaveEmptySlot() overload.</summary>
+        public const string HaveEmptySlotParametersNone = "";
+
+        /// <summary>The MoveInventoryToGrave method.</summary>
+        public const string MoveInventoryToGrave = "MoveInventoryToGrave";
+
+        /// <summary>Parameter type full names of the MoveInventoryToGrave(Inventory) overload.</summary>
+        public const string MoveInventoryToGraveParametersOriginal = "Inventory";
+
         /// <summary>Parameter type full names of the StackAll(Inventory, bool) overload.</summary>
         public const string StackAllParametersFromMessage = "Inventory,System.Boolean";
 
@@ -855,6 +873,12 @@ internal static class PatchTargetNames
 
         /// <summary>The reflection full name of the type.</summary>
         public const string TypeName = "InventoryGrid";
+
+        /// <summary>The OnRightDown method.</summary>
+        public const string OnRightDown = "OnRightDown";
+
+        /// <summary>Parameter type full names of the OnRightDown(UIInputHandler) overload.</summary>
+        public const string OnRightDownParametersHandler = "UIInputHandler";
 
         /// <summary>The OnLeftDown method.</summary>
         public const string OnLeftDown = "OnLeftDown";
@@ -1173,6 +1197,24 @@ internal static class PatchTargetNames
 
         /// <summary>The IsItemEquiped method.</summary>
         public const string IsItemEquiped = "IsItemEquiped";
+
+        /// <summary>The DropInvalidItems method.</summary>
+        public const string DropInvalidItems = "DropInvalidItems";
+
+        /// <summary>Parameter type full names of the DropInvalidItems() overload.</summary>
+        public const string DropInvalidItemsParametersNone = "";
+
+        /// <summary>The EquipItem method.</summary>
+        public const string EquipItem = "EquipItem";
+
+        /// <summary>Parameter type full names of the EquipItem(ItemDrop.ItemData, bool) overload.</summary>
+        public const string EquipItemParametersItemEffects = "ItemDrop+ItemData,System.Boolean";
+
+        /// <summary>The UnequipItem method.</summary>
+        public const string UnequipItem = "UnequipItem";
+
+        /// <summary>Parameter type full names of the UnequipItem(ItemDrop.ItemData, bool) overload.</summary>
+        public const string UnequipItemParametersItemEffects = "ItemDrop+ItemData,System.Boolean";
 
         /// <summary>Parameter type full names of the IsItemEquiped(ItemDrop.ItemData) overload.</summary>
         public const string IsItemEquipedParametersItem = "ItemDrop+ItemData";
@@ -1649,11 +1691,32 @@ internal static class PatchTargetNames
         /// <summary>A patch of the feeder or the mod's gamepad focus.</summary>
         public const string InventoryGuiUpdateRecipeGamepadInput = "InventoryGui.UpdateRecipeGamepadInput()";
 
+        /// <summary>The InventoryGrid.OnRightDown(UIInputHandler) prefix of the quick put away.</summary>
+        public const string InventoryGridOnRightDown = "InventoryGrid.OnRightDown(UIInputHandler)";
+
         /// <summary>The InventoryGrid.OnLeftDown(UIInputHandler) prefix of the favourites toggle.</summary>
         public const string InventoryGridOnLeftDown = "InventoryGrid.OnLeftDown(UIInputHandler)";
 
         /// <summary>The InventoryGrid.UpdateGui(Player, ItemDrop.ItemData) postfix of the favourite markers.</summary>
         public const string InventoryGridUpdateGui = "InventoryGrid.UpdateGui(Player,ItemDrop+ItemData)";
+
+        /// <summary>The Humanoid.DropInvalidItems() prefix and finalizer of the character menu.</summary>
+        public const string HumanoidDropInvalidItems = "Humanoid.DropInvalidItems()";
+
+        /// <summary>The Humanoid.EquipItem(ItemDrop+ItemData,System.Boolean) postfix of the character menu.</summary>
+        public const string HumanoidEquipItem = "Humanoid.EquipItem(ItemDrop+ItemData,System.Boolean)";
+
+        /// <summary>The Humanoid.UnequipItem(ItemDrop+ItemData,System.Boolean) postfix of the character menu.</summary>
+        public const string HumanoidUnequipItem = "Humanoid.UnequipItem(ItemDrop+ItemData,System.Boolean)";
+
+        /// <summary>The Inventory.GetEmptySlots() postfix of the character menu.</summary>
+        public const string InventoryGetEmptySlots = "Inventory.GetEmptySlots()";
+
+        /// <summary>The Inventory.HaveEmptySlot() postfix of the character menu.</summary>
+        public const string InventoryHaveEmptySlot = "Inventory.HaveEmptySlot()";
+
+        /// <summary>The Inventory.MoveInventoryToGrave(Inventory) postfix of the character menu.</summary>
+        public const string InventoryMoveInventoryToGrave = "Inventory.MoveInventoryToGrave(Inventory)";
 
         /// <summary>The Inventory.StackAll(Inventory, bool) guard of the favourites during Place stacks.</summary>
         public const string InventoryStackAll = "Inventory.StackAll(Inventory,System.Boolean)";

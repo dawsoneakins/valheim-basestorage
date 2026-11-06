@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using BaseStorage.Core.Organize.Run;
 using BaseStorage.Core.Ui;
 
-/// <summary>The pure decisions of the basestorage console command: argument parsing and the one reply line (contract section 2).</summary>
+/// <summary>The pure decisions of the dons-qol console command: argument parsing and the one reply line (contract section 2).</summary>
 public static class ConsoleCommandText
 {
     /// <summary>The console command word, as registered (vanilla lower-cases the typed word before lookup).</summary>
-    public const string CommandName = "basestorage";
+    public const string CommandName = "dons-qol";
 
     /// <summary>The one sub-command word.</summary>
     public const string OrganizeVerb = "organize";

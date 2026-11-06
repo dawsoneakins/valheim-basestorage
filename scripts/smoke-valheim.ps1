@@ -1,4 +1,4 @@
-# Runtime smoke check for BaseStorage: build the plugin, deploy it into the local
+# Runtime smoke check for Dons-QOL: build the plugin, deploy it into the local
 # Valheim + BepInEx install, start the game headless and confirm BepInEx loads it.
 # Exit 0 = loaded cleanly, 1 = failed (reason printed), 2 = toolchain missing.
 # Used as commands.game-windows.run in .pipeline/config.yml.
@@ -11,7 +11,9 @@ $valheimDir = if ($env:VALHEIM_DIR) { $env:VALHEIM_DIR } else { 'C:\Program File
 $exe = Join-Path $valheimDir 'valheim.exe'
 $bepCore = Join-Path $valheimDir 'BepInEx\core\BepInEx.dll'
 $log = Join-Path $valheimDir 'BepInEx\LogOutput.log'
-$pluginDir = Join-Path $valheimDir 'BepInEx\plugins\BaseStorage'
+$pluginDir = Join-Path $valheimDir 'BepInEx\plugins\Dons-QOL'
+# Before the rename the plugin lived here; leaving it would load the same GUID twice.
+$oldPluginDir = Join-Path $valheimDir 'BepInEx\plugins\BaseStorage'
 
 function Fail([int]$code, [string]$msg) { Write-Host "SMOKE FAIL: $msg"; exit $code }
 
@@ -22,12 +24,13 @@ if (Get-Process -Name valheim -ErrorAction SilentlyContinue) { Fail 1 'Valheim i
 Write-Host 'Building BaseStorage.Plugin (Release)...'
 & dotnet build (Join-Path $repo 'src\BaseStorage.Plugin\BaseStorage.Plugin.csproj') -c Release --nologo -v quiet
 if ($LASTEXITCODE -ne 0) { Fail 1 'plugin build failed' }
-$dll = Get-ChildItem -Path (Join-Path $repo 'src\BaseStorage.Plugin\bin\Release') -Recurse -Filter BaseStorage.dll | Select-Object -First 1
-if (-not $dll) { Fail 1 'BaseStorage.dll not found after build' }
+$dll = Get-ChildItem -Path (Join-Path $repo 'src\BaseStorage.Plugin\bin\Release') -Recurse -Filter Dons-QOL.dll | Select-Object -First 1
+if (-not $dll) { Fail 1 'Dons-QOL.dll not found after build' }
 
+if (Test-Path $oldPluginDir) { Remove-Item -Recurse -Force $oldPluginDir; Write-Host "Removed old plugin folder $oldPluginDir" }
 New-Item -ItemType Directory -Force -Path $pluginDir | Out-Null
 Copy-Item -Force $dll.FullName $pluginDir
-$coreDll = Join-Path $dll.DirectoryName 'BaseStorage.Core.dll'
+$coreDll = Join-Path $dll.DirectoryName 'Dons-QOL.Core.dll'
 if (Test-Path $coreDll) { Copy-Item -Force $coreDll $pluginDir }
 Write-Host "Deployed $($dll.FullName) -> $pluginDir"
 
@@ -60,10 +63,10 @@ if (-not (Test-Path $log)) { Fail 1 "BepInEx wrote no log (exit code $($proc.Exi
 $text = Get-Content -Raw $log
 if (-not $done) { Fail 1 "chainloader did not complete within $TimeoutSec s. Log tail:`n$(($text -split "`n" | Select-Object -Last 15) -join "`n")" }
 
-$errors = $text -split "`n" | Where-Object { $_ -match '\[(Error|Fatal)' -and $_ -match 'BaseStorage' }
-if ($errors) { Fail 1 "BaseStorage errors in BepInEx log:`n$($errors -join "`n")" }
-if ($hasPlugin -and $text -notmatch 'Loading \[BaseStorage') { Fail 1 'BaseStorage.dll has a [BepInPlugin] but BepInEx did not load it' }
+$errors = $text -split "`n" | Where-Object { $_ -match '\[(Error|Fatal)' -and $_ -match "Don's QOL|Dons-QOL|BaseStorage" }
+if ($errors) { Fail 1 "Dons-QOL errors in BepInEx log:`n$($errors -join "`n")" }
+if ($hasPlugin -and $text -notmatch "Loading \[Don's QOL") { Fail 1 'Dons-QOL.dll has a [BepInPlugin] but BepInEx did not load it' }
 
-if ($hasPlugin) { Write-Host 'SMOKE PASS: BepInEx loaded BaseStorage with no errors' }
-else { Write-Host 'SMOKE PASS: game started with BepInEx and BaseStorage.dll deployed; no [BepInPlugin] entry point yet, so there was nothing to load' }
+if ($hasPlugin) { Write-Host 'SMOKE PASS: BepInEx loaded Dons-QOL with no errors' }
+else { Write-Host 'SMOKE PASS: game started with BepInEx and Dons-QOL.dll deployed; no [BepInPlugin] entry point yet, so there was nothing to load' }
 exit 0

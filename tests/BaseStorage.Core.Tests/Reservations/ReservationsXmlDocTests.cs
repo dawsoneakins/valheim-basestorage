@@ -15,7 +15,7 @@ using BaseStorage.Core.Tests.Snapshots;
 /// </summary>
 public sealed class ReservationsXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const string Namespace = "BaseStorage.Core.Reservations";
 
     private const BindingFlags Members = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;

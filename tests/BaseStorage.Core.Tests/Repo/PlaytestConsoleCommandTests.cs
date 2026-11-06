@@ -54,11 +54,11 @@ public sealed class PlaytestConsoleCommandTests
 
         Assert.Contains("-console", preamble, StringComparison.Ordinal);
         Assert.Contains("F5", preamble, StringComparison.Ordinal);
-        Assert.Contains("basestorage organize", preamble, StringComparison.Ordinal);
+        Assert.Contains("dons-qol organize", preamble, StringComparison.Ordinal);
 
         AssertInOrder(section.Substring(solo, host - solo),
             "organize - start an Organize for the base you are in",
-            "Usage: basestorage organize",
+            "Usage: dons-qol organize",
             "Not in a base",
             "Organize preview open, close the console to confirm",
             "Organize started",

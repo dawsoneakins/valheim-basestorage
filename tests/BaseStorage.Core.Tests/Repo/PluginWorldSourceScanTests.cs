@@ -167,7 +167,8 @@ public sealed class PluginWorldSourceScanTests
     [Fact]
     public void TheBuildRangeFieldIsUsedOnlyInPluginWorld()
     {
-        Assert.Equal(new[] { PluginWorldFile }, PluginSourceScan.FilesMatching(Plugin.Value, @"m_rangeBuild"));
+        // Edited by the base move: a far station has no loaded object, so its range comes from the prefab.
+        Assert.Equal(new[] { "src/BaseStorage.Plugin/BaseMove/FarWorld.cs", PluginWorldFile }, PluginSourceScan.FilesMatching(Plugin.Value, @"m_rangeBuild"));
     }
 
     // GW-U-508 (station patches)
@@ -421,7 +422,7 @@ public sealed class PluginWorldSourceScanTests
         Assert.Equal(
             // Edited by S-E003-006, ADR-GWIN-132: PluginBuilding.Tick() sits immediately after PluginCrafting.Tick().
             // Edited by integration (S-E004-004 + S-E004-011): CategoryHotkey.Tick() then OrganizeRunner.Tick() follow ChestCategoryWriter.Tick().
-            "PluginReservations.Tick();PluginCrafting.Tick();PluginBuilding.Tick();ChestCategoryWriter.Tick();CategoryHotkey.Tick();OrganizeRunner.Tick();StationFeeder.Tick();if(firstRunCategoryFile!=null&&firstRunCategoryFile.Tick()){firstRunCategoryFile=null;}PluginVersionHandshake.Tick();",
+            "PluginReservations.Tick();PluginCrafting.Tick();PluginBuilding.Tick();ChestCategoryWriter.Tick();CategoryHotkey.Tick();OrganizeRunner.Tick();PluginBaseMove.Tick();CharacterMenu.CharacterPanel.Tick();Compendium.CompendiumWindow.Tick();BaseMove.BasesWindow.Tick();StationFeeder.Tick();if(firstRunCategoryFile!=null&&firstRunCategoryFile.Tick()){firstRunCategoryFile=null;}PluginVersionHandshake.Tick();",
             Regex.Replace(update, @"\s+", string.Empty));
     }
 

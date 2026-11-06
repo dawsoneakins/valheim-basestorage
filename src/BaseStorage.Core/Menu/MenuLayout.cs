@@ -14,9 +14,11 @@ public sealed class MenuLayout
     private readonly MenuRect list;
     private readonly int rows;
     private readonly bool fits;
+    private readonly ReadOnlyCollection<MenuRect> headings;
 
-    internal MenuLayout(MenuRect[] buttons, MenuRect search, MenuRect list, int rows, bool fits)
+    internal MenuLayout(MenuRect[] buttons, MenuRect search, MenuRect list, int rows, bool fits, MenuRect[] headings)
     {
+        this.headings = new ReadOnlyCollection<MenuRect>(headings);
         this.buttons = new ReadOnlyCollection<MenuRect>(buttons);
         this.search = search;
         this.list = list;
@@ -26,6 +28,9 @@ public sealed class MenuLayout
 
     /// <summary>Gets one rectangle per input button, in the same order.</summary>
     public IReadOnlyList<MenuRect> Buttons => buttons;
+
+    /// <summary>Gets one rectangle per group heading, in button order.</summary>
+    public IReadOnlyList<MenuRect> Headings => headings;
 
     /// <summary>Gets the search box rectangle.</summary>
     public MenuRect Search => search;

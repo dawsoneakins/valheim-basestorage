@@ -9,6 +9,7 @@ using BaseStorage.Core.Locking;
 using BaseStorage.Core.Logging;
 using BaseStorage.Core.Organize.Deposit;
 using BaseStorage.Core.Organize.Execution;
+using BaseStorage.Core.Persistence;
 using BaseStorage.Core.Restock;
 using BaseStorage.Core.Restock.Run;
 using BaseStorage.Core.Settings;
@@ -103,6 +104,45 @@ public sealed class OrganizeRunCoordinator
     /// <exception cref="ArgumentException"><paramref name="start"/> has no defined kind.</exception>
     public OrganizeStartOutcome StartDeposit(BaseStart start) => StartRun(start, RunMode.Deposit, default);
 
+    /// <summary>Starts a Put away selected for the base that contains a start: a Deposit of only the given slots.</summary>
+    /// <param name="start">A station or position start.</param>
+    /// <param name="selection">The selected slots. Not null.</param>
+    /// <returns>What happened.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="selection"/> is null.</exception>
+    public OrganizeStartOutcome StartDepositSelected(BaseStart start, FavouriteSlots selection)
+    {
+        depositSelection = selection ?? throw new ArgumentNullException(nameof(selection));
+        try
+        {
+            return StartRun(start, RunMode.Deposit, default);
+        }
+        finally
+        {
+            depositSelection = null;
+        }
+    }
+
+    /// <summary>Starts a Deposit of the given slots at once, without the optional preview: the shortcut that sends one stack on a click.</summary>
+    /// <param name="start">The base's start.</param>
+    /// <param name="selection">The slots to move.</param>
+    /// <returns>The outcome.</returns>
+    public OrganizeStartOutcome StartQuickDeposit(BaseStart start, FavouriteSlots selection)
+    {
+        skipDepositPreview = true;
+        try
+        {
+            return StartDepositSelected(start, selection);
+        }
+        finally
+        {
+            skipDepositPreview = false;
+        }
+    }
+
+    private FavouriteSlots? depositSelection;
+
+    private bool skipDepositPreview;
+
     private OrganizeStartOutcome StartRun(BaseStart start, RunMode runMode, WorldPosition player)
     {
         bool asDeposit = runMode == RunMode.Deposit;
@@ -152,7 +192,9 @@ public sealed class OrganizeRunCoordinator
 
             madeDeposit = DepositPlanner.Plan(
                 inventory,
-                DepositExclusions.FromSettings(settings, port.Favourites),
+                depositSelection is null
+                    ? DepositExclusions.FromSettings(settings, port.Favourites)
+                    : DepositExclusions.FromSettings(settings, port.Favourites).OnlySelected(depositSelection),
                 resolution.Containers,
                 facts.Assignments,
                 facts.InUseBy,
@@ -199,7 +241,7 @@ public sealed class OrganizeRunCoordinator
         holderName = name;
         try
         {
-            if (asDeposit ? !settings.DepositPreview : settings.OrganizeSkipPreview)
+            if (asDeposit ? skipDepositPreview || !settings.DepositPreview : settings.OrganizeSkipPreview)
             {
                 BeginRun();
             }

@@ -24,8 +24,14 @@ public static class PersistenceKeys
     /// <summary>The key on a chest that holds its name.</summary>
     public const string ChestName = "basestorage.name";
 
+    /// <summary>The base name, stored on every station of a named base so it survives losing one of them.</summary>
+    public const string BaseName = "basestorage.base";
+
+    /// <summary>The creatures and biomes the player has met, stored on the character for the spoiler-free compendium.</summary>
+    public const string CompendiumSightings = "basestorage.seen";
+
     private static readonly ReadOnlyCollection<string> AllKeys =
-        new ReadOnlyCollection<string>(new[] { ChestCategory, OrganizeLock, Favourites, StationFeed, ChestName, FavouriteItems });
+        new ReadOnlyCollection<string>(new[] { ChestCategory, OrganizeLock, Favourites, StationFeed, ChestName, FavouriteItems, BaseName, CompendiumSightings });
 
     /// <summary>Gets every persistent key, in the order chest category, organize lock, favourites.</summary>
     public static IReadOnlyList<string> All => AllKeys;

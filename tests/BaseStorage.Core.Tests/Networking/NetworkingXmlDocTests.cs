@@ -11,7 +11,7 @@ using BaseStorage.Core.Tests.Abstractions;
 /// <summary>AC-6.1 (R9, ADR-GWIN-064): every public type and member of BaseStorage.Core.Networking has its summary, its params and its returns in BaseStorage.Core.xml.</summary>
 public sealed class NetworkingXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const string NetworkingNamespace = "BaseStorage.Core.Networking";
 
     // GW-U-813: XmlDocMembers.TargetsFor over the five Networking types (plus the PayloadTag const) finds a summary on each, a param for each parameter, and a returns on each non-void member.

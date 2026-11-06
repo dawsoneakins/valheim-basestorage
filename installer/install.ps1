@@ -1,4 +1,4 @@
-# BaseStorage installer. Runs under Windows PowerShell 5.1, so friends need nothing extra installed.
+# Don's QOL installer. Runs under Windows PowerShell 5.1, so friends need nothing extra installed.
 # It never touches save files, and it backs up any plugin file it replaces.
 param(
     [string]$GameDir,
@@ -14,7 +14,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-# Empty when the script runs from inside BaseStorage-Setup.bat, which has no folder of its own to read.
+# Empty when the script runs from inside Dons-QOL-Setup.bat, which has no folder of its own to read.
 $pluginSource = if ($PSScriptRoot) { Join-Path $PSScriptRoot 'plugin' } else { '' }
 $modTemp = $null
 
@@ -153,7 +153,7 @@ if (-not $IgnoreRunningGame -and (Get-Process -Name 'valheim' -ErrorAction Silen
     Stop-Install 'Valheim is running. Close it and run this again.'
 }
 
-if (-not $pluginSource -or -not (Test-Path -LiteralPath (Join-Path $pluginSource 'BaseStorage.dll'))) {
+if (-not $pluginSource -or -not (Test-Path -LiteralPath (Join-Path $pluginSource 'Dons-QOL.dll'))) {
     $modTemp = Get-Mod
     $pluginSource = $modTemp
 }
@@ -174,15 +174,25 @@ try {
         Install-BepInEx $dir
     }
 
-    $target = Join-Path $dir 'BepInEx\plugins\BaseStorage'
+    $target = Join-Path $dir 'BepInEx\plugins\Dons-QOL'
     New-Item -ItemType Directory -Force -Path $target | Out-Null
     $files = Get-ChildItem -LiteralPath $pluginSource -File
     $backup = $null
+    # Before the rename the plugin lived in plugins\BaseStorage. BepInEx would load both and see the same GUID twice, so back that folder up and remove it.
+    $oldTarget = Join-Path $dir 'BepInEx\plugins\BaseStorage'
+    if (Test-Path -LiteralPath $oldTarget) {
+        $backup = Join-Path $dir ('BepInEx\Dons-QOL-backup-' + (Get-Date -Format 'yyyyMMdd-HHmmss'))
+        New-Item -ItemType Directory -Force -Path $backup | Out-Null
+        Copy-Item -LiteralPath $oldTarget -Destination (Join-Path $backup 'BaseStorage') -Recurse -Force
+        Remove-Item -LiteralPath $oldTarget -Recurse -Force
+        Write-Host "Removed the old plugin folder $oldTarget (the rename to Dons-QOL)."
+    }
+
     foreach ($file in $files) {
         $existing = Join-Path $target $file.Name
         if (Test-Path -LiteralPath $existing) {
             if (-not $backup) {
-                $backup = Join-Path $dir ('BepInEx\BaseStorage-backup-' + (Get-Date -Format 'yyyyMMdd-HHmmss'))
+                $backup = Join-Path $dir ('BepInEx\Dons-QOL-backup-' + (Get-Date -Format 'yyyyMMdd-HHmmss'))
                 New-Item -ItemType Directory -Force -Path $backup | Out-Null
             }
 

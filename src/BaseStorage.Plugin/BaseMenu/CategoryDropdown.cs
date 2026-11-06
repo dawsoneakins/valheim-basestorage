@@ -78,7 +78,7 @@ internal static class CategoryDropdown
         Rows.Clear();
         Labels.Clear();
         root = VanillaButtonFactory.CreateNode(gui.m_inventoryRoot, RootId, new Vector2(Width, RowHeight), Vector2.zero, typeof(RectTransform), typeof(Image));
-        root.GetComponent<Image>().color = new Color(0.1f, 0.075f, 0.05f, 1f);
+        PanelStyle.Wood(root.GetComponent<Image>(), gui);
         root.AddComponent<LayoutElement>().ignoreLayout = true;
     }
 
@@ -88,7 +88,7 @@ internal static class CategoryDropdown
         {
             int index = i;
             GameObject row = VanillaButtonFactory.CreateNode(root!.transform, OptionId, new Vector2(Width - (2 * Pad), RowHeight - 2f), new Vector2(Pad, -Pad - (i * RowHeight)), typeof(RectTransform), typeof(Image), typeof(Button));
-            row.GetComponent<Image>().color = new Color(1f, 0.8f, 0.4f, 0.1f);
+            row.GetComponent<Image>().color = PanelStyle.Inset;
             row.GetComponent<Button>().onClick.AddListener(() => PatchSafety.Run(ClickKey, () => Choose(index)));
             TMP_Text? label = VanillaButtonFactory.CreateText(gui.m_craftingStationName, row.transform, LabelId);
             if (label != null)

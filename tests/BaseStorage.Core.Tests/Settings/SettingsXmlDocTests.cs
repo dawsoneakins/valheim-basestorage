@@ -15,7 +15,7 @@ using BaseStorage.Core.Settings;
 /// </summary>
 public sealed class SettingsXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const string SettingsNamespace = "BaseStorage.Core.Settings";
     private const BindingFlags Members = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
 

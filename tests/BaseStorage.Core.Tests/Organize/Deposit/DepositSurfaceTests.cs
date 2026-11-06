@@ -17,7 +17,7 @@ using BaseStorage.Core.Tests.Abstractions;
 public sealed class DepositSurfaceTests
 {
     private const string Namespace = "BaseStorage.Core.Organize.Deposit";
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
 
     private static Type[] ExportedTypes() => typeof(DepositPlanner).Assembly.GetExportedTypes()
         .Where(type => type.Namespace == Namespace)
@@ -56,7 +56,7 @@ public sealed class DepositSurfaceTests
         Assert.Equal(new[] { "Reasons", "Source", "StackIndex" }, Members(typeof(ExcludedStack)));
         Assert.Equal(new[] { "Container", "Height", "Id", "Stacks", "Width" }, Members(typeof(PlayerInventorySnapshot)));
         Assert.Equal(new[] { "IsEquipped", "Slot", "Stack", "Traits" }, Members(typeof(PlayerInventoryStack)));
-        Assert.Equal(new[] { "Favourites", "FromSettings", "IsNeverItem", "NeverItems" }, Members(typeof(DepositExclusions)));
+        Assert.Equal(new[] { "Favourites", "FromSettings", "IsNeverItem", "NeverItems", "OnlySelected", "Selection" }, Members(typeof(DepositExclusions)));
 
         Assert.Empty(typeof(DepositPlan).GetConstructors());
         Assert.Empty(typeof(ExcludedStack).GetConstructors());
@@ -88,7 +88,7 @@ public sealed class DepositSurfaceTests
         Assert.NotNull(typeof(DepositExclusion).GetCustomAttribute<FlagsAttribute>());
         Assert.NotNull(typeof(InventoryItemTraits).GetCustomAttribute<FlagsAttribute>());
         Assert.Equal(
-            new[] { ("None", 0), ("Hotbar", 1), ("Equipped", 2), ("Favourite", 4), ("NeverList", 8), ("SameItemAsExcluded", 16), ("InvalidStack", 32) },
+            new[] { ("None", 0), ("Hotbar", 1), ("Equipped", 2), ("Favourite", 4), ("NeverList", 8), ("SameItemAsExcluded", 16), ("InvalidStack", 32), ("NotSelected", 64) },
             Enum.GetValues(typeof(DepositExclusion)).Cast<DepositExclusion>().Select(v => (v.ToString(), (int)v)));
         Assert.Equal(
             new[] { ("None", 0), ("Equipped", 1), ("Mead", 4), ("Ammo", 8), ("Bait", 16) },

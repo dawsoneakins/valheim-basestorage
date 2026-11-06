@@ -1,5 +1,5 @@
-# BaseStorage uninstaller. Removes the plugin, and asks before removing BepInEx, because other mods may need it.
-# It leaves the config files, and it never touches save files. Vanilla ignores the keys BaseStorage left on chests.
+# Don's QOL uninstaller. Removes the plugin, and asks before removing BepInEx, because other mods may need it.
+# It leaves the config files, and it never touches save files. Vanilla ignores the keys Don's QOL left on chests.
 param(
     [string]$GameDir,
     [string]$SteamRoot,
@@ -67,9 +67,17 @@ if (-not (Test-GameDir $dir)) {
     }
 }
 
-$plugin = Join-Path $dir 'BepInEx\plugins\BaseStorage'
-if (Test-Path -LiteralPath $plugin) {
-    Remove-Item -LiteralPath $plugin -Recurse -Force
+$removed = $false
+# Dons-QOL is the current folder; BaseStorage is where versions before the rename installed.
+foreach ($name in 'Dons-QOL', 'BaseStorage') {
+    $plugin = Join-Path $dir ('BepInEx\plugins\' + $name)
+    if (Test-Path -LiteralPath $plugin) {
+        Remove-Item -LiteralPath $plugin -Recurse -Force
+        $removed = $true
+    }
+}
+
+if ($removed) {
     Write-Host "Don's QOL removed."
 } else {
     Write-Host "Don's QOL was not installed."

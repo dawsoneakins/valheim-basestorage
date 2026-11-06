@@ -40,7 +40,7 @@ public sealed class PlaytestFavouritesTests
         Assert.Contains("basestorage.fav", section);
         Assert.Contains("BaseStorage.inventory.slot.favourite-marker", section);
         Assert.Contains("1280x720", section);
-        Assert.Contains("BaseStorage.dll", section);
+        Assert.Contains("Dons-QOL.dll", section);
     }
 
     // GW-U-720

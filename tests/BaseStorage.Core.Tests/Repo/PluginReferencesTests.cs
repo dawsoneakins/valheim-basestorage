@@ -21,13 +21,14 @@ public sealed class PluginReferencesTests
         "UnityEngine.UIModule", // Edited by S-E004-012 (ADR-GWIN-136): Canvas for SA7/SA9 root canvas and scaleFactor (contract station-actions SA7, SA9).
         "UnityEngine.UI",
         "UnityEngine.PhysicsModule",
+        "UnityEngine.AnimationModule", // The character view's Animator; the game ships this module.
         "Unity.TextMeshPro",
     ];
 
     // GW-U-014
     // Edited by S-E004-012 (ADR-GWIN-136): eight becomes nine, with UnityEngine.UIModule for Canvas (contract station-actions SA7, SA9).
     [Fact]
-    public void PluginReferencesExactlyTheNineContractGameAssemblies()
+    public void PluginReferencesExactlyTheContractGameAssemblies()
     {
         XElement[] references = RepoRoot.Named(RepoRoot.LoadXml(ContractPaths.PluginProject), "Reference").ToArray();
         string[] names = references.Select(r => RepoRoot.Attr(r, "Include")).OrderBy(n => n, StringComparer.Ordinal).ToArray();

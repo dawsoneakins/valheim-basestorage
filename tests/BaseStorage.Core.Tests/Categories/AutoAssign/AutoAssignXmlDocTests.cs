@@ -12,7 +12,7 @@ using BaseStorage.Core.Tests.Snapshots;
 /// <summary>AC-10 (R9, CS1591): every public member of the AutoAssign namespace is documented in BaseStorage.Core.xml.</summary>
 public sealed class AutoAssignXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const string Namespace = "BaseStorage.Core.Categories.AutoAssign";
 
     // GW-U-533

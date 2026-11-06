@@ -15,7 +15,7 @@ using BaseStorage.Core.Tests.Snapshots;
 /// </summary>
 public sealed class PatchingXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const string PatchingNamespace = "BaseStorage.Core.Patching";
     private const BindingFlags Members = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
 

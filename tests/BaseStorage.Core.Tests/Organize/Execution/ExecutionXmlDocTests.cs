@@ -11,7 +11,7 @@ using BaseStorage.Core.Tests.Abstractions;
 /// <summary>GW-U-942 (AC-5, R9, CS1591): every public member of the 4 Execution types is documented in BaseStorage.Core.xml.</summary>
 public sealed class ExecutionXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const string Namespace = "BaseStorage.Core.Organize.Execution";
 
     // GW-U-942

@@ -9,7 +9,7 @@ using BaseStorage.PatchTargets.Tests.Checking;
 /// </summary>
 public sealed class AgreementCheckerTests
 {
-    private const string Plugin = @"C:\p\BaseStorage.dll";
+    private const string Plugin = @"C:\p\Dons-QOL.dll";
     private const string RecipeId = "Player.HaveRequirements(Recipe,System.Boolean,System.Int32,System.Int32)";
     private const string PieceId = "Player.HaveRequirements(Piece,Player+RequirementMode)";
     private const string RecipeClass = "BaseStorage.Plugin.Patches.PlayerHaveRequirementsRecipePatch";
@@ -46,7 +46,7 @@ public sealed class AgreementCheckerTests
     public void NoPatchWithTheRecipeEntryGivesTheBst2021RecipeLine()
     {
         Assert.Equal(
-            @"BST2021: PatchTargetNames.HarmonyPatched.PlayerHaveRequirementsRecipe = 'Player.HaveRequirements(Recipe,System.Boolean,System.Int32,System.Int32)' has no matching Harmony patch in 'C:\p\BaseStorage.dll'.",
+            @"BST2021: PatchTargetNames.HarmonyPatched.PlayerHaveRequirementsRecipe = 'Player.HaveRequirements(Recipe,System.Boolean,System.Int32,System.Int32)' has no matching Harmony patch in 'C:\p\Dons-QOL.dll'.",
             AgreementChecker.Compare(Array.Empty<PatchClass>(), new[] { RecipeEntry }, Plugin));
     }
 
@@ -56,7 +56,7 @@ public sealed class AgreementCheckerTests
     {
         string expected =
             "BST2020: Plugin patch class 'BaseStorage.Plugin.Patches.PlayerHaveRequirementsPiecePatch' targets 'Player.HaveRequirements(Piece,Player+RequirementMode)', which is not listed in PatchTargetNames.HarmonyPatched.\n"
-            + @"BST2021: PatchTargetNames.HarmonyPatched.PlayerHaveRequirementsRecipe = 'Player.HaveRequirements(Recipe,System.Boolean,System.Int32,System.Int32)' has no matching Harmony patch in 'C:\p\BaseStorage.dll'.";
+            + @"BST2021: PatchTargetNames.HarmonyPatched.PlayerHaveRequirementsRecipe = 'Player.HaveRequirements(Recipe,System.Boolean,System.Int32,System.Int32)' has no matching Harmony patch in 'C:\p\Dons-QOL.dll'.";
 
         Assert.Equal(expected, AgreementChecker.Compare(new[] { Patch(PieceClass, PieceId) }, new[] { RecipeEntry }, Plugin));
     }

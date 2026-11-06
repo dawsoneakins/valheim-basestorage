@@ -151,7 +151,7 @@ public sealed class PluginFavouritesSourceScanTests
     [Fact]
     public void TheCustomDataFieldIsReadOnlyInTheSessionFileOnly()
     {
-        Assert.Equal(new[] { SessionFile, RestockIdentityFile }, PluginSourceScan.FilesMatching(ScanWithFavourites(), "m_customData")); // Edited by S-QR-002 (ADR-GWIN-174)
+        Assert.Equal(new[] { "src/BaseStorage.Plugin/Compendium/CompendiumSightingTracker.cs", SessionFile, RestockIdentityFile }, PluginSourceScan.FilesMatching(ScanWithFavourites(), "m_customData")); // Edited by S-QR-002 (ADR-GWIN-174)
     }
 
     // GW-U-710
@@ -258,12 +258,19 @@ public sealed class PluginFavouritesSourceScanTests
                 "src/BaseStorage.Plugin/Building/PlayerTryPlacePiecePatch.cs",
                 "src/BaseStorage.Plugin/CategoryButton/InventoryGuiUpdateContainerPatch.cs",
                 // Edited by S-E010-002 (organize-console-command 6.2): the console registration patch file.
+                "src/BaseStorage.Plugin/CharacterMenu/HumanoidDropInvalidItemsPatch.cs",
+                "src/BaseStorage.Plugin/CharacterMenu/HumanoidEquipItemPatch.cs",
+                "src/BaseStorage.Plugin/CharacterMenu/HumanoidUnequipItemPatch.cs",
+                "src/BaseStorage.Plugin/CharacterMenu/InventoryGetEmptySlotsPatch.cs",
+                "src/BaseStorage.Plugin/CharacterMenu/InventoryHaveEmptySlotPatch.cs",
+                "src/BaseStorage.Plugin/CharacterMenu/InventoryMoveInventoryToGravePatch.cs",
                 "src/BaseStorage.Plugin/Commands/TerminalInitTerminalPatch.cs",
                 "src/BaseStorage.Plugin/Crafting/InventoryGuiDoCraftingPatch.cs",
                 "src/BaseStorage.Plugin/Crafting/PlayerConsumeResourcesPatch.cs",
                 "src/BaseStorage.Plugin/Crafting/PlayerHaveRequirementItemsPatch.cs",
                 "src/BaseStorage.Plugin/Favourites/HumanoidIsItemEquipedPatch.cs",
                 OnLeftDownFile,
+                "src/BaseStorage.Plugin/Favourites/InventoryGridOnRightDownPatch.cs",
                 UpdateGuiFile,
                 "src/BaseStorage.Plugin/Favourites/InventoryStackAllPatch.cs",
                 "src/BaseStorage.Plugin/Feeding/CookingStationAwakePatch.cs",
@@ -349,7 +356,7 @@ public sealed class PluginFavouritesSourceScanTests
     [Fact]
     public void NoPluginFileMentionsTheExcludedHandlersOrGridFields()
     {
-        Assert.Equal(new[] { "src/BaseStorage.Plugin/BaseMenu/InventoryGridGamepadPatch.cs" }, PluginSourceScan.FilesMatching(ScanWithFavourites(), "OnRightDown|UpdateGamepad|m_containerGrid|OnSelectedItem")); // Pauses the grid for the mod's panels; it does not touch favourites.
+        Assert.Equal(new[] { "src/BaseStorage.Plugin/BaseMenu/InventoryGridGamepadPatch.cs", "src/BaseStorage.Plugin/Favourites/InventoryGridOnRightDownPatch.cs" }, PluginSourceScan.FilesMatching(ScanWithFavourites(), "OnRightDown|UpdateGamepad|m_containerGrid|OnSelectedItem")); // Pauses the grid for the mod's panels; it does not touch favourites.
     }
 
     // GW-U-713
@@ -478,12 +485,12 @@ public sealed class PluginFavouritesSourceScanTests
 
     // GW-U-715
     [Fact]
-    public void TheMarkerIsNonInteractiveAndSitsBottomRightOnTopOfTheIcon()
+    public void TheMarkerIsNonInteractiveAndSitsTopLeftOnTopOfTheIcon()
     {
         string text = MarkersText();
 
         Assert.Contains("raycastTarget = false", text, StringComparison.Ordinal);
-        Assert.True(Regex.Matches(text, @"new Vector2\(1f, 0f\)").Count >= 3, "anchorMin, anchorMax and pivot must be bottom-right.");
+        Assert.True(Regex.Matches(text, @"new Vector2\(0f, 1f\)").Count >= 3, "anchorMin, anchorMax and pivot must be top-left, clear of the stack count.");
         Assert.Contains("clone.enabled = true", text, StringComparison.Ordinal);
         Assert.Contains("SetAsLastSibling()", text, StringComparison.Ordinal);
         Assert.Contains("m_icon.transform.parent", text, StringComparison.Ordinal);

@@ -9,12 +9,14 @@ public sealed class MenuButtonSpec : IEquatable<MenuButtonSpec>
 {
     private readonly float width;
     private readonly bool startsRow;
+    private readonly bool hasHeading;
 
     /// <summary>Creates a button spec.</summary>
     /// <param name="width">The button's measured width.</param>
     /// <param name="startsRow">True when this button begins a new row unless the current row is empty.</param>
+    /// <param name="hasHeading">True when a group's heading sits above this button, which always starts a new row.</param>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="width"/> is not finite or not above 0.</exception>
-    public MenuButtonSpec(float width, bool startsRow)
+    public MenuButtonSpec(float width, bool startsRow, bool hasHeading = false)
     {
         if (float.IsNaN(width) || float.IsInfinity(width) || width <= 0f)
         {
@@ -23,6 +25,7 @@ public sealed class MenuButtonSpec : IEquatable<MenuButtonSpec>
 
         this.width = width;
         this.startsRow = startsRow;
+        this.hasHeading = hasHeading;
     }
 
     /// <summary>Gets the measured width.</summary>
@@ -30,6 +33,9 @@ public sealed class MenuButtonSpec : IEquatable<MenuButtonSpec>
 
     /// <summary>Gets a value that is true when this button begins a new row.</summary>
     public bool StartsRow => startsRow;
+
+    /// <summary>Gets a value that is true when a group's heading sits above this button.</summary>
+    public bool HasHeading => hasHeading;
 
     /// <summary>Compares two specs by value.</summary>
     /// <param name="left">The left spec.</param>
@@ -46,7 +52,7 @@ public sealed class MenuButtonSpec : IEquatable<MenuButtonSpec>
     /// <summary>Compares the two values.</summary>
     /// <param name="other">The other spec.</param>
     /// <returns>True when equal.</returns>
-    public bool Equals(MenuButtonSpec? other) => other is not null && width == other.width && startsRow == other.startsRow;
+    public bool Equals(MenuButtonSpec? other) => other is not null && width == other.width && startsRow == other.startsRow && hasHeading == other.hasHeading;
 
     /// <summary>Compares with another object.</summary>
     /// <param name="obj">The other object.</param>

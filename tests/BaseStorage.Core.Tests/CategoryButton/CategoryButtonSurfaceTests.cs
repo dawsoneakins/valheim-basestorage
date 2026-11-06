@@ -10,7 +10,7 @@ using BaseStorage.Core.Tests.Snapshots;
 public sealed class CategoryButtonSurfaceTests
 {
     private const string Namespace = "BaseStorage.Core.CategoryButton";
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const BindingFlags PublicDeclared = BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly;
 
     // GW-U-1304

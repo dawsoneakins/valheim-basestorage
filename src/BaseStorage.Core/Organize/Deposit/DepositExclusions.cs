@@ -23,7 +23,13 @@ public sealed class DepositExclusions
     /// <exception cref="ArgumentNullException"><paramref name="favourites"/> or <paramref name="neverItems"/> is null.</exception>
     /// <exception cref="ArgumentException"><paramref name="neverItems"/> contains a null entry.</exception>
     public DepositExclusions(FavouriteSlots favourites, IReadOnlyList<string> neverItems)
+        : this(favourites, neverItems, null)
     {
+    }
+
+    private DepositExclusions(FavouriteSlots favourites, IReadOnlyList<string> neverItems, FavouriteSlots? selection)
+    {
+        Selection = selection;
         Favourites = favourites ?? throw new ArgumentNullException(nameof(favourites));
         if (neverItems is null)
         {
@@ -58,6 +64,18 @@ public sealed class DepositExclusions
 
     /// <summary>Gets the DepositNeverItems entries, verbatim and in order, read-only.</summary>
     public IReadOnlyList<string> NeverItems { get; }
+
+    /// <summary>Gets the slots of a Put away selected, or null for a normal Put away.</summary>
+    public FavouriteSlots? Selection { get; }
+
+    /// <summary>Makes the same exclusions for a Put away selected: only the given slots move, and picking them overrides the hotbar, favourite and never-list rules.</summary>
+    /// <param name="selection">The selected slots. Not null.</param>
+    /// <returns>The new exclusions.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="selection"/> is null.</exception>
+    public DepositExclusions OnlySelected(FavouriteSlots selection)
+    {
+        return new DepositExclusions(Favourites, NeverItems, selection ?? throw new ArgumentNullException(nameof(selection)));
+    }
 
     /// <summary>Reads the never list from the settings once and pairs it with the favourites.</summary>
     /// <param name="settings">The settings read path; its DepositNeverItems is read once, now.</param>

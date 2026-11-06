@@ -31,7 +31,7 @@ public static class PeerVersionMessages
             case PeerVersionAction.RefuseMismatch:
                 return head + " refused, versions differ, host " + Host(result) + ", client " + Client(result);
             case PeerVersionAction.RefuseMissing:
-                return head + " refused, no BaseStorage payload, host " + Host(result);
+                return head + " refused, no Dons-QOL payload, host " + Host(result);
             case PeerVersionAction.Disconnect:
                 return head + " disconnected after refusal";
             case PeerVersionAction.LeaveMismatch:

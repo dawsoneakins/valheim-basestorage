@@ -13,7 +13,7 @@ using Xunit;
 /// <summary>AC-3 (contract 0.1 R9): every public member of the four Consumption types is documented in BaseStorage.Core.xml.</summary>
 public sealed class ConsumptionXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
 
     // GW-U-540 (AC-3, R9): each type and member has a summary, each parameter a param, and each non-void member a returns.
     [Fact]

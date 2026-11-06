@@ -13,7 +13,7 @@ using BaseStorage.Core.Tests.Abstractions;
 /// </summary>
 public sealed class PersistenceXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
 
     // GW-U-079
     [Fact]

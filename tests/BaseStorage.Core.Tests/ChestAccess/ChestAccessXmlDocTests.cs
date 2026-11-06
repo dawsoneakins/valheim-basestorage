@@ -7,7 +7,7 @@ using BaseStorage.Core.Tests.Snapshots;
 /// <summary>GW-U-761 (AC-1): every public member of the 4 ChestAccess types is documented in BaseStorage.Core.xml with summary, param and returns.</summary>
 public sealed class ChestAccessXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const string Namespace = "BaseStorage.Core.ChestAccess";
 
     // GW-U-761

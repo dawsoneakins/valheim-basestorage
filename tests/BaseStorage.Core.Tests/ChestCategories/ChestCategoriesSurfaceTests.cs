@@ -10,7 +10,7 @@ using BaseStorage.Core.Tests.Snapshots;
 public sealed class ChestCategoriesSurfaceTests
 {
     private const string Namespace = "BaseStorage.Core.ChestCategories";
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const BindingFlags PublicDeclared = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
 
     // GW-U-1212

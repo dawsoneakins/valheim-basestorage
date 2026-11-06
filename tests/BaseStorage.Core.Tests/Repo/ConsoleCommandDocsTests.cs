@@ -18,7 +18,7 @@ public sealed class ConsoleCommandDocsTests
     private const string ChangelogFile = "CHANGELOG.md";
     private const string ReadmeHeading = @"^## Console command[ \t]*$";
     private const string AddedHeading = "## Organize console command (S-E010-002)";
-    private const string ChangelogPrefix = "- Console command `basestorage organize`: ";
+    private const string ChangelogPrefix = "- Console command `dons-qol organize`: ";
 
     private static readonly string AddedPreamble = string.Join(
         "\n",
@@ -41,12 +41,12 @@ public sealed class ConsoleCommandDocsTests
         Assert.True(stationButtons.Index < headings[0].Index && headings[0].Index < knownLimits.Index, "The Console command section must sit between Station buttons and Known limits.");
 
         string section = text.Substring(headings[0].Index, knownLimits.Index - headings[0].Index);
-        Assert.Contains("basestorage organize", section, StringComparison.Ordinal);
+        Assert.Contains("dons-qol organize", section, StringComparison.Ordinal);
         Assert.Contains("-console", section, StringComparison.Ordinal);
         Assert.Contains("F5", section, StringComparison.Ordinal);
         Assert.Contains("Not in a base", section, StringComparison.Ordinal);
         Assert.Contains("Organize in progress by <name>", section, StringComparison.Ordinal);
-        Assert.Contains("Usage: basestorage organize", section, StringComparison.Ordinal);
+        Assert.Contains("Usage: dons-qol organize", section, StringComparison.Ordinal);
         Assert.Contains("in-game console", section, StringComparison.Ordinal);
         Assert.Single(Regex.Matches(text, Regex.Escape("Console and crossplay players are not supported.")));
     }
@@ -61,11 +61,11 @@ public sealed class ConsoleCommandDocsTests
         Assert.Single(Regex.Matches(text, "^" + Regex.Escape(AddedHeading) + "[ \t]*$", RegexOptions.Multiline));
 
         string section = text.Substring(text.IndexOf(AddedHeading, StringComparison.Ordinal));
-        Assert.Contains("basestorage organize", section, StringComparison.Ordinal);
+        Assert.Contains("dons-qol organize", section, StringComparison.Ordinal);
         Assert.Contains("Terminal.InitTerminal", section, StringComparison.Ordinal);
         Assert.Contains("Not in a base", section, StringComparison.Ordinal);
         Assert.Contains("Organize in progress by <name>", section, StringComparison.Ordinal);
-        Assert.Contains("Usage: basestorage organize", section, StringComparison.Ordinal);
+        Assert.Contains("Usage: dons-qol organize", section, StringComparison.Ordinal);
     }
 
     // GW-U-2327 (7.4): the CHANGELOG bullet is the last bullet of the first Unreleased Added list, and Changed stays last.

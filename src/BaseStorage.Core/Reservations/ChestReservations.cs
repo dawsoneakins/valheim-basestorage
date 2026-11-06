@@ -72,6 +72,39 @@ public sealed class ChestReservations<TOperation>
         return created;
     }
 
+    /// <summary>
+    /// Begins a reservation with its own timeout, for an operation that must hold a chest for longer than the usual reservation lasts.
+    /// A timed-out reservation lets go of its chest, so a base move holds its chests with a long one until the host's write has arrived.
+    /// </summary>
+    /// <param name="chest">The chest; must not be the none id.</param>
+    /// <param name="operation">The operation; must not be null.</param>
+    /// <param name="timeoutMs">The timeout in milliseconds; must be at least 1.</param>
+    /// <returns>The new reservation, or null when a non-terminal reservation of the chest exists.</returns>
+    /// <exception cref="ArgumentException">Thrown when the chest is the none id.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when the operation is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the timeout is less than 1.</exception>
+    public Reservation<TOperation>? BeginWithTimeout(ContainerId chest, TOperation operation, int timeoutMs)
+    {
+        if (chest.IsNone)
+        {
+            throw new ArgumentException("The chest must not be the none id.", nameof(chest));
+        }
+
+        if (operation is null)
+        {
+            throw new ArgumentNullException(nameof(operation));
+        }
+
+        if (byChest.TryGetValue(chest, out Reservation<TOperation>? existing) && !existing.IsTerminal)
+        {
+            return null;
+        }
+
+        var created = new Reservation<TOperation>(chest, operation, clock, timeoutMs);
+        byChest[chest] = created;
+        return created;
+    }
+
     /// <summary>Gets the latest reservation stored for a chest, terminal or not. Never throws.</summary>
     /// <param name="chest">The chest to look up.</param>
     /// <returns>The stored reservation, or null when there is none.</returns>

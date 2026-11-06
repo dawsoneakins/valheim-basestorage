@@ -53,12 +53,12 @@ public sealed class SolutionLayoutTests
 
     // GW-U-002
     [Fact]
-    public void PluginAssemblyNameIsBaseStorage()
+    public void PluginAssemblyNameIsDonsQol()
     {
         XDocument doc = RepoRoot.LoadXml(ContractPaths.PluginProject);
         string[] names = RepoRoot.Named(doc, "AssemblyName").Select(e => e.Value.Trim()).ToArray();
 
-        Assert.Equal(new[] { "BaseStorage" }, names);
+        Assert.Equal(new[] { "Dons-QOL" }, names);
     }
 
     // GW-U-003

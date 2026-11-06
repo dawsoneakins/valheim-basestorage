@@ -25,7 +25,7 @@ public sealed class SkipGateTests : IDisposable
 
         Assert.Equal(
             "BST2002: Skipped: ValheimDir '" + missing + "' does not exist." + Tail,
-            Decide(missing, @"C:\p\BaseStorage.dll", needsPlugin: false));
+            Decide(missing, @"C:\p\Dons-QOL.dll", needsPlugin: false));
     }
 
     // GW-U-102
@@ -36,7 +36,7 @@ public sealed class SkipGateTests : IDisposable
 
         Assert.Equal(
             "BST2003: Skipped: '" + folder + @"\valheim_Data\Managed\assembly_valheim.dll' does not exist." + Tail,
-            Decide(folder, @"C:\p\BaseStorage.dll", needsPlugin: false));
+            Decide(folder, @"C:\p\Dons-QOL.dll", needsPlugin: false));
     }
 
     // GW-U-102
@@ -44,7 +44,7 @@ public sealed class SkipGateTests : IDisposable
     public void MissingPluginGivesBst2004WithThePathAndTheConfiguration()
     {
         string folder = TempFolder("PlaceholderValheim");
-        string plugin = Path.Combine(Path.GetTempPath(), "missing-plugin", "BaseStorage.dll");
+        string plugin = Path.Combine(Path.GetTempPath(), "missing-plugin", "Dons-QOL.dll");
 
         Assert.Equal(
             "BST2004: Skipped: Plugin assembly '" + plugin + "' does not exist. Build BaseStorage.sln -c Release first.",
@@ -59,7 +59,7 @@ public sealed class SkipGateTests : IDisposable
 
         Assert.Null(Decide(
             folder,
-            Path.Combine(Path.GetTempPath(), "missing-plugin", "BaseStorage.dll"),
+            Path.Combine(Path.GetTempPath(), "missing-plugin", "Dons-QOL.dll"),
             needsPlugin: false,
             fileExists: p => p == GameDllOf(folder)));
     }
@@ -69,7 +69,7 @@ public sealed class SkipGateTests : IDisposable
     public void AllPresentGivesNull()
     {
         string folder = TempFolder("AllPresent");
-        string plugin = Path.Combine(TempFolder("PluginFolder"), "BaseStorage.dll");
+        string plugin = Path.Combine(TempFolder("PluginFolder"), "Dons-QOL.dll");
 
         Assert.Null(Decide(folder, plugin, needsPlugin: true, fileExists: p => p == GameDllOf(folder) || p == plugin));
     }
@@ -82,7 +82,7 @@ public sealed class SkipGateTests : IDisposable
 
         Assert.Equal(
             "BST2002: Skipped: ValheimDir '" + missing + "' does not exist." + Tail,
-            Decide(missing, Path.Combine(Path.GetTempPath(), "missing-plugin", "BaseStorage.dll"), needsPlugin: true));
+            Decide(missing, Path.Combine(Path.GetTempPath(), "missing-plugin", "Dons-QOL.dll"), needsPlugin: true));
     }
 
     // GW-U-102
@@ -91,7 +91,7 @@ public sealed class SkipGateTests : IDisposable
     {
         string folder = TempFolder("TrailingValheim") + @"\";
 
-        string? message = Decide(folder, pluginDll: @"C:\p\BaseStorage.dll", needsPlugin: false);
+        string? message = Decide(folder, pluginDll: @"C:\p\Dons-QOL.dll", needsPlugin: false);
 
         Assert.Equal(
             "BST2003: Skipped: '" + folder + @"\valheim_Data\Managed\assembly_valheim.dll' does not exist." + Tail,

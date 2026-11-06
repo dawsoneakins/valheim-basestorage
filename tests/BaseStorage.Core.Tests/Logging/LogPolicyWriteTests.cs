@@ -11,7 +11,7 @@ public sealed class LogPolicyWriteTests
 {
     // GW-U-203
     [Theory]
-    [InlineData(0, LogSeverity.Info, "BaseStorage 0.1.0 loaded")]
+    [InlineData(0, LogSeverity.Info, "Dons-QOL 0.1.0 loaded")]
     [InlineData(1, LogSeverity.Info, "Config synced from host: 6 host-synced settings applied")]
     [InlineData(2, LogSeverity.Info, "Organize: moved 412 items in 37 stacks across 9 chests")]
     [InlineData(3, LogSeverity.Info, "Deposit: stored 128 items in 4 chests, 2 favourite stacks kept")]
@@ -58,7 +58,7 @@ public sealed class LogPolicyWriteTests
     [Fact]
     public void WriteToANullSinkReturnsNormally()
     {
-        LogPolicyApi.Write(null, Cat.Load, "BaseStorage 0.1.0 loaded");
+        LogPolicyApi.Write(null, Cat.Load, "Dons-QOL 0.1.0 loaded");
     }
 
     // GW-U-204
@@ -67,7 +67,7 @@ public sealed class LogPolicyWriteTests
     {
         var sink = new RecordingSink { ThrowOnLog = true };
 
-        LogPolicyApi.Write(sink, Cat.Load, "BaseStorage 0.1.0 loaded");
+        LogPolicyApi.Write(sink, Cat.Load, "Dons-QOL 0.1.0 loaded");
 
         Assert.Equal(1, sink.LogCalls);
     }

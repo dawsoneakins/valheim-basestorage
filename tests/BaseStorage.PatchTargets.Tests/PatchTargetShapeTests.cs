@@ -146,11 +146,17 @@ public sealed class PatchTargetShapeTests
             new("Hud", "SetupPieceInfo", TargetKind.MethodOverloads, "SetupPieceInfo", null),
             new("Hud", "SetupPieceInfoParametersPiece", TargetKind.OverloadCompanion, "Piece", "SetupPieceInfo"),
             new("Hud", "TypeName", TargetKind.TypeEntry, "Hud", null),
+            new("Humanoid", "DropInvalidItems", TargetKind.MethodOverloads, "DropInvalidItems", null),
+            new("Humanoid", "DropInvalidItemsParametersNone", TargetKind.OverloadCompanion, "", "DropInvalidItems"),
+            new("Humanoid", "EquipItem", TargetKind.MethodOverloads, "EquipItem", null),
+            new("Humanoid", "EquipItemParametersItemEffects", TargetKind.OverloadCompanion, "ItemDrop+ItemData,System.Boolean", "EquipItem"),
             new("Humanoid", "GetInventory", TargetKind.MethodNameOnly, "GetInventory", null),
             new("Humanoid", "GetRightItem", TargetKind.MethodNameOnly, "GetRightItem", null),
             new("Humanoid", "IsItemEquiped", TargetKind.MethodOverloads, "IsItemEquiped", null),
             new("Humanoid", "IsItemEquipedParametersItem", TargetKind.OverloadCompanion, "ItemDrop+ItemData", "IsItemEquiped"),
             new("Humanoid", "TypeName", TargetKind.TypeEntry, "Humanoid", null),
+            new("Humanoid", "UnequipItem", TargetKind.MethodOverloads, "UnequipItem", null),
+            new("Humanoid", "UnequipItemParametersItemEffects", TargetKind.OverloadCompanion, "ItemDrop+ItemData,System.Boolean", "UnequipItem"),
             new("Inventory", "AddItem", TargetKind.MethodOverloads, "AddItem", null),
             new("Inventory", "AddItemParametersItem", TargetKind.OverloadCompanion, "ItemDrop+ItemData", "AddItem"),
             new("Inventory", "AddItemParametersItemPosition", TargetKind.OverloadCompanion, "ItemDrop+ItemData,Vector2i", "AddItem"), // Edited by S-QR-002 (ADR-GWIN-176)
@@ -161,9 +167,15 @@ public sealed class PatchTargetShapeTests
             new("Inventory", "CountItems", TargetKind.MethodNameOnly, "CountItems", null),
             new("Inventory", "GetAllItems", TargetKind.MethodOverloads, "GetAllItems", null),
             new("Inventory", "GetAllItemsParametersNone", TargetKind.OverloadCompanion, "", "GetAllItems"),
+            new("Inventory", "GetEmptySlots", TargetKind.MethodOverloads, "GetEmptySlots", null),
+            new("Inventory", "GetEmptySlotsParametersNone", TargetKind.OverloadCompanion, "", "GetEmptySlots"),
             new("Inventory", "GetHeight", TargetKind.MethodNameOnly, "GetHeight", null),
             new("Inventory", "GetItemAt", TargetKind.MethodNameOnly, "GetItemAt", null),
             new("Inventory", "GetWidth", TargetKind.MethodNameOnly, "GetWidth", null),
+            new("Inventory", "HaveEmptySlot", TargetKind.MethodOverloads, "HaveEmptySlot", null),
+            new("Inventory", "HaveEmptySlotParametersNone", TargetKind.OverloadCompanion, "", "HaveEmptySlot"),
+            new("Inventory", "MoveInventoryToGrave", TargetKind.MethodOverloads, "MoveInventoryToGrave", null),
+            new("Inventory", "MoveInventoryToGraveParametersOriginal", TargetKind.OverloadCompanion, "Inventory", "MoveInventoryToGrave"),
             new("Inventory", "RemoveItem", TargetKind.MethodOverloads, "RemoveItem", null),
             new("Inventory", "RemoveItemParametersItemAmount", TargetKind.OverloadCompanion, "ItemDrop+ItemData,System.Int32", "RemoveItem"),
             new("Inventory", "Save", TargetKind.MethodNameOnly, "Save", null),
@@ -180,6 +192,8 @@ public sealed class PatchTargetShapeTests
             new("InventoryGrid", "GetInventory", TargetKind.MethodNameOnly, "GetInventory", null),
             new("InventoryGrid", "OnLeftDown", TargetKind.MethodOverloads, "OnLeftDown", null),
             new("InventoryGrid", "OnLeftDownParametersHandler", TargetKind.OverloadCompanion, "UIInputHandler", "OnLeftDown"),
+            new("InventoryGrid", "OnRightDown", TargetKind.MethodOverloads, "OnRightDown", null),
+            new("InventoryGrid", "OnRightDownParametersHandler", TargetKind.OverloadCompanion, "UIInputHandler", "OnRightDown"),
             new("InventoryGrid", "TypeName", TargetKind.TypeEntry, "InventoryGrid", null),
             new("InventoryGrid", "UpdateGamepad", TargetKind.MethodOverloads, "UpdateGamepad", null),
             new("InventoryGrid", "UpdateGamepadParametersNone", TargetKind.OverloadCompanion, "", "UpdateGamepad"),
@@ -505,10 +519,10 @@ public sealed class PatchTargetShapeTests
         // Edited by S-E004-012 (ADR-GWIN-136): plus the 15 station-actions rows (1, 1, 1, 0, 6, 6) = 385.
         // Edited by S-E004-015 (ADR-GWIN-143): plus the seven Deposit rows (0, 0, 0, 1, 3, 3) = 392, as 48, 41, 45, 102, 78 and 78.
         // Edited by S-E010-002 (organize-console-command 6.2): 404, by kind 52, 43, 47, 102, 80 and 80.
-        Assert.Equal(458, entries.Count); // Edited by S-QR-002 (ADR-GWIN-176)
+        Assert.Equal(472, entries.Count); // Edited by S-QR-002 (ADR-GWIN-176)
         Assert.Equal(57, entries.Count(e => e.Kind == TargetKind.TypeEntry));
-        Assert.Equal(61, entries.Count(e => e.Kind == TargetKind.MethodOverloads));
-        Assert.Equal(66, entries.Count(e => e.Kind == TargetKind.OverloadCompanion)); // Edited by S-QR-002 (ADR-GWIN-176)
+        Assert.Equal(68, entries.Count(e => e.Kind == TargetKind.MethodOverloads));
+        Assert.Equal(73, entries.Count(e => e.Kind == TargetKind.OverloadCompanion)); // Edited by S-QR-002 (ADR-GWIN-176)
         Assert.Equal(104, entries.Count(e => e.Kind == TargetKind.MethodNameOnly));
         Assert.Equal(85, entries.Count(e => e.Kind == TargetKind.FieldEntry)); // Edited by S-QR-002 (ADR-GWIN-176)
         Assert.Equal(85, entries.Count(e => e.Kind == TargetKind.FieldTypeCompanion)); // Edited by S-QR-002 (ADR-GWIN-176)
@@ -533,8 +547,13 @@ public sealed class PatchTargetShapeTests
                 new HarmonyEntry("FireplaceGetHoverText", "Fireplace.GetHoverText()"),
                 new HarmonyEntry("FireplaceInteract", "Fireplace.Interact(Humanoid,System.Boolean,System.Boolean)"),
                 new HarmonyEntry("HudSetupPieceInfo", "Hud.SetupPieceInfo(Piece)"),
+                new HarmonyEntry("HumanoidDropInvalidItems", "Humanoid.DropInvalidItems()"),
+                new HarmonyEntry("HumanoidEquipItem", "Humanoid.EquipItem(ItemDrop+ItemData,System.Boolean)"),
                 new HarmonyEntry("HumanoidIsItemEquiped", "Humanoid.IsItemEquiped(ItemDrop+ItemData)"),
+                new HarmonyEntry("HumanoidUnequipItem", "Humanoid.UnequipItem(ItemDrop+ItemData,System.Boolean)"),
+                new HarmonyEntry("InventoryGetEmptySlots", "Inventory.GetEmptySlots()"),
                 new HarmonyEntry("InventoryGridOnLeftDown", "InventoryGrid.OnLeftDown(UIInputHandler)"),
+                new HarmonyEntry("InventoryGridOnRightDown", "InventoryGrid.OnRightDown(UIInputHandler)"),
                 new HarmonyEntry("InventoryGridUpdateGamepad", "InventoryGrid.UpdateGamepad()"),
                 new HarmonyEntry("InventoryGridUpdateGui", "InventoryGrid.UpdateGui(Player,ItemDrop+ItemData)"),
                 new HarmonyEntry("InventoryGuiDoCrafting", "InventoryGui.DoCrafting(Player)"),
@@ -544,6 +563,8 @@ public sealed class PatchTargetShapeTests
                 new HarmonyEntry("InventoryGuiUpdateContainer", "InventoryGui.UpdateContainer(Player)"),
                 new HarmonyEntry("InventoryGuiUpdateRecipe", "InventoryGui.UpdateRecipe(Player,System.Single)"), // Edited by S-E004-012 (ADR-GWIN-136).
                 new HarmonyEntry("InventoryGuiUpdateRecipeGamepadInput", "InventoryGui.UpdateRecipeGamepadInput()"),
+                new HarmonyEntry("InventoryHaveEmptySlot", "Inventory.HaveEmptySlot()"),
+                new HarmonyEntry("InventoryMoveInventoryToGrave", "Inventory.MoveInventoryToGrave(Inventory)"),
                 new HarmonyEntry("InventoryStackAll", "Inventory.StackAll(Inventory,System.Boolean)"),
                 new HarmonyEntry("ItemDataGetTooltip", "ItemDrop+ItemData.GetTooltip(ItemDrop+ItemData,System.Int32,System.Boolean,System.Single,System.Int32,System.Boolean)"),
                 new HarmonyEntry("PlayerConsumeResources", "Player.ConsumeResources(Piece+Requirement[],System.Int32,System.Int32,System.Int32)"),

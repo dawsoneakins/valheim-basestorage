@@ -11,7 +11,7 @@ using BaseStorage.Core.Locking;
 /// <summary>AC-8 (R9, ADR-GWIN-027): every public type and member of BaseStorage.Core.Locking has its summary, its params and its returns in BaseStorage.Core.xml.</summary>
 public sealed class LockingXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const string LockingNamespace = "BaseStorage.Core.Locking";
 
     // GW-U-284 (AC-8): XmlDocMembers.TargetsFor over the four Locking types finds a summary on each, a param for each parameter, and a returns on each non-void member.

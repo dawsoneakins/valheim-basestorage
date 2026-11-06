@@ -1,6 +1,6 @@
-# BaseStorage (working title): Valheim mod spec and acceptance criteria, v1
+# Don's QOL (formerly BaseStorage): Valheim mod spec and acceptance criteria, v1
 
-BaseStorage is a BepInEx mod for Valheim with two features:
+Don's QOL (code name BaseStorage) is a BepInEx mod for Valheim with two features:
 
 1. **Craft from the base.** Every chest in your base counts as if it were in your inventory when you craft, upgrade or build.
 2. **Organize the base.** One button at any crafting station (workbench, forge and so on) sorts the whole base so that like items live together. Each chest belongs to a category (metals, wood, food and so on), and an Organize moves every item into a chest of its category.
@@ -45,7 +45,7 @@ package/                       Thunderstore package sources (manifest.json, icon
 - **Never commit game assemblies** or any file from the game folder.
 - **No runtime dependencies** beyond BepInEx, HarmonyX and what the game ships. No Jötunn, no ServerSync: config sync and version checks are implemented in the mod (E6). Anything else needs an ADR in `docs/adr/`.
 - **Language and style.** C# `LangVersion` latest, nullable enabled in Core, `TreatWarningsAsErrors` in Release. An `.editorconfig` must keep `dotnet format --verify-no-changes` clean.
-- **Plugin identity.** GUID `dawso.valheim.basestorage`, name `BaseStorage`, SemVer version starting at `0.1.0`. A single `Version.props` (or equivalent) is the only place the version is written, and the plugin attribute, Thunderstore manifest and network version check all read from it.
+- **Plugin identity.** GUID `dawso.valheim.basestorage`, name `Don's QOL` (files and folders `Dons-QOL`), SemVer version starting at `0.1.0`. A single `Version.props` (or equivalent) is the only place the version is written, and the plugin attribute, Thunderstore manifest and network version check all read from it.
 
 ## 4. Gate commands (mandatory: the pipeline gates call these)
 
@@ -57,7 +57,7 @@ dotnet test  BaseStorage.sln -c Release --nologo                (test gate)
 dotnet format BaseStorage.sln --verify-no-changes               (lint gate)
 ```
 
-Building must never write into the game folder. An opt-in MSBuild target, `-p:DeployToGame=true`, copies `BaseStorage.dll` to `$(ValheimDir)\BepInEx\plugins\BaseStorage\`, and only if that BepInEx folder already exists. Gates never pass it.
+Building must never write into the game folder. An opt-in MSBuild target, `-p:DeployToGame=true`, copies `Dons-QOL.dll` to `$(ValheimDir)\BepInEx\plugins\Dons-QOL\`, and only if that BepInEx folder already exists. Gates never pass it.
 
 ## 5. Epics and acceptance criteria
 
@@ -66,7 +66,7 @@ IDs are stable. Reference them from ROADMAP stories as "AC-x.y".
 ### E1 Foundations
 
 - **AC-1.1 Solution scaffold.** The layout in section 3 exists, and all three gate commands in section 4 exit 0. Core has zero references to Unity, Valheim or BepInEx assemblies; a test asserts this by inspecting Core's referenced assemblies.
-- **AC-1.2 Plugin boots.** `BaseStorage.Plugin` builds to `BaseStorage.dll` with a `[BepInPlugin]` entry point. On load it applies all Harmony patches through one `Harmony` instance, logs `BaseStorage <version> loaded` through the BepInEx logger, and reports any patch that fails to apply by name rather than throwing.
+- **AC-1.2 Plugin boots.** `BaseStorage.Plugin` builds to `Dons-QOL.dll` with a `[BepInPlugin]` entry point. On load it applies all Harmony patches through one `Harmony` instance, logs `Dons-QOL <version> loaded` through the BepInEx logger, and reports any patch that fails to apply by name rather than throwing.
 - **AC-1.3 Patch safety wrapper.** A shared helper wraps every patch body. An exception is logged once per patch per session, with the stack trace at Debug level, and vanilla behaviour continues. The helper's Core-testable part, a per-key rate-limited error reporter, has unit tests.
 - **AC-1.4 Patch-target contract test.** `BaseStorage.PatchTargets.Tests` loads `assembly_valheim.dll` from `$(ValheimDir)` with `System.Reflection.MetadataLoadContext` (read-only, game not running). It asserts that every type, method overload, field and RPC name the plugin depends on exists with the expected signature. The plugin's patch list is the single source for these targets, either by reflection over the attributes or by a shared constants file. When `ValheimDir` is missing, the tests are skipped with a clear message rather than failing. This is the early warning for game updates.
 - **AC-1.5 Config.** All user settings are BepInEx `ConfigEntry` values in `BepInEx/config/dawso.valheim.basestorage.cfg`, grouped into sections with descriptions. Section 7 lists the settings and defaults. Settings marked "host-synced" are overridden by the host's values in multiplayer (AC-6.2).
@@ -178,7 +178,7 @@ IDs are stable. Reference them from ROADMAP stories as "AC-x.y".
 
 ### E7 Packaging, docs and playtest
 
-- **AC-7.1 Thunderstore package.** An opt-in target or script (`dotnet build -c Release -p:PackageThunderstore=true`) produces `dist/BaseStorage-<version>.zip` containing `manifest.json` (name, version, description, `BepInEx-BepInExPack_Valheim` dependency), `icon.png` (256×256), `README.md`, `CHANGELOG.md` and `plugins/BaseStorage.dll`. This lets friends install it from r2modman by importing the zip.
+- **AC-7.1 Thunderstore package.** An opt-in target or script (`dotnet build -c Release -p:PackageThunderstore=true`) produces `dist/Dons-QOL-<version>.zip` containing `manifest.json` (name, version, description, `BepInEx-BepInExPack_Valheim` dependency), `icon.png` (256×256), `README.md`, `CHANGELOG.md` and `plugins/Dons-QOL.dll`. This lets friends install it from r2modman by importing the zip.
 - **AC-7.2 Player README.** `package/README.md` covers:
   - what the mod does: set chest categories from the chest panel, then press Organize base or Put away inventory at any workbench;
   - installation for host and friends (all players need the same version);
@@ -254,7 +254,7 @@ After all must-have ACs in E1-E7 are delivered, the program may add stories it j
 - restocking food and meads from the base;
 - a short coloured category label on chest hover;
 - a statistics line ("Base: 41 chests, 78% full");
-- a console command `basestorage organize`;
+- a console command `dons-qol organize`;
 - export and import of category assignments.
 
 Guardrails:

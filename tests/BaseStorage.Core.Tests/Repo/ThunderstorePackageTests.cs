@@ -134,14 +134,14 @@ public sealed class ThunderstorePackageTests
             .OrderBy(v => v, StringComparer.Ordinal)
             .ToArray();
         Assert.Contains("$(TargetPath)", includes);
-        Assert.Contains("$(TargetDir)BaseStorage.Core.dll", includes);
+        Assert.Contains("$(TargetDir)Dons-QOL.Core.dll", includes);
         Assert.Contains(includes, v => v.EndsWith("icon.png", StringComparison.Ordinal));
         Assert.Contains(includes, v => v.EndsWith("README.md", StringComparison.Ordinal));
         Assert.Contains(includes, v => v.EndsWith("CHANGELOG.md", StringComparison.Ordinal));
 
         XElement zip = Assert.Single(target.Descendants(), e => e.Name.LocalName == "ZipDirectory");
         Assert.Equal("true", RepoRoot.Attr(zip, "Overwrite"));
-        Assert.EndsWith("BaseStorage-$(Version).zip", RepoRoot.Attr(zip, "DestinationFile"), StringComparison.Ordinal);
+        Assert.EndsWith("Dons-QOL-$(Version).zip", RepoRoot.Attr(zip, "DestinationFile"), StringComparison.Ordinal);
 
         XElement message = Assert.Single(target.Descendants(), e => e.Name.LocalName == "Message");
         Assert.Equal("high", RepoRoot.Attr(message, "Importance"));

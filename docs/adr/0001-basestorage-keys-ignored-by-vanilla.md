@@ -13,6 +13,8 @@ BaseStorage persists a small amount of data inside vanilla game data:
 - `basestorage.fav`: the favourite inventory slots of versions before 0.4.1, in the player profile custom data. It is read once, converted and removed.
 - `basestorage.favitems`: the favourite item types, in the player profile custom data.
 - `basestorage.name`: a chest's name, stored on the chest and cleaned on every read.
+- `basestorage.base`: a base's name, stored on every station of the base and cleaned on every read.
+- `basestorage.seen`: the creatures and biomes a player has met, stored in the character's custom data for the spoiler-free compendium.
 - `basestorage.feed`: what a station is kept fed with and how much to leave in the base, in the station's ZDO.
 
 Players must be able to remove the mod without damaging their world or characters.

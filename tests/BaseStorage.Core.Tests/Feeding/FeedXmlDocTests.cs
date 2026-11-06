@@ -11,7 +11,7 @@ using BaseStorage.Core.Tests.Abstractions;
 /// <summary>GW-U-2684 (ADR-GWIN-180, R9, CS1591): every public member of <c>BaseStorage.Core.Feeding</c> is documented in BaseStorage.Core.xml.</summary>
 public sealed class FeedXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const string Namespace = "BaseStorage.Core.Feeding";
 
     // GW-U-2684

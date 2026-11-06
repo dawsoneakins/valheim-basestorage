@@ -24,8 +24,8 @@ public sealed class InstallerTests : IDisposable
         Directory.CreateDirectory(game);
         Directory.CreateDirectory(Path.Combine(kit, "plugin"));
         File.WriteAllText(Path.Combine(game, "valheim.exe"), "fake");
-        File.WriteAllText(Path.Combine(kit, "plugin", "BaseStorage.dll"), "new plugin");
-        File.WriteAllText(Path.Combine(kit, "plugin", "BaseStorage.Core.dll"), "new core");
+        File.WriteAllText(Path.Combine(kit, "plugin", "Dons-QOL.dll"), "new plugin");
+        File.WriteAllText(Path.Combine(kit, "plugin", "Dons-QOL.Core.dll"), "new core");
         File.Copy(RepoRoot.Combine(@"installer\install.ps1"), Path.Combine(kit, "install.ps1"));
         File.Copy(RepoRoot.Combine(@"installer\uninstall.ps1"), Path.Combine(kit, "uninstall.ps1"));
 
@@ -52,7 +52,7 @@ public sealed class InstallerTests : IDisposable
         Assert.True(code == 0, output);
         Assert.True(File.Exists(Path.Combine(game, "winhttp.dll")));
         Assert.True(File.Exists(Path.Combine(game, "BepInEx", "core", "BepInEx.dll")));
-        Assert.Equal("new plugin", File.ReadAllText(Plugin("BaseStorage.dll")));
+        Assert.Equal("new plugin", File.ReadAllText(Plugin("Dons-QOL.dll")));
         Assert.False(File.Exists(Path.Combine(game, "manifest.json")));
     }
 
@@ -65,7 +65,7 @@ public sealed class InstallerTests : IDisposable
         (int code, string output) = Run("install.ps1", $"-GameDir \"{game}\" -PackZip \"{packZip}\" -ExpectedHash {Hash(packZip)} -ModZip \"{modZip}\" -ModHash {Hash(modZip)} -NoPrompt");
 
         Assert.True(code == 0, output);
-        Assert.Equal("zipped plugin", File.ReadAllText(Plugin("BaseStorage.dll")));
+        Assert.Equal("zipped plugin", File.ReadAllText(Plugin("Dons-QOL.dll")));
     }
 
     [Fact]
@@ -95,14 +95,47 @@ public sealed class InstallerTests : IDisposable
     public void RunningTwiceBacksUpWhatItReplaces()
     {
         Install();
-        File.WriteAllText(Plugin("BaseStorage.dll"), "old plugin");
+        File.WriteAllText(Plugin("Dons-QOL.dll"), "old plugin");
 
         (int code, string _) = Install();
 
         Assert.Equal(0, code);
-        Assert.Equal("new plugin", File.ReadAllText(Plugin("BaseStorage.dll")));
-        string backup = Assert.Single(Directory.GetDirectories(Path.Combine(game, "BepInEx"), "BaseStorage-backup-*"));
-        Assert.Equal("old plugin", File.ReadAllText(Path.Combine(backup, "BaseStorage.dll")));
+        Assert.Equal("new plugin", File.ReadAllText(Plugin("Dons-QOL.dll")));
+        string backup = Assert.Single(Directory.GetDirectories(Path.Combine(game, "BepInEx"), "Dons-QOL-backup-*"));
+        Assert.Equal("old plugin", File.ReadAllText(Path.Combine(backup, "Dons-QOL.dll")));
+    }
+
+    [Fact]
+    public void InstallingBacksUpAndRemovesTheOldBaseStoragePluginFolder()
+    {
+        string oldFolder = Path.Combine(game, "BepInEx", "plugins", "BaseStorage");
+        Directory.CreateDirectory(oldFolder);
+        File.WriteAllText(Path.Combine(oldFolder, "BaseStorage.dll"), "legacy plugin");
+        File.WriteAllText(Path.Combine(oldFolder, "BaseStorage.Core.dll"), "legacy core");
+
+        (int code, string output) = Install();
+
+        Assert.True(code == 0, output);
+        Assert.False(Directory.Exists(oldFolder));
+        Assert.Equal("new plugin", File.ReadAllText(Plugin("Dons-QOL.dll")));
+        string backup = Assert.Single(Directory.GetDirectories(Path.Combine(game, "BepInEx"), "Dons-QOL-backup-*"));
+        Assert.Equal("legacy plugin", File.ReadAllText(Path.Combine(backup, "BaseStorage", "BaseStorage.dll")));
+        Assert.Equal("legacy core", File.ReadAllText(Path.Combine(backup, "BaseStorage", "BaseStorage.Core.dll")));
+    }
+
+    [Fact]
+    public void UninstallRemovesTheOldBaseStoragePluginFolderToo()
+    {
+        Install();
+        string oldFolder = Path.Combine(game, "BepInEx", "plugins", "BaseStorage");
+        Directory.CreateDirectory(oldFolder);
+        File.WriteAllText(Path.Combine(oldFolder, "BaseStorage.dll"), "legacy plugin");
+
+        (int code, string output) = Run("uninstall.ps1", $"-GameDir \"{game}\" -NoPrompt");
+
+        Assert.True(code == 0, output);
+        Assert.False(Directory.Exists(oldFolder));
+        Assert.False(File.Exists(Plugin("Dons-QOL.dll")));
     }
 
     [Fact]
@@ -128,7 +161,7 @@ public sealed class InstallerTests : IDisposable
         (int code, string output) = Run("install.ps1", $"-SteamRoot \"{steam}\" -PackZip \"{packZip}\" -ExpectedHash {Hash(packZip)} -NoPrompt");
 
         Assert.True(code == 0, output);
-        Assert.Equal("new plugin", File.ReadAllText(Plugin("BaseStorage.dll")));
+        Assert.Equal("new plugin", File.ReadAllText(Plugin("Dons-QOL.dll")));
     }
 
     [Fact]
@@ -150,7 +183,7 @@ public sealed class InstallerTests : IDisposable
         (int code, string output) = Run("uninstall.ps1", $"-SteamRoot \"{steam}\" -NoPrompt");
 
         Assert.True(code == 0, output);
-        Assert.False(File.Exists(Plugin("BaseStorage.dll")));
+        Assert.False(File.Exists(Plugin("Dons-QOL.dll")));
     }
 
     [Fact]
@@ -161,7 +194,7 @@ public sealed class InstallerTests : IDisposable
         (int code, string _) = Run("uninstall.ps1", $"-GameDir \"{game}\" -NoPrompt");
 
         Assert.Equal(0, code);
-        Assert.False(File.Exists(Plugin("BaseStorage.dll")));
+        Assert.False(File.Exists(Plugin("Dons-QOL.dll")));
         Assert.True(File.Exists(Path.Combine(game, "winhttp.dll")));
     }
 
@@ -230,8 +263,8 @@ public sealed class InstallerTests : IDisposable
     {
         string path = Path.Combine(root, "mod.zip");
         using ZipArchive zip = ZipFile.Open(path, ZipArchiveMode.Create);
-        Add(zip, "BaseStorage.dll", "zipped plugin");
-        Add(zip, "BaseStorage.Core.dll", "zipped core");
+        Add(zip, "Dons-QOL.dll", "zipped plugin");
+        Add(zip, "Dons-QOL.Core.dll", "zipped core");
         return path;
     }
 
@@ -241,7 +274,7 @@ public sealed class InstallerTests : IDisposable
         return Convert.ToHexString(SHA256.HashData(stream));
     }
 
-    private string Plugin(string name) => Path.Combine(game, "BepInEx", "plugins", "BaseStorage", name);
+    private string Plugin(string name) => Path.Combine(game, "BepInEx", "plugins", "Dons-QOL", name);
 
     private (int Code, string Output) Install() =>
         Run("install.ps1", $"-GameDir \"{game}\" -PackZip \"{packZip}\" -ExpectedHash {Hash(packZip)} -NoPrompt");

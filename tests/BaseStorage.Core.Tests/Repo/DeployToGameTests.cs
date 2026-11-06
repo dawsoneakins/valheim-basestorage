@@ -36,7 +36,7 @@ public sealed class DeployToGameTests
             .ToArray();
 
         Assert.Equal(
-            new[] { "$(TargetDir)BaseStorage.Core.dll", "$(TargetPath)" },
+            new[] { "$(TargetDir)Dons-QOL.Core.dll", "$(TargetPath)" },
             includes);
     }
 
@@ -52,7 +52,7 @@ public sealed class DeployToGameTests
         DotnetResult result = Deploy(gameFolder, outputFolder, deployProperty: true);
 
         Assert.Equal(0, result.ExitCode);
-        string destination = gameFolder.Combine("BepInEx", "plugins", "BaseStorage");
+        string destination = gameFolder.Combine("BepInEx", "plugins", "Dons-QOL");
         string[] files = Directory.EnumerateFiles(gameFolder.Root, "*", SearchOption.AllDirectories)
             .Select(file => Path.GetRelativePath(gameFolder.Root, file))
             .OrderBy(file => file, StringComparer.Ordinal)
@@ -60,8 +60,8 @@ public sealed class DeployToGameTests
         Assert.Equal(
             new[]
             {
-                Path.Combine("BepInEx", "plugins", "BaseStorage", "BaseStorage.Core.dll"),
-                Path.Combine("BepInEx", "plugins", "BaseStorage", "BaseStorage.dll"),
+                Path.Combine("BepInEx", "plugins", "Dons-QOL", "Dons-QOL.Core.dll"),
+                Path.Combine("BepInEx", "plugins", "Dons-QOL", "Dons-QOL.dll"),
             },
             files);
         Assert.Contains(
@@ -136,8 +136,8 @@ public sealed class DeployToGameTests
 
     private static void WriteFakeOutputs(TempFolder outputFolder)
     {
-        File.WriteAllText(outputFolder.Combine("BaseStorage.dll"), "fake");
-        File.WriteAllText(outputFolder.Combine("BaseStorage.Core.dll"), "fake");
+        File.WriteAllText(outputFolder.Combine("Dons-QOL.dll"), "fake");
+        File.WriteAllText(outputFolder.Combine("Dons-QOL.Core.dll"), "fake");
     }
 
     private static string[] RecursiveListing(string root) =>

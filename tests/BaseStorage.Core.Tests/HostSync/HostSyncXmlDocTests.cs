@@ -11,7 +11,7 @@ using BaseStorage.Core.Tests.Abstractions;
 /// <summary>AC-6.2 (R9, ADR-GWIN-084): every public type and member of BaseStorage.Core.HostSync has its summary, its params and its returns in BaseStorage.Core.xml.</summary>
 public sealed class HostSyncXmlDocTests
 {
-    private const string DocFileName = "BaseStorage.Core.xml";
+    private const string DocFileName = "Dons-QOL.Core.xml";
     private const string HostSyncNamespace = "BaseStorage.Core.HostSync";
 
     // GW-U-1011: XmlDocMembers.TargetsFor over the four HostSync types (plus the two HostSyncCodec consts) finds a summary on each, a param for each parameter, and a returns on each non-void member.

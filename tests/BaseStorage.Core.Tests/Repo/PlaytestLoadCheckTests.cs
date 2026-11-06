@@ -41,7 +41,7 @@ public sealed class PlaytestLoadCheckTests
     {
         string section = LoadCheckSection(RepoRoot.ReadText(Doc));
 
-        Assert.Contains("`BaseStorage <version> loaded`", section, StringComparison.Ordinal);
+        Assert.Contains("`Dons-QOL <version> loaded`", section, StringComparison.Ordinal);
         Assert.Contains("Version.props", section, StringComparison.Ordinal);
         Assert.True(Regex.Matches(section, @"^\d+\. ", RegexOptions.Multiline).Count >= 5, "The load check needs at least 5 numbered steps.");
     }
@@ -55,9 +55,9 @@ public sealed class PlaytestLoadCheckTests
         string[] fragments =
         {
             "dotnet build BaseStorage.sln -c Release -p:DeployToGame=true",
-            "BaseStorage.dll",
-            "BaseStorage.Core.dll",
-            @"BepInEx\plugins\BaseStorage\",
+            "Dons-QOL.dll",
+            "Dons-QOL.Core.dll",
+            @"BepInEx\plugins\Dons-QOL\",
             "main menu",
             "LogOutput.log",
         };
@@ -93,7 +93,7 @@ public sealed class PlaytestLoadCheckTests
             bool isExample = line.Contains("example", StringComparison.OrdinalIgnoreCase);
             if (Regex.IsMatch(line, @"BaseStorage \d+\.\d+\.\d+ loaded") && !isExample)
             {
-                problems.Add("A concrete 'BaseStorage x.y.z loaded' line is not marked as an example: " + line.Trim());
+                problems.Add("A concrete 'Dons-QOL x.y.z loaded' line is not marked as an example: " + line.Trim());
             }
 
             if (Regex.IsMatch(line, versionPattern) && !isExample)

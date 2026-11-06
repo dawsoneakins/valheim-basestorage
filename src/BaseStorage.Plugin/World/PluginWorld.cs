@@ -103,6 +103,7 @@ internal sealed class PluginWorld
     /// <param name="container">The container.</param>
     internal void OnContainerAwake(Container container)
     {
+        CharacterMenu.WornItems.WidenIfGrave(container);
         if (container != null && container.m_nview != null && container.m_nview.IsValid() && Containers.Add(container.m_nview, container))
         {
             ChestNames.Register(container);
